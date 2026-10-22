@@ -49,7 +49,7 @@ a{color:inherit}
 .sign{font-family:var(--font-sign);font-size:2rem;line-height:1;color:var(--paper);text-shadow:0 2px 0 rgba(0,0,0,.4);margin:0;font-weight:700}
 .tag{font-family:var(--font-sc);letter-spacing:.08em;font-size:.82rem;color:var(--rule)}
 .bar nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.chip{border:1px solid rgba(244,235,218,.45);background:rgba(27,20,16,.55);color:var(--paper);border-radius:999px;padding:6px 13px;font-family:var(--font-sc);font-size:.86rem;letter-spacing:.05em}
+.chip{text-decoration:none;border:1px solid rgba(244,235,218,.45);background:rgba(27,20,16,.55);color:var(--paper);border-radius:999px;padding:6px 13px;font-family:var(--font-sc);font-size:.86rem;letter-spacing:.05em}
 .chip:hover{border-color:var(--brass);color:#fff}
 
 /* waiter bubble */
@@ -143,7 +143,7 @@ dialog::backdrop{background:rgba(10,7,5,.7)}
 <header class="bar">
   <h1 class="sign">Chez Déo</h1><span class="tag" id="tag"></span>
   <nav aria-label="Site">
-    <button type="button" class="chip" id="bText"></button>
+    <a class="chip" id="bClassic" href="classic.html"></a>
     <button type="button" class="chip" id="bCV"></button>
     <button type="button" class="chip" id="bLang" lang=""></button>
   </nav>
@@ -182,32 +182,73 @@ let lastSay = () => T().hello;
 const T = () => C.ui[lang];
 const L = d => d[lang];
 const ALL = [C.starter, ...C.dishes];
+const XS = {
+  fr:{ narr:"Chez Déo · rue des Données", street:"Un soir d'octobre à Mulhouse. La winstub est éclairée et il reste une table. Cliquez sur la porte pour entrer.",
+       enter:"Entrer", skipTable:"M'installer directement à table", classic:"Version classique, sans 3D", classicChip:"Version classique",
+       inside:"Il fait bon à l'intérieur. L'accueil est juste à votre gauche, on vous attend.", toDesk:"Aller à l'accueil",
+       follow:"Parfait. Suivez-moi, je vous installe.", coming:"Très bon choix. Je vous apporte ça tout de suite.",
+       seated:"Installez-vous. Avant de vous apporter la carte : qu'est-ce qui vous amène ce soir ?", waiter:"Déo · votre serveur",
+       bill:"Voici l'addition. Elle est offerte : il ne vous reste qu'à m'écrire." },
+  en:{ narr:"Chez Déo · Data Street", street:"An October evening in Mulhouse. The winstub's lights are on and there's one table left. Click the door to go in.",
+       enter:"Go in", skipTable:"Take me straight to a table", classic:"Classic version, no 3D", classicChip:"Classic version",
+       inside:"It's warm inside. The front desk is just to your left, they're expecting you.", toDesk:"Go to the front desk",
+       follow:"Perfect. Follow me, I'll show you to your table.", coming:"Good choice. I'll bring it right out.",
+       seated:"Have a seat. Before I bring the menu: what brings you here tonight?", waiter:"Deo · your waiter",
+       bill:"Here's the bill. It's on the house: all you have to do is write to me." }
+};
+const X = () => XS[lang];
 
 /* ================================================================ UI */
 function chrome(){
   document.documentElement.lang = lang;
   $("#tag").textContent = T().tagline;
-  $("#bText").textContent = T().textMenu;
+  $("#bClassic").textContent = X().classicChip;
   $("#bCV").textContent = T().cv;
   $("#bLang").textContent = T().lang; $("#bLang").setAttribute("lang", T().langCode);
-  $("#who").textContent = lang === "fr" ? "Déo · votre serveur" : "Deo · your waiter";
+  $("#who").textContent = (view === "street" || view === "inside" || view === "entering") ? X().narr : X().waiter;
   document.querySelectorAll("[data-close]").forEach(b => b.textContent = T().close);
   $("#cvDl").textContent = T().download;
   $("#cvImg").alt = lang === "fr" ? "CV d'une page de Deo Gratias Loutou." : "One-page CV of Deo Gratias Loutou.";
 }
-function say(fn){ lastSay = fn; $("#say").textContent = fn(); }
+function say(fn){ lastSay = fn; $("#say").textContent = fn(); $("#waiter").hidden = false; }
 
-function welcome(){
-  view = "welcome"; document.body.classList.remove("card-open"); $("#card").hidden = true;
-  say(() => T().hello);
-  $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("")
-    + `<button type="button" class="link" data-profile="all">${esc(T().skip)}</button>`;
-  Scene.go("door");
+function hideCard(){ document.body.classList.remove("card-open"); $("#card").hidden = true; }
+function setView(v){ view = v; chrome(); }
+const classicLink = () => `<a class="link" href="classic.html">${esc(X().classic)}</a>`;
+function street(){
+  setView("street"); hideCard(); Scene.toStreet(); Scene.setHot(["door"]);
+  say(() => X().street);
+  $("#choices").innerHTML = `<button type="button" data-act="enter">${esc(X().enter)}</button><button type="button" data-act="sit">${esc(X().skipTable)}</button>` + classicLink();
 }
+function enterResto(){
+  if (view !== "street") return;
+  setView("entering"); Scene.setHot([]); $("#choices").innerHTML = ""; $("#waiter").hidden = true;
+  Scene.enter(inside);
+}
+function inside(){
+  setView("inside"); Scene.setHot(["desk"]);
+  say(() => X().inside);
+  $("#choices").innerHTML = `<button type="button" data-act="desk">${esc(X().toDesk)}</button>`;
+}
+function goDesk(){
+  if (view !== "inside") return;
+  setView("walking"); Scene.setHot([]); $("#choices").innerHTML = ""; $("#waiter").hidden = true;
+  Scene.toDesk(welcome);
+}
+function welcome(){
+  setView("welcome"); hideCard(); Scene.setHot([]);
+  say(() => Scene.seated ? X().seated : T().hello);
+  $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("") + classicLink();
+}
+function sitDown(){ Scene.sitNow(); welcome(); }
 $("#choices").addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (a){ const act = a.dataset.act; if (act === "enter") enterResto(); else if (act === "sit") sitDown(); else if (act === "desk") goDesk(); return; }
   const b = e.target.closest("[data-profile]"); if (!b) return;
-  if (b.dataset.profile === "all"){ openText(); return; }
-  profile = b.dataset.profile; store.set("chezdeo-profile", profile); showMenu(true);
+  profile = b.dataset.profile; store.set("chezdeo-profile", profile);
+  if (Scene.seated) return showMenu(true);
+  setView("leading"); $("#choices").innerHTML = ""; say(() => X().follow);
+  Scene.lead(() => showMenu(true));
 });
 
 function ordered(){
@@ -220,7 +261,7 @@ function dishBtn(d){
   return `<button type="button" class="dish" data-dish="${d.id}"><span class="n">${esc(L(d).name)} ${pick}</span><span class="d">${esc(L(d).desc)}</span></button>`;
 }
 function showMenu(first){
-  view = "menu"; current = null; Scene.serve(null);
+  setView("menu"); current = null; waitLine = null;
   const S = T().sections;
   const special = C.dishes.filter(d => d.section === "special"), dessert = C.dishes.filter(d => d.section === "dessert");
   $("#cardScroll").innerHTML = `<h2>${esc(T().menuTitle)}</h2><p class="sub">${esc(T().tagline)}</p>
@@ -248,7 +289,7 @@ $("#cardScroll").addEventListener("click", e => {
 function sequence(){ return [C.starter, ...C.dishes.filter(d => d.section==="special"), ...ordered(), ...C.dishes.filter(d => d.section==="dessert")]; }
 function openDish(id){
   const d = ALL.find(x => x.id === id); if (!d) return;
-  view = "dish"; current = id; const t = L(d), R = T().recipe;
+  setView("dish"); current = id; const t = L(d), R = T().recipe;
   let body;
   if (d === C.starter){
     body = `<p class="sub">${esc(T().sections.starter)}</p><h3>${esc(t.name)}</h3><p class="lede">${esc(t.desc)}</p>
@@ -271,8 +312,7 @@ function openDish(id){
     + (nxt ? `<button type="button" class="primary" data-next="${nxt.id}">${esc(T().next)} →</button>` : `<button type="button" class="primary" data-billbtn>${esc(T().billTitle)} →</button>`);
   $("#card").hidden = false; document.body.classList.add("card-open"); $("#cardScroll").scrollTop = 0;
   $("#choices").innerHTML = "";
-  say(() => L(ALL.find(x => x.id === current) || C.starter).waiter);
-  Scene.serve(d.plate); Scene.go("plate");
+  serveDish(d.plate, () => L(ALL.find(x => x.id === current) || C.starter).waiter);
   demoOn = false;
 }
 $("#cardFoot").addEventListener("click", e => {
@@ -292,7 +332,7 @@ function toggleDemo(){
 }
 
 function openBill(){
-  view = "bill"; current = null;
+  setView("bill"); current = null;
   $("#cardScroll").innerHTML = `<div class="recipe"><p class="sub">${esc(T().sections.bill)}</p><h3>${esc(T().billTitle)}</h3><p class="lede">${esc(T().billIntro)}</p>
     <dl class="facts">
       <dt>${esc(T().lookingFor)}</dt><dd>${lang==="fr" ? "Un stage de data analyst" : "A data analyst internship"}</dd>
@@ -303,8 +343,13 @@ function openBill(){
     </dl></div>`;
   $("#cardFoot").hidden = false; $("#cardFoot").innerHTML = `<button type="button" data-back>${esc(T().back)}</button>`;
   $("#card").hidden = false; document.body.classList.add("card-open"); $("#cardScroll").scrollTop = 0;
-  say(() => lang === "fr" ? "Voici l'addition. Elle est offerte : il ne vous reste qu'à m'écrire." : "Here's the bill. It's on the house: all you have to do is write to me.");
-  Scene.serve("bill"); Scene.go("plate");
+  serveDish("bill", () => X().bill);
+}
+let waitLine = null;
+function serveDish(kind, lineFn){
+  waitLine = {kind, lineFn};
+  if (Scene.ok && Scene.needsTrip(kind)){ say(() => X().coming); Scene.go("wait"); Scene.serve(kind); }
+  else { say(lineFn); Scene.serve(kind); Scene.go("plate"); }
 }
 function copyMail(btn){
   const t = C.contact.email, msg = $("#copyMsg");
@@ -330,34 +375,42 @@ function show(d){ if (d.showModal){ if (!d.open) d.showModal(); } else d.setAttr
 document.querySelectorAll("dialog").forEach(d => {
   d.addEventListener("click", e => { if (e.target === d || e.target.closest("[data-close]")) d.close(); });
 });
-$("#bText").onclick = openText; $("#bCV").onclick = openCV;
+$("#bCV").onclick = openCV;
 $("#bLang").onclick = () => {
-  lang = lang === "fr" ? "en" : "fr"; store.set("chezdeo-lang", lang); chrome();
-  if (view === "welcome") welcome(); else if (view === "menu") showMenu(); else if (view === "dish") openDish(current); else if (view === "bill") openBill();
+  lang = lang === "fr" ? "en" : "fr"; store.set("chezdeo-lang", lang); chrome(); Scene.relabel();
+  if (view === "street") street(); else if (view === "inside") inside(); else if (view === "leading") say(lastSay);
+  else if (view === "welcome") welcome(); else if (view === "menu") showMenu(); else if (view === "dish") openDish(current); else if (view === "bill") openBill();
   if ($("#dlgText").open) openText();
 };
 
 /* ================================================================ 3D ROOM */
-const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} : (() => {
+const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet(){},enter(cb){cb&&cb()},toDesk(cb){cb&&cb()},lead(cb){cb&&cb()},sitNow(){},setHot(){},relabel(){},needsTrip(){return false},seated:true,ok:false} : (() => {
   const canvas = $("#room");
   let R, scene, cam, ok = false;
-  const camPos = new THREE.Vector3(0,1.75,5.3), camLook = new THREE.Vector3(0,1.05,-1);
+  const camPos = new THREE.Vector3(0,1.65,15), camLook = new THREE.Vector3(0,2.4,6);
   const goalPos = camPos.clone(), goalLook = camLook.clone(), mouse = {x:0,y:0}, off = {x:0,y:0};
   function region(){ const w = innerWidth, h = innerHeight, bar = document.querySelector('.bar').getBoundingClientRect(), card = $('#card'), wt = $('#waiter').getBoundingClientRect();
     let x0 = 0, x1 = w, y0 = bar.bottom, y1 = h;
     if (!card.hidden){ const c = card.getBoundingClientRect(); if (w >= 760) x1 = c.left; else y1 = Math.min(c.top, wt.top); }
     return {dx:(x0+x1)/2 - w/2, dy:(y0+y1)/2 - h/2}; }
   const SHOTS = {
-    door:  [[0,1.72,5.2],[0,1.05,-1.2]],
-    table: [[0.05,1.32,1.32],[0,0.86,-0.75]],
-    plate: [[0.02,1.04,0.48],[0,0.78,-0.02]],
+    street:[[0,1.65,15],[0,2.4,6]],
+    table: [[0,1.14,0.62],[0,0.92,-1.4]],
+    plate: [[0,1.04,0.44],[0,0.77,-0.03]],
+    wait:  [[0,1.14,0.62],[-1.1,1.0,-1.7]],
   };
   const PLATE = new THREE.Vector3(0,0.772,0.0);
-  let plateG, cloche, food = null, foodKind = null, canvasDish = null, clocheT = 0, clocheGoal = 0, swapTo = undefined;
-  let cityGeo = null, cityU = {uYear:{value:2045}}, boids = null, tStart = performance.now();
+  let tableHolder, waiter, kDoor, onTable = null, pending = null, seated = false, walk = null, wState = "desk", fGoal = 0, fT = 0, bob = 0;
+  let cityGeo = null, cityU = {uYear:{value:2045}}, hotOn = new Set();
+  const fDoors = [], tweens = [], hot = [], signs = [], D0 = -3.5, D1 = 6, HW = 3.5, ray = new THREE.Raycaster(), lookT = new THREE.Vector3();
+  const V = (x,y,z) => new THREE.Vector3(x,y,z);
+  // the waiter's routes (x, z on the floor)
+  const K_IN = [-2.85,-3.3], K_OUT = [-2.85,-2.95];
+  const TO_TABLE = [K_OUT,[-1.4,-2.75],[-1.05,-1.1],[-0.95,0.0],[-0.8,0.35]];
+  const TO_KITCHEN = [[-0.95,0.0],[-1.05,-1.1],[-1.4,-2.75],K_OUT,K_IN];
 
   function tex(w,h,draw,rep){ const c = document.createElement("canvas"); c.width=w; c.height=h; draw(c.getContext("2d"),w,h);
-    const t = new THREE.CanvasTexture(c); t.anisotropy = 4; if (rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0],rep[1]); } return t; }
+    const t = new THREE.CanvasTexture(c); t._redraw = () => { draw(c.getContext("2d"),w,h); t.needsUpdate = true; }; t.anisotropy = 4; if (rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0],rep[1]); } return t; }
   const rnd = (s => () => (s = (s*16807) % 2147483647) / 2147483647)(42);
 
   function planks(ctx,w,h){ for (let i=0;i<8;i++){ const y=i*h/8; ctx.fillStyle=`hsl(${24+rnd()*6},${38+rnd()*10}%,${22+rnd()*8}%)`; ctx.fillRect(0,y,w,h/8);
@@ -431,7 +484,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
     const legM = lambert(0x3B2416); [[-0.68,-0.75],[0.68,-0.75],[-0.68,0.05],[0.68,0.05]].forEach(([x,z]) => box(0.06,0.72,0.06,legM,x,0.36,z));
     const drape = (w,x,z,ry) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w,0.22), lambert(0xffffff, tex(256,64,kelsch))); m.position.set(x,0.63,z); m.rotation.y=ry; scene.add(m); };
     drape(1.5,0,0.126,0); drape(1.5,0,-0.826,Math.PI); drape(0.95,0.751,-0.35,Math.PI/2); drape(0.95,-0.751,-0.35,-Math.PI/2);
-    chair(0,-1.2,0); // empty chair opposite: the waiter's side
+    chair(0,-1.2,0); chair(0,0.72,Math.PI); // the guest sits on the near side
     // other tables in the room
     [[-2.2,-1.6],[2.2,-1.6],[-2.2,1.6],[2.2,1.6]].forEach(([x,z]) => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.04,28), lambert(0xffffff, tex(256,256,kelsch,[2,2]))); t.position.set(x,0.74,z); scene.add(t);
       box(0.08,0.72,0.08,legM,x,0.36,z); chair(x,z-0.75,0); chair(x,z+0.75,Math.PI);
@@ -452,6 +505,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
     // a little table sign
     const signT = tex(256,160,(c,w,h) => { c.fillStyle="#F4EBDA"; c.fillRect(0,0,w,h); c.strokeStyle="#9C3029"; c.lineWidth=4; c.strokeRect(8,8,w-16,h-16);
       c.fillStyle="#2B1F17"; c.font="bold 46px UnifrakturCook, Georgia, serif"; c.textAlign="center"; c.fillText("Chez Déo",w/2,h/2+4); c.font="20px Alegreya, Georgia, serif"; c.fillText("Mulhouse · 2026",w/2,h/2+38); });
+    signs.push(signT);
     const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.18,0.11), lambert(0xffffff, signT)); sign.position.set(-0.45,0.82,-0.62); sign.rotation.set(-0.15,0.35,0); scene.add(sign);
     // framed pictures of my own work on the walls
     const loader = new THREE.TextureLoader();
@@ -460,22 +514,215 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
       loader.load(src, t => { t.encoding = THREE.sRGBEncoding; const p = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshLambertMaterial({map:t})); p.position.set(x + (x<0?0.017:-0.017),y,z); p.rotation.y=ry; scene.add(p); });
     });
 
-    // plate and cloche in front of the guest
-    plateG = new THREE.Group(); plateG.position.copy(PLATE); scene.add(plateG);
-    const china = new THREE.MeshPhongMaterial({color:0xfbf8f1, shininess:60});
-    const plate = new THREE.Mesh(new THREE.LatheGeometry([[0,0],[0.1,0],[0.1,0.006],[0.125,0.01],[0.145,0.02],[0.15,0.018],[0.128,0.008],[0.1,0.006],[0,0.006]].map(([a,b]) => new THREE.Vector2(a,b)), 40), china);
-    plateG.add(plate);
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.139,0.0016,6,60), new THREE.MeshBasicMaterial({color:0x2E4C8C})); rim.rotation.x=-Math.PI/2; rim.position.y=0.016; plateG.add(rim);
-    const steel = new THREE.MeshPhongMaterial({color:0xd8dcdf, shininess:110, specular:0xffffff});
-    cloche = new THREE.Group();
-    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.135,32,16,0,Math.PI*2,0,Math.PI/2), steel); dome.scale.y = 0.85; cloche.add(dome);
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.014,12,8), steel); knob.position.y = 0.122; cloche.add(knob);
-    cloche.position.y = 0.012; plateG.add(cloche);
+    // where the plates go, plus the parts of the building you walk through
+    tableHolder = new THREE.Group(); tableHolder.position.copy(PLATE); scene.add(tableHolder);
+    buildFront(); buildDesk(); buildKitchen();
+    waiter = makeWaiter(); scene.add(waiter.root); hot.push(waiter.root); placeWaiter(-3.15, 4.3, Math.PI/2);
+    const moon = new THREE.DirectionalLight(0x8fa6d8, 0.22); moon.position.set(4,8,20); scene.add(moon);
 
     window.addEventListener("pointermove", e => { mouse.x = e.clientX/innerWidth*2-1; mouse.y = e.clientY/innerHeight*2-1; });
+    canvas.addEventListener("pointermove", e => { canvas.style.cursor = pick(e) ? "pointer" : ""; });
+    canvas.addEventListener("click", e => { const id = pick(e); if (id && api.onHot) api.onHot(id); });
     addEventListener("resize", resize); resize();
     ok = true;
   }
+  /* ---------- the street front: half-timbered facade, double door, sign ---------- */
+  function buildFront(){
+    const H = 3, wallM = lambert(0xE7D8BC), pm = lambert(0xffffff, tex(1024,256,panel)), timber = lambert(0x3B2416);
+    const fw = (x0,x1,y0,y1,m) => { const o = new THREE.Mesh(new THREE.PlaneGeometry(x1-x0,y1-y0), m); o.position.set((x0+x1)/2,(y0+y1)/2,D1); o.rotation.y = Math.PI; scene.add(o); };
+    fw(-HW,-0.55,1.05,H,wallM); fw(0.55,HW,1.05,H,wallM); fw(-0.55,0.55,2.2,H,wallM); fw(-HW,-0.55,0,1.05,pm); fw(0.55,HW,0,1.05,pm);
+    const sh = new THREE.Shape(); [[-4,0],[-0.55,0],[-0.55,2.2],[0.55,2.2],[0.55,0],[4,0],[4,5.2],[0,7.6],[-4,5.2]].forEach(([x,y],i) => i ? sh.lineTo(x,y) : sh.moveTo(x,y));
+    const ft = tex(512,512,(c,w,h) => { colombage(c,w,h); c.globalCompositeOperation = "multiply"; c.fillStyle = "#F3CF94"; c.fillRect(0,0,w,h); c.globalCompositeOperation = "source-over"; });
+    ft.wrapS = ft.wrapT = THREE.RepeatWrapping; ft.repeat.set(0.5,0.55);
+    const fac = new THREE.Mesh(new THREE.ShapeGeometry(sh), lambert(0xffffff, ft)); fac.position.z = D1+0.15; scene.add(fac);
+    box(0.14,2.32,0.22,timber,-0.62,1.16,D1+0.07); box(0.14,2.32,0.22,timber,0.62,1.16,D1+0.07); box(1.38,0.16,0.22,timber,0,2.28,D1+0.07);
+    box(1.3,0.06,0.34,lambert(0x8a7f72),0,0.03,D1+0.3);
+    const doorM = lambert(0x2f4a3a), paneM = new THREE.MeshBasicMaterial({color:0xffcf8a});
+    [[-0.55,1],[0.55,-1]].forEach(([hx,sg]) => { const p = new THREE.Group(); p.position.set(hx,0,D1+0.06);
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.55,2.18,0.05), doorM); leaf.position.set(sg*0.275,1.09,0); p.add(leaf);
+      [0.027,-0.027].forEach(z => { const pane = new THREE.Mesh(new THREE.PlaneGeometry(0.3,0.5), paneM); pane.position.set(sg*0.275,1.6,z); if (z<0) pane.rotation.y = Math.PI; p.add(pane); });
+      p.userData.sg = sg; p.userData.hot = "door"; scene.add(p); fDoors.push(p); hot.push(p); });
+    const hb = new THREE.Mesh(new THREE.BoxGeometry(1.1,2.2,0.3), new THREE.MeshBasicMaterial({transparent:true, opacity:0, depthWrite:false}));
+    hb.position.set(0,1.1,D1+0.25); hb.userData.hot = "door"; scene.add(hb); hot.push(hb);
+    const sgT = tex(1024,256,(c,w,h) => { c.fillStyle="#2B1F17"; c.fillRect(0,0,w,h); c.strokeStyle="#C99640"; c.lineWidth=8; c.strokeRect(14,14,w-28,h-28);
+      c.textAlign="center"; c.fillStyle="#E8C15A"; c.font="bold 120px UnifrakturCook, Georgia, serif"; c.fillText("Chez Déo", w/2, 150);
+      c.fillStyle="#F4EBDA"; c.font="38px 'Alegreya Sans SC', 'Alegreya Sans', sans-serif"; c.fillText("WINSTUB  ·  DATA  ·  MULHOUSE", w/2, 214); });
+    signs.push(sgT);
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(2.2,0.55), new THREE.MeshBasicMaterial({map:sgT})); board.position.set(0,2.78,D1+0.17); scene.add(board);
+    [-1.0,1.0].forEach(x => { const l = new THREE.Mesh(new THREE.BoxGeometry(0.15,0.22,0.15), new THREE.MeshBasicMaterial({color:0xffd08a})); l.position.set(x,2.25,D1+0.34); scene.add(l);
+      box(0.18,0.03,0.18,timber,x,2.37,D1+0.34); box(0.03,0.03,0.2,timber,x,2.4,D1+0.24);
+      const pl = new THREE.PointLight(0xffb866, 0.9, 6, 2); pl.position.set(x,2.1,D1+0.7); scene.add(pl); });
+    const glow = tex(256,256,(c,w,h) => { const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,"#ffd79a"); g.addColorStop(1,"#e89a52"); c.fillStyle=g; c.fillRect(0,0,w,h);
+      c.fillStyle="rgba(46,76,140,.5)"; for (let i=0;i<8;i++){ c.fillRect(0,i*32,40,16); c.fillRect(w-40,i*32,40,16); }
+      c.fillStyle="#3B2416"; c.fillRect(w/2-5,0,10,h); c.fillRect(0,h/2-5,w,10); c.lineWidth=14; c.strokeStyle="#3B2416"; c.strokeRect(0,0,w,h); });
+    const dark = tex(256,256,(c,w,h) => { c.fillStyle="#1d2638"; c.fillRect(0,0,w,h); c.fillStyle="#3B2416"; c.fillRect(w/2-5,0,10,h); c.fillRect(0,h/2-5,w,10); c.lineWidth=14; c.strokeStyle="#3B2416"; c.strokeRect(0,0,w,h); });
+    const shM = lambert(0x2f4a3a), sill = lambert(0x8a7f72);
+    const win = (x,y,w,h,t,z) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshBasicMaterial({map:t})); m.position.set(x,y,z); scene.add(m);
+      box(w*0.5,h,0.03,shM,x-w*0.78,y,z+0.01); box(w*0.5,h,0.03,shM,x+w*0.78,y,z+0.01); box(w+0.2,0.06,0.12,sill,x,y-h/2-0.03,z+0.05); };
+    win(-2.2,1.45,1.2,1.0,glow,D1+0.16); win(2.2,1.45,1.2,1.0,glow,D1+0.16); win(-2.2,4.0,0.8,1.0,dark,D1+0.16); win(0,4.15,0.8,1.0,glow,D1+0.16); win(2.2,4.0,0.8,1.0,dark,D1+0.16);
+    const roofM = lambert(0x7a3328);
+    [-1,1].forEach(sg => { const r = new THREE.Mesh(new THREE.BoxGeometry(5.0,0.16,5.4), roofM); r.position.set(sg*2,6.47,D1-2.25); r.rotation.z = -sg*0.54; scene.add(r); });
+    const nb = (x0,x1,h,col) => { const w = x1-x0; box(w,h,7,lambert(col),(x0+x1)/2,h/2,D1+0.15-3.5); box(w+0.2,0.3,7.4,lambert(0x5d2a22),(x0+x1)/2,h+0.15,D1+0.15-3.5);
+      for (let fl=0; fl<3; fl++) for (let i=0; i*1.6+0.9 < w-0.5; i++){ const x = x0+0.9+i*1.6, y = 1.5+fl*2.4; if (y > h-1) continue;
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(0.7,1.0), new THREE.MeshBasicMaterial({map: (i*7+fl*3+Math.round(Math.abs(x0))) % 3 === 0 ? glow : dark})); m.position.set(x,y,D1+0.16); scene.add(m); } };
+    nb(-10,-4.05,8.4,0xD9A05B); nb(4.05,10,7.6,0x9DB8A6);
+    const cob = tex(512,512,(c,w,h) => { c.fillStyle="#3e3a36"; c.fillRect(0,0,w,h); for (let y=0;y<16;y++) for (let x=-1;x<16;x++){ const o = (y%2)*16;
+      c.fillStyle=`hsl(30,${5+rnd()*6}%,${28+rnd()*14}%)`; c.beginPath(); if (c.roundRect) c.roundRect(x*32+o+2,y*32+2,28,28,8); else c.rect(x*32+o+2,y*32+2,28,28); c.fill(); } }, [24,16]);
+    const st = new THREE.Mesh(new THREE.PlaneGeometry(60,40), lambert(0xffffff, cob)); st.rotation.x = -Math.PI/2; st.position.set(0,-0.005,D1+20); scene.add(st);
+    box(30,0.08,2.2,lambert(0x8f857a),0,0.04,D1+1.27);
+  }
+  /* ---------- the front desk, left of the entrance ---------- */
+  function buildDesk(){
+    const g = new THREE.Group(); g.position.set(-2.75,0,4.3); g.userData.hot = "desk";
+    const add = (geo,mat,x,y,z) => { const o = new THREE.Mesh(geo,mat); o.position.set(x,y,z); g.add(o); return o; };
+    add(new THREE.BoxGeometry(0.55,1.05,1.5), lambert(0xffffff, tex(512,256,panel)), 0,0.525,0);
+    add(new THREE.BoxGeometry(0.68,0.05,1.62), lambert(0x6B452B), 0,1.075,0);
+    const brass = new THREE.MeshPhongMaterial({color:0xC99640, shininess:90});
+    add(new THREE.SphereGeometry(0.045,16,8,0,Math.PI*2,0,Math.PI/2), brass, 0.12,1.1,-0.45);
+    add(new THREE.BoxGeometry(0.26,0.02,0.36), lambert(0xF7F1E3), 0.05,1.11,0.12).rotation.y = 0.15;
+    add(new THREE.CylinderGeometry(0.01,0.01,0.32,6), brass, -0.12,1.26,0.55);
+    add(new THREE.CylinderGeometry(0.05,0.11,0.1,16,1,true), new THREE.MeshLambertMaterial({color:0x2f5a3a, side:THREE.DoubleSide, emissive:0x0c2010}), -0.12,1.42,0.55);
+    const lb = new THREE.PointLight(0xffd59a, 0.7, 2.5, 2); lb.position.set(0.1,1.4,0.4); g.add(lb);
+    const pt = tex(512,160,(c,w,h) => { c.fillStyle="#F4EBDA"; c.fillRect(0,0,w,h); c.strokeStyle="#9C3029"; c.lineWidth=6; c.strokeRect(10,10,w-20,h-20);
+      c.fillStyle="#2B1F17"; c.textAlign="center"; c.font="bold 64px UnifrakturCook, Georgia, serif"; c.fillText(lang==="fr" ? "Accueil" : "Welcome", w/2, 90);
+      c.font="italic 30px Alegreya, Georgia, serif"; c.fillText("Empfang", w/2, 132); });
+    signs.push(pt);
+    const plaque = add(new THREE.PlaneGeometry(0.5,0.16), new THREE.MeshBasicMaterial({map:pt}), 0.28,0.8,0); plaque.rotation.y = Math.PI/2;
+    scene.add(g); hot.push(g);
+  }
+  /* ---------- kitchen door, back left: the waiter comes out of here ---------- */
+  function buildKitchen(){
+    const gl = new THREE.Mesh(new THREE.PlaneGeometry(0.7,2.1), new THREE.MeshBasicMaterial({color:0xffd9a0})); gl.position.set(-2.85,1.05,D0+0.012); scene.add(gl);
+    kDoor = new THREE.Group(); kDoor.position.set(-2.5,0,D0+0.035); kDoor.userData.t = 0;
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.7,2.1,0.04), lambert(0x4a2e1c)); leaf.position.set(-0.35,1.05,0); kDoor.add(leaf);
+    const port = new THREE.Mesh(new THREE.CircleGeometry(0.11,24), new THREE.MeshBasicMaterial({color:0xffd9a0})); port.position.set(-0.35,1.55,0.022); kDoor.add(port);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.115,0.012,6,24), new THREE.MeshPhongMaterial({color:0xC99640})); ring.position.copy(port.position); kDoor.add(ring);
+    scene.add(kDoor);
+    const fr = lambert(0x3B2416); box(0.08,2.2,0.08,fr,-3.24,1.1,D0+0.04); box(0.08,2.2,0.08,fr,-2.46,1.1,D0+0.04); box(0.86,0.08,0.08,fr,-2.85,2.18,D0+0.04);
+  }
+  /* ---------- the waiter: a faceless figure in a black vest and white apron ---------- */
+  function makeWaiter(){
+    const root = new THREE.Group(), body = new THREE.Group(); root.add(body); root.userData.hot = "desk";
+    const black = lambert(0x1d1714), shirt = lambert(0xF3EEE4), apronM = lambert(0xFBF8F1), skin = new THREE.MeshPhongMaterial({color:0xB98E6A, shininess:25}), hair = lambert(0x16100c), red = lambert(0x9C3029);
+    const m = (geo, mat, x,y,z, parent=body) => { const o = new THREE.Mesh(geo, mat); o.position.set(x,y,z); parent.add(o); return o; };
+    const legs = [-0.08,0.08].map(x => { const p = new THREE.Group(); p.position.set(x,0.88,0); body.add(p);
+      m(new THREE.CylinderGeometry(0.058,0.05,0.84,10), black, 0,-0.42,0, p); m(new THREE.BoxGeometry(0.09,0.06,0.22), black, 0,-0.85,0.04, p); return p; });
+    m(new THREE.CylinderGeometry(0.16,0.14,0.6,16), shirt, 0,1.18,0);
+    m(new THREE.CylinderGeometry(0.168,0.148,0.46,20,1,true,0.32,Math.PI*2-0.64), new THREE.MeshLambertMaterial({color:0x1d1714, side:THREE.DoubleSide}), 0,1.16,0);
+    m(new THREE.BoxGeometry(0.34,0.66,0.02), apronM, 0,0.66,0.16);
+    m(new THREE.CylinderGeometry(0.042,0.048,0.08,10), skin, 0,1.52,0);
+    m(new THREE.SphereGeometry(0.105,20,16), skin, 0,1.635,0).scale.set(0.92,1.08,1);
+    m(new THREE.SphereGeometry(0.108,20,12,0,Math.PI*2,0,Math.PI*0.5), hair, 0,1.655,-0.014).rotation.x = -0.35;
+    [-0.17,0.17].forEach(x => m(new THREE.SphereGeometry(0.06,12,10), shirt, x,1.43,0));
+    const bow = new THREE.ConeGeometry(0.024,0.05,8); bow.rotateZ(Math.PI/2);
+    m(bow, red, 0.025,1.47,0.15); m(bow, red, -0.025,1.47,0.15).rotation.z = Math.PI;
+    const armL = new THREE.Group(); armL.position.set(-0.2,1.43,0); body.add(armL);
+    m(new THREE.CylinderGeometry(0.042,0.036,0.6,10), shirt, 0,-0.3,0, armL); m(new THREE.BoxGeometry(0.1,0.3,0.03), apronM, -0.01,-0.34,0.05, armL);
+    const hold = new THREE.Group(); hold.position.set(0,-0.62,0.02); armL.add(hold);
+    const armR = new THREE.Group(); armR.position.set(0.2,1.43,0); body.add(armR);
+    m(new THREE.CylinderGeometry(0.042,0.038,0.32,10), shirt, 0,-0.16,0, armR);
+    m(new THREE.CylinderGeometry(0.038,0.034,0.34,10), shirt, 0,-0.3,0.16, armR).rotation.x = Math.PI/2;
+    const tray = new THREE.Group(); tray.position.set(0.02,-0.31,0.38); armR.add(tray);
+    m(new THREE.CylinderGeometry(0.19,0.19,0.012,32), new THREE.MeshPhongMaterial({color:0xC0C4C6, shininess:90}), 0,-0.006,0, tray);
+    return {root, body, legs, armL, hold, tray, pos:V(0,0,0), head:0, target:0, path:[], phase:0, done:null, face:undefined, carry:null, old:null};
+  }
+  function placeWaiter(x,z,h){ waiter.pos.set(x,0,z); waiter.head = waiter.target = h; waiter.path = []; waiter.root.position.copy(waiter.pos); waiter.root.rotation.y = h; }
+  function waiterGo(pts, done, face){
+    waiter.path = pts.map(([x,z]) => V(x,0,z)); waiter.done = done || null; waiter.face = face;
+    if (reduced){ const l = waiter.path[waiter.path.length-1]; placeWaiter(l.x, l.z, face !== undefined ? face : waiter.head); const d = done; waiter.done = null; d && d(); }
+  }
+  function waiterUpdate(dt){
+    const w = waiter; let moving = false;
+    if (w.path.length){ const t = w.path[0], dx = t.x - w.pos.x, dz = t.z - w.pos.z, L = Math.hypot(dx,dz), step = 1.7*dt; moving = true;
+      if (L > 1e-3) w.target = Math.atan2(dx, dz);
+      if (L <= step){ w.pos.copy(t); w.path.shift(); } else { w.pos.x += dx/L*step; w.pos.z += dz/L*step; }
+      if (!w.path.length){ if (w.face !== undefined) w.target = w.face; const cb = w.done; w.done = null; cb && cb(); } }
+    let dh = w.target - w.head; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); w.head += dh * Math.min(1, dt*9);
+    if (moving) w.phase += dt*8.5;
+    const sw = moving ? Math.sin(w.phase)*0.42 : 0;
+    w.legs[0].rotation.x += (sw - w.legs[0].rotation.x)*Math.min(1,dt*12); w.legs[1].rotation.x = -w.legs[0].rotation.x;
+    const armGoal = w.old ? -1.05 : (moving ? -sw*0.5 : 0); w.armL.rotation.x += (armGoal - w.armL.rotation.x)*Math.min(1,dt*8); w.hold.rotation.x = -w.armL.rotation.x;
+    w.body.position.y = moving ? Math.abs(Math.cos(w.phase))*0.022 : 0;
+    w.root.position.copy(w.pos); w.root.rotation.y = w.head;
+  }
+  /* ---------- plates on the move ---------- */
+  let MAT = null, PLATE_GEO = null;
+  function makeServing(kind){
+    if (!MAT){ MAT = { china:new THREE.MeshPhongMaterial({color:0xfbf8f1, shininess:60}), steel:new THREE.MeshPhongMaterial({color:0xd8dcdf, shininess:110, specular:0xffffff}), rim:new THREE.MeshBasicMaterial({color:0x2E4C8C}) };
+      PLATE_GEO = new THREE.LatheGeometry([[0,0],[0.1,0],[0.1,0.006],[0.125,0.01],[0.145,0.02],[0.15,0.018],[0.128,0.008],[0.1,0.006],[0,0.006]].map(([a,b]) => new THREE.Vector2(a,b)), 40); }
+    const g = new THREE.Group(); g.add(new THREE.Mesh(PLATE_GEO, MAT.china));
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.139,0.0016,6,60), MAT.rim); rim.rotation.x = -Math.PI/2; rim.position.y = 0.016; g.add(rim);
+    const cl = new THREE.Group(); const dome = new THREE.Mesh(new THREE.SphereGeometry(0.135,32,16,0,Math.PI*2,0,Math.PI/2), MAT.steel); dome.scale.y = 0.85; cl.add(dome);
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.014,12,8), MAT.steel); knob.position.y = 0.122; cl.add(knob); cl.position.y = 0.012; g.add(cl);
+    const food = PLATES[kind] ? PLATES[kind]() : null; if (food) g.add(food);
+    return {g, cloche:cl, food, kind};
+  }
+  function moveTo(obj, parent, local, dur, done, arc=0.12){
+    scene.attach(obj);
+    tweens.push({obj, parent, local, from:obj.position.clone(), q0:obj.quaternion.clone(), t:0, dur: reduced ? 0 : dur, done, arc});
+  }
+  function tweenUpdate(dt){
+    const qT = new THREE.Quaternion();
+    for (let i = tweens.length-1; i >= 0; i--){ const w = tweens[i]; w.t += dt; const u = w.dur ? Math.min(1, w.t/w.dur) : 1, e = u*u*(3-2*u);
+      const to = w.parent.localToWorld(w.local.clone()); w.parent.getWorldQuaternion(qT);
+      w.obj.position.lerpVectors(w.from, to, e); w.obj.position.y += Math.sin(Math.PI*e)*w.arc; w.obj.quaternion.copy(w.q0).slerp(qT, e);
+      if (u >= 1){ tweens.splice(i,1); w.parent.attach(w.obj); w.obj.position.copy(w.local); w.obj.quaternion.identity(); w.done && w.done(); } }
+  }
+  function freeKids(g, keep){ for (let i = g.children.length-1; i >= keep; i--){ const o = g.children[i]; g.remove(o); o.traverse(x => { if (x.material && x.material.map) x.material.map.dispose(); }); } }
+  function kick(){
+    if (wState !== "kitchen" || !pending) return;
+    const kind = pending; pending = null;
+    if (onTable && onTable.kind === kind){ reveal(kind); return; }
+    const s = makeServing(kind); waiter.tray.add(s.g); waiter.carry = s;
+    placeWaiter(K_IN[0], K_IN[1], 0); waiter.root.visible = true; wState = "toTable";
+    waiterGo(TO_TABLE, place, Math.PI/2);
+  }
+  function place(){
+    wState = "placing"; const s = waiter.carry, old = onTable;
+    const putNew = () => moveTo(s.g, tableHolder, V(0,0,0), 0.7, () => {
+      onTable = s; waiter.carry = null;
+      moveTo(s.cloche, waiter.tray, V(0,0.006,0), 0.7, null, 0.22);
+      if (s.food) s.food.userData.t0 = performance.now();
+      reveal(s.kind);
+      setTimeout(() => { wState = "toKitchen"; waiterGo(TO_KITCHEN, home); }, reduced ? 0 : 1000);
+    }, 0.1);
+    if (old){ waiter.old = old; moveTo(old.g, waiter.hold, V(0,0,0), 0.6, putNew, 0.1); } else putNew();
+  }
+  function home(){ wState = "kitchen"; waiter.root.visible = false; freeKids(waiter.tray, 1); freeKids(waiter.hold, 0); waiter.old = null; kick(); }
+  function reveal(kind){ api.onReveal && api.onReveal(kind); }
+  function pick(e){
+    if (!hotOn.size || !cam) return null;
+    const r = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1, -((e.clientY-r.top)/r.height)*2+1), cam);
+    for (const h of ray.intersectObjects(hot, true)){ let o = h.object; while (o && !o.userData.hot) o = o.parent; if (o && hotOn.has(o.userData.hot)) return o.userData.hot; }
+    return null;
+  }
+  /* ---------- the guest's own walk ---------- */
+  function camWalk(points, speed, done){
+    const pts = [{p:camPos.clone(), l:camLook.clone()}, ...points.map(q => ({p:V(...q.p), l:V(...q.l)}))];
+    if (reduced){ const e = pts[pts.length-1]; camPos.copy(e.p); camLook.copy(e.l); goalPos.copy(e.p); goalLook.copy(e.l); done && done(); return; }
+    walk = {pts, i:0, s:0, d:0, speed, done};
+  }
+  function walkUpdate(dt){
+    const w = walk, a = w.pts[w.i], b = w.pts[w.i+1], L = Math.max(1e-3, a.p.distanceTo(b.p));
+    w.s += w.speed*dt; w.d += w.speed*dt; const u = Math.min(1, w.s/L);
+    camPos.lerpVectors(a.p, b.p, u); lookT.lerpVectors(a.l, b.l, u); camLook.lerp(lookT, Math.min(1, dt*5));
+    bob = 0.014*Math.sin(w.d*Math.PI*2/0.72);
+    if (u >= 1){ w.i++; w.s = 0; if (w.i >= w.pts.length-1){ goalPos.copy(b.p); goalLook.copy(b.l); bob = 0; const d = w.done; walk = null; d && d(); } }
+  }
+  const insideLook = () => innerWidth < 760 ? [-2.7,1.3,4.1] : [-2.4,1.3,3.4];
+  function toStreet(){ walk = null; seated = false; fGoal = 0; const s = SHOTS.street; camPos.set(...s[0]); camLook.set(...s[1]); goalPos.copy(camPos); goalLook.copy(camLook);
+    if (wState === "desk") placeWaiter(-3.15, 4.3, Math.PI/2); }
+  function enter(done){ fGoal = 1; setTimeout(() => camWalk([{p:[0,1.65,9.6],l:[0,1.75,5]},{p:[0,1.65,6.7],l:[0,1.6,3]},{p:[0,1.65,5.25],l:insideLook()}], 1.5, done), reduced ? 0 : 450); }
+  function toDesk(done){ camWalk([{p:[-0.9,1.65,4.75],l:[-2.9,1.35,4.3]},{p:[-1.55,1.65,4.35],l:[-3.0,1.42,4.3]}], 1.1, done); }
+  function lead(done){
+    wState = "leading"; waiterGo([[-3.2,3.3],[-1.6,3.1],[-0.6,1.9],[-0.78,1.0]], null, Math.PI/2);
+    setTimeout(() => camWalk([{p:[-1.2,1.65,3.2],l:[-0.5,1.3,1.6]},{p:[-0.4,1.65,2.0],l:[0,1.0,0]},{p:[0,1.65,1.35],l:[0,0.9,-0.6]},{p:SHOTS.table[0],l:SHOTS.table[1]}], 1.2, () => {
+      seated = true; done && done();
+      setTimeout(() => { wState = "toKitchen"; waiterGo(TO_KITCHEN, home); }, reduced ? 0 : 500);
+    }), reduced ? 0 : 1600);
+  }
+  function sitNow(){ walk = null; seated = true; fGoal = 1; const s = SHOTS.table; camPos.set(...s[0]); camLook.set(...s[1]); goalPos.copy(camPos); goalLook.copy(camLook);
+    if (wState === "desk" || wState === "leading"){ placeWaiter(K_IN[0], K_IN[1], 0); waiter.root.visible = false; wState = "kitchen"; kick(); } }
   function chair(x,z,ry){
     const g = new THREE.Group(), m = lambert(0x4a2e1c);
     const add = (w,h,d,px,py,pz) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.position.set(px,py,pz); g.add(o); };
@@ -523,8 +770,9 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
     const m = new THREE.Mesh(new THREE.CircleGeometry(DISC_R, 48), new THREE.MeshBasicMaterial({map:t}));
     m.rotation.x = -Math.PI/2; m.position.y = 0.0075;
     const state = {};
-    canvasDish = { draw: (time) => { ctx.save(); ctx.clearRect(0,0,512,512); ctx.beginPath(); ctx.arc(256,256,256,0,7); ctx.clip(); draw(ctx, time, state); ctx.restore(); t.needsUpdate = true; } };
-    canvasDish.draw(0);
+    const paint = (time) => { ctx.save(); ctx.clearRect(0,0,512,512); ctx.beginPath(); ctx.arc(256,256,256,0,7); ctx.clip(); draw(ctx, time, state); ctx.restore(); t.needsUpdate = true; };
+    paint(0); let last = 0;
+    m.userData.update = (now) => { if (now - last > 33){ last = now; paint(m.userData.t0 ? now - m.userData.t0 : 0); } };
     return m;
   }
   const PLATES = {
@@ -536,11 +784,22 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
     city(){ const d = Scene._cityData; if (!d) return PLATES.card();
       const g = new THREE.Group(); const m = cityMesh(d, cityU, true); const s = DISC_R/430; m.scale.set(s, s*1.8, s); g.add(m);
       const base = new THREE.Mesh(new THREE.CircleGeometry(DISC_R,48), new THREE.MeshLambertMaterial({color:0x8a9a83})); base.rotation.x=-Math.PI/2; base.position.y=-0.0005; g.add(base);
-      g.position.y = 0.007; cityU.uYear.value = 1440; tStart = performance.now(); g.userData.grow = true; return g; },
+      g.position.y = 0.007; g.userData.update = (now) => { cityU.uYear.value = g.userData.t0 ? Math.min(2045, 1440 + (now - g.userData.t0)*0.12) : 1440; }; return g; },
     boids(){ const n = 90, geo = new THREE.ConeGeometry(0.0035,0.012,5); geo.rotateX(Math.PI/2);
       const mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({color:0x2B1F17}), n);
-      boids = Array.from({length:n}, () => ({p:new THREE.Vector3((rnd()-.5)*.14,0.03+rnd()*0.08,(rnd()-.5)*.14), v:new THREE.Vector3(rnd()-.5,(rnd()-.5)*.3,rnd()-.5).multiplyScalar(0.03)}));
-      mesh.userData.boids = true; return mesh; },
+      const boids = Array.from({length:n}, () => ({p:new THREE.Vector3((rnd()-.5)*.14,0.03+rnd()*0.08,(rnd()-.5)*.14), v:new THREE.Vector3(rnd()-.5,(rnd()-.5)*.3,rnd()-.5).multiplyScalar(0.03)}));
+      const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(1,1,1), up = new THREE.Vector3(0,0,1);
+      const place = () => { boids.forEach((b,i) => { Q.setFromUnitVectors(up, b.v.clone().normalize()); M.compose(b.p, Q, S); mesh.setMatrixAt(i, M); }); mesh.instanceMatrix.needsUpdate = true; };
+      place();
+      mesh.userData.update = (now, dt) => {
+        boids.forEach(b => { const c = new THREE.Vector3(), a = new THREE.Vector3(), s = new THREE.Vector3(); let n=0;
+          boids.forEach(o => { if (o===b) return; const d = o.p.distanceTo(b.p); if (d < 0.035){ n++; c.add(o.p); a.add(o.v); if (d < 0.012) s.add(b.p.clone().sub(o.p).multiplyScalar(1/(d+1e-4))); } });
+          if (n){ c.multiplyScalar(1/n).sub(b.p).multiplyScalar(0.6); a.multiplyScalar(1/n).sub(b.v).multiplyScalar(0.8); b.v.add(c.multiplyScalar(dt*3)).add(a.multiplyScalar(dt*3)).add(s.multiplyScalar(dt*0.002)); }
+          const home = new THREE.Vector3(0,0.06,0).sub(b.p); if (home.length() > 0.08) b.v.add(home.multiplyScalar(dt*1.5));
+          const sp = b.v.length(); if (sp > 0.06) b.v.multiplyScalar(0.06/sp); if (sp < 0.025) b.v.multiplyScalar(1.05);
+          b.p.addScaledVector(b.v, dt); });
+        place(); };
+      return mesh; },
     voronoi(){ const pts = Array.from({length:26}, () => [60+rnd()*392, 60+rnd()*392]); const del = d3.Delaunay.from(pts), vor = del.voronoi([0,0,512,512]);
       const cols = ["#E7C58A","#D99A5B","#C9714A","#E9D7AE","#B9C08B","#D6B06E"];
       return canvasFood((x,t) => { pts.forEach((p,i) => { x.fillStyle = cols[i%cols.length]; x.beginPath(); vor.renderCell(i,x); x.fill(); });
@@ -603,57 +862,45 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},ok:false} 
   };
 
   function serve(kind){
-    if (!ok) return;
-    if (kind === foodKind && food) return;
-    swapTo = kind; clocheGoal = 0;                  // cover first
+    if (!ok || !kind) return;
+    if (onTable && onTable.kind === kind && wState !== "toTable" && wState !== "placing"){ reveal(kind); return; }
+    pending = kind; kick();
   }
-  function swap(){
-    if (food){ plateG.remove(food); food.traverse?.(o => { if (o.material && o.material.map) o.material.map.dispose?.(); }); }
-    food = null; canvasDish = null; boids = null; foodKind = swapTo;
-    if (swapTo && PLATES[swapTo]){ food = PLATES[swapTo](); plateG.add(food); clocheGoal = 1; }
-    swapTo = undefined;
-  }
-  function go(shot){ const s = SHOTS[shot]; goalPos.set(...s[0]); goalLook.set(...s[1]); if (reduced){ camPos.copy(goalPos); camLook.copy(goalLook); } }
+  function go(shot){ if (!seated || walk) return; const s = SHOTS[shot]; goalPos.set(...s[0]); goalLook.set(...s[1]); if (reduced){ camPos.copy(goalPos); camLook.copy(goalLook); } }
 
   function resize(){ if (!R) return; const w = innerWidth, h = innerHeight; R.setSize(w,h,false); cam.aspect = w/h;
     cam.fov = w < 760 ? 62 : 50; cam.updateProjectionMatrix();
-    SHOTS.plate = w < 760 ? [[0.0,1.16,0.5],[0,0.76,-0.02]] : [[0.02,1.04,0.48],[0,0.78,-0.02]];
-    SHOTS.table = w < 760 ? [[0.0,1.45,1.55],[0,0.78,-0.6]] : [[0.05,1.32,1.32],[0,0.86,-0.75]]; }
+    SHOTS.plate = w < 760 ? [[0,1.16,0.52],[0,0.76,-0.02]] : [[0,1.04,0.44],[0,0.77,-0.03]];
+    SHOTS.wait = w < 760 ? [[0,1.2,0.8],[-1.4,1.0,-1.6]] : [[0,1.14,0.62],[-1.1,1.0,-1.7]];
+    SHOTS.table = w < 760 ? [[0,1.2,0.8],[0,0.9,-1.3]] : [[0,1.14,0.62],[0,0.92,-1.4]]; }
 
   let prev = performance.now();
   function frame(now){
-    const dt = Math.min(0.05,(now-prev)/1000); prev = now;
+    const dt = Math.min(0.1,(now-prev)/1000); prev = now;
     const k = reduced ? 1 : 1 - Math.pow(0.0025, dt);
-    camPos.lerp(goalPos, k); camLook.lerp(goalLook, k);
+    if (walk) walkUpdate(dt); else { camPos.lerp(goalPos, k); camLook.lerp(goalLook, k); }
     const rg = region(); off.x += (rg.dx - off.x)*k; off.y += (rg.dy - off.y)*k; cam.setViewOffset(innerWidth, innerHeight, -off.x, -off.y, innerWidth, innerHeight);
-    cam.position.set(camPos.x + mouse.x*0.06, camPos.y - mouse.y*0.03, camPos.z); cam.lookAt(camLook);
-    // cloche: lift when a dish is served, cover while swapping
-    clocheT += (clocheGoal - clocheT) * (reduced ? 1 : Math.min(1, dt*6));
-    if (swapTo !== undefined && clocheT < 0.03) swap();
-    cloche.position.set(0.3*clocheT, 0.012 + 0.16*Math.sin(Math.PI*Math.min(clocheT,1)) + 0.02*clocheT, -0.28*clocheT); cloche.rotation.z = -0.5*clocheT; cloche.visible = clocheT < 0.98 || !reduced;
-    if (food){
-      if (canvasDish && (now|0) % 2 === 0) canvasDish.draw(now);
-      if (food.userData && food.userData.grow){ cityU.uYear.value = Math.min(2045, 1440 + (now - tStart) * 0.12); }
-      if (boids && food.isInstancedMesh){ const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(1,1,1), up = new THREE.Vector3(0,0,1);
-        boids.forEach(b => { const c = new THREE.Vector3(), a = new THREE.Vector3(), s = new THREE.Vector3(); let n=0;
-          boids.forEach(o => { if (o===b) return; const d = o.p.distanceTo(b.p); if (d < 0.035){ n++; c.add(o.p); a.add(o.v); if (d < 0.012) s.add(b.p.clone().sub(o.p).multiplyScalar(1/(d+1e-4))); } });
-          if (n){ c.multiplyScalar(1/n).sub(b.p).multiplyScalar(0.6); a.multiplyScalar(1/n).sub(b.v).multiplyScalar(0.8); b.v.add(c.multiplyScalar(dt*3)).add(a.multiplyScalar(dt*3)).add(s.multiplyScalar(dt*0.002)); }
-          const home = new THREE.Vector3(0,0.06,0).sub(b.p); if (home.length() > 0.08) b.v.add(home.multiplyScalar(dt*1.5));
-          const sp = b.v.length(); if (sp > 0.06) b.v.multiplyScalar(0.06/sp); if (sp < 0.025) b.v.multiplyScalar(1.05);
-          b.p.addScaledVector(b.v, dt); });
-        boids.forEach((b,i) => { Q.setFromUnitVectors(up, b.v.clone().normalize()); M.compose(b.p, Q, S); food.setMatrixAt(i, M); }); food.instanceMatrix.needsUpdate = true; }
-    }
+    cam.position.set(camPos.x + mouse.x*0.06, camPos.y - mouse.y*0.03 + bob, camPos.z); cam.lookAt(camLook);
+    waiterUpdate(dt); tweenUpdate(dt);
+    const kd = waiter.root.visible && Math.hypot(waiter.pos.x - K_IN[0], waiter.pos.z - K_IN[1]) < 1.2 ? 1 : 0;
+    kDoor.userData.t += (kd - kDoor.userData.t)*Math.min(1, dt*8); kDoor.rotation.y = 1.25*kDoor.userData.t;
+    fT += (fGoal - fT)*(reduced ? 1 : Math.min(1, dt*3)); fDoors.forEach(p => p.rotation.y = p.userData.sg*1.35*fT);
+    if (onTable && onTable.food && onTable.food.userData.update) onTable.food.userData.update(now, dt);
     R.render(scene, cam);
     requestAnimationFrame(frame);
   }
   function start(){
     try { build(); } catch(e){ console.error(e); return false; }
+    if (document.fonts && document.fonts.load) Promise.all(["700 40px UnifrakturCook","20px Alegreya","italic 20px Alegreya","500 20px 'Alegreya Sans SC'"].map(f => document.fonts.load(f))).then(relabel, () => {});
     $("#load").textContent = T().loading;
     loadCity().then(() => { $("#load").hidden = true; });
     requestAnimationFrame(frame);
     return true;
   }
-  return { start, go, serve, get ok(){ return ok; } };
+  function relabel(){ signs.forEach(t => t._redraw()); }
+  const api = { start, go, serve, toStreet, enter, toDesk, lead, sitNow, relabel, setHot(ids){ hotOn = new Set(ids); },
+    needsTrip(kind){ return !(onTable && onTable.kind === kind); }, get seated(){ return seated; }, get ok(){ return ok; }, onHot:null, onReveal:null };
+  return api;
 })();
 
 /* ================================================================ live demos (2D, inside the recipe card) */
@@ -706,12 +953,13 @@ const DEMOS = {
 if (!/github\.io$/.test(location.hostname)) $("#cvDl").hidden = true;   // downloads only work on the real site
 chrome();
 const has3D = (() => { try { const c = document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"))) && window.THREE; } catch(e){ return false; } })();
-if (has3D) Scene.start(); else { $("#room").hidden = true; }
+Scene.onHot = id => { if (id === "door") enterResto(); else if (id === "desk") goDesk(); };
+Scene.onReveal = kind => { if (waitLine && waitLine.kind === kind){ say(waitLine.lineFn); Scene.go("plate"); } };
+const live3D = has3D && Scene.start(); if (!live3D) $("#room").hidden = true;
 const h0 = location.hash.slice(1);
-if (h0 === "cv") { welcome(); openCV(); }
-else if (h0 && ALL.some(d => d.id === h0)) { profile = store.get("chezdeo-profile"); openDish(h0); }
-else welcome();
-if (!has3D) { say(() => T().noGL); openText(); }
+if (h0 && ALL.some(d => d.id === h0)) { profile = store.get("chezdeo-profile"); Scene.sitNow(); openDish(h0); }
+else if (live3D) { street(); if (h0 === "cv") openCV(); }
+else { welcome(); say(() => T().noGL); if (h0 === "cv") openCV(); }
 </script>
 
 </body>
