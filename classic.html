@@ -268,7 +268,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <div class="section-head">
       <h2 id="nb-title">Lab notebook</h2>
-      <p>One entry per project from this year, newest first. Each one says what worked, what didn't, and what I'd change. Entries marked live demo run in your browser.</p>
+      <p>One entry per project from this year, newest first. The first two are complete data analyses, with public code and a written report. Entries marked live demo run in your browser.</p>
     </div>
     <ol class="entries" id="entries"></ol>
   </div>
@@ -284,7 +284,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
         <p>I'm moving towards data analysis because the part I enjoy most is measuring things carefully and explaining what the numbers mean.</p>
       </div>
       <dl class="facts">
-        <dt>Data</dt><dd>Python (pandas, NumPy, SciPy, Seaborn), SQL, statistics, hypothesis testing</dd>
+        <dt>Data</dt><dd>Python (pandas, NumPy, statsmodels, scikit-learn, Matplotlib), SQL (DuckDB, MySQL, PostgreSQL), statistics, logistic regression</dd>
         <dt>Engineering</dt><dd>C++, C#, TypeScript, Java, Qt, Unity, three.js, Git, CI, automated tests</dd>
         <dt>Certificates</dt><dd>DataCamp Python Data Fundamentals (28 h), GitHub Foundations (9 h), MikroTik MTCNA</dd>
         <dt>Languages</dt><dd>French (native), English (B2)</dd>
@@ -567,6 +567,23 @@ fetch("data/district.json").then(r => { if (!r.ok) throw new Error(r.status); re
    2. THE NOTEBOOK
    ===================================================================== */
 const ENTRIES = [
+ { id:"roads", date:"Oct 2026", title:"Road accidents in France and Haut-Rhin", tags:["Python","SQL (DuckDB)","pandas","statsmodels","open data"],
+   one:"310,000 injury accidents and 18,356 deaths, 2019 to 2024: when, where and to whom road deaths happen, and what turns a crash into a death.",
+   links:[["Code and notebook","https://github.com/LDGKM/road-accidents-france"],["Report (PDF)","https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf"]],
+   notes:[
+    ["What I did","Loaded 24 yearly files from the national police accident file (ONISR) whose format changes from year to year, and cleaned them into four tables with SQL in DuckDB. My death counts match the official figures exactly for 2019 to 2023."],
+    ["Findings","About 3,000 deaths a year, flat since 2019. Two thirds of them happen outside towns, which hold only a third of accidents. E-scooter deaths rose from 11 to 47 a year. Haut-Rhin is the 11th safest of 96 departments (36 deaths per million inhabitants against 46 nationally)."],
+    ["Model","A logistic regression on 17 risk factors: a pedestrian, a heavy vehicle, a fixed obstacle or a head-on collision multiply the odds of a death by 2.5 to 3 (AUC 0.76 on unseen data)."],
+    ["The trap I caught","Mulhouse records fewer accidents than Colmar, a smaller city, and 15 times fewer than Strasbourg. Minor accidents are under-recorded there, so only death-based indicators are reliable for this area."]],
+   images:[["roads_map.jpg","Every injury accident in Haut-Rhin, 2019-2024; red = fatal"],["roads_odds.jpg","What makes an injury accident fatal (odds ratios)"]]},
+ { id:"medicines", date:"Oct 2026", title:"What France reimburses", tags:["Python","SQL (DuckDB)","pandas","open health data"],
+   one:"EUR 160 billion of medicines dispensed in pharmacies, 2019 to 2025: spending rose 43% while the number of boxes stayed flat.",
+   links:[["Code and notebook","https://github.com/LDGKM/medicine-spending-france"],["Report (PDF)","https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf"]],
+   notes:[
+    ["What I did","Loaded Open Medic (national health insurance) files with French number formats and mixed encodings into DuckDB, and checked that totals match to the euro across three levels of detail. Linked molecules that changed ATC code or spelling with a union-find algorithm (19% of spending)."],
+    ["Findings","Reimbursements went from EUR 19.1 bn to 27.4 bn with the same number of boxes: new, expensive treatments drive the growth, with cancer and immunology drugs explaining EUR 3.2 bn. Patients on GLP-1 analogues more than doubled; adults treated for ADHD with methylphenidate rose from 17,000 to 114,000."],
+    ["Regions at equal age","People over 60 cost almost eight times more per head than under-20s. With direct age standardisation, Île-de-France moves from 11th to 3rd of 12 regions; Grand Est ranks 4th."]],
+   images:[["med_volume.jpg","Spending vs volume, and the average price of a box"],["med_stories.jpg","GLP-1 analogues, antibiotics and ADHD treatment"]]},
  { id:"drone", date:"Sep – Oct 2026", title:"Drone over Mulhouse", tags:["Unity 6","C#","HDRP","IGN open data","Python"],
    one:"A drone simulator over a 3D Mulhouse generated from national map data, which also produces labelled images of damaged buildings.",
    demo:"drone",
@@ -612,12 +629,6 @@ const ENTRIES = [
     ["What it does","Pick k centres, assign each point to the nearest, move each centre to the mean of its points, repeat until nothing moves. The C++ version parallelises the distance matrix and the assignment over points."],
     ["The detail that mattered","Filling the groups stays sequential on purpose: two threads pushing into the same vector at once is a race condition. Each thread only writes to its own cells."],
     ["Try it","Change k, reshuffle, and step through iterations. Poor starting centres can split one blob in two and leave another merged."]]},
- { id:"life", date:"Sep 2026", title:"Game of Life", tags:["React 19","Vite","Web Worker"],
-   one:"Conway's automaton in the browser, with the rules in a pure module and the computation in a separate thread.",
-   demo:"life",
-   notes:[
-    ["Structure","Four parts with one job each: the engine (pure functions, no React), a Web Worker that runs it off the main thread, a canvas that draws and handles clicks, and the app that holds the state."],
-    ["Why it matters","The engine doesn't know it lives in a browser. It can be tested from the command line or reused elsewhere."]]},
  { id:"nsga", date:"Sep – Nov 2026", title:"NSGA-III, explained", tags:["C++","multi-objective optimisation","team of 4"],
    one:"Presenting Deb and Jain's NSGA-III paper and running its C++ implementation on DTLZ and ZDT benchmarks.",
    notes:[
@@ -628,20 +639,10 @@ const ENTRIES = [
    notes:[
     ["What it does","Cars that are close enough interfere, so they need different channels: that is graph colouring, re-run as cars move. We compare greedy, DSATUR, tabu search and incremental recolouring on quality, speed and how often cars must change channel."],
     ["Status","The map, zone selection and vehicle rendering work and are tested with 2,000 points. The engine is being connected. The benchmark campaign is planned for December."]]},
- { id:"selenium", date:"Oct 2026", title:"Selenium vs UI.Vision", tags:["Python","Selenium","test automation"],
-   one:"Ten end-to-end browser tests, nine passing, and a clear explanation of the one that failed.",
-   notes:[
-    ["The failure","Test 07 typed an age of 15 into a field marked min=18. The browser blocked the form itself, so the request never reached the server and the test timed out. Disabling HTML5 validation in the test checks the server rule as intended."],
-    ["Takeaway","End-to-end tests are slow (about 2.5 s each) and fragile with ids. Dedicated data-testid attributes and API tests underneath make them worth having."]],
-   images:[["selenium07.jpg","Test 07: the browser's own validation stops the form"]]},
  { id:"geo", date:"Oct 2026", title:"Hulls, maps and triangulations", tags:["C++","computational geometry"],
    one:"Incremental convex hull, combinatorial maps with half-edges, and incremental triangulation that handles aligned points.",
    notes:[
     ["Notes","Written from scratch with a circular doubly linked polygon and half-edge maps, with a 34-page write-up of every function. Aligned points were the hard case in the triangulation."]]},
- { id:"piano", date:"Sep 2026", title:"Air piano", tags:["Python","OpenCV","MediaPipe","pygame"],
-   one:"A piano drawn on the webcam image: a fingertip entering a key plays it. Free play, follow-the-score and recording modes.",
-   notes:[
-    ["Notes","Recordings are saved as JSON notes, WAV audio and MP4 video, and become scores you can replay. Ignoring thumbs removes most false notes. Your browser can't lend this page a camera, so there is no live demo here."]]},
  { id:"confope", date:"Jun – Aug 2026", title:"Internship at PetitAvis", tags:["Laravel","MySQL","Jira","production"],
    one:"ConfoPE, a compliance platform for French childcare facilities, already in production when I joined.",
    notes:[
@@ -661,7 +662,7 @@ list.innerHTML = ENTRIES.map(e => `
     <span class="tags">${e.tags.map(t => `<span>${t}</span>`).join("")}</span>
    </summary>
    <div class="body">
-    <div class="notes">${e.notes.map(([h,p]) => `<div><h4>${h}</h4><p>${p}</p></div>`).join("")}</div>
+    <div class="notes">${e.notes.map(([h,p]) => `<div><h4>${h}</h4><p>${p}</p></div>`).join("")}${e.links ? `<p class="cta">${e.links.map(([t,u]) => `<a class="btn" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("")}</p>` : ""}</div>
     <div class="stage" id="stage-${e.id}">${(e.images||[]).map(([src,cap]) => `<figure><img src="img/${src}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("")}</div>
    </div>
   </details>
