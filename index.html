@@ -120,7 +120,24 @@ dialog::backdrop{background:rgba(10,7,5,.7)}
 .dlg-body img{width:100%;height:auto;max-width:100%;display:block;background:#fff;border:1px solid var(--rule)}
 .tm-dish{border-top:1px solid var(--rule);padding:14px 0}
 .tm-dish h3{margin:0 0 2px;font-size:1.3rem}
-.load{position:fixed;inset:0;display:grid;place-items:center;font-family:var(--font-menu);font-style:italic;color:var(--rule);z-index:5;pointer-events:none}
+.load{position:fixed;inset:0;display:grid;place-items:center;z-index:40;background:radial-gradient(ellipse at 50% 40%,#3a2617 0%,var(--night) 70%);transition:opacity .6s}
+.load.done{opacity:0;pointer-events:none}
+.load .in{text-align:center;padding:16px}
+.load .lsign{font-family:var(--font-sign);font-size:3rem;color:var(--paper);margin:0 0 6px}
+.load .lmsg{font-family:var(--font-menu);font-style:italic;color:var(--rule);margin:0 0 14px}
+.load .lbar{width:min(260px,70vw);height:4px;background:rgba(244,235,218,.15);border-radius:2px;overflow:hidden;margin:0 auto}
+.load .lbar i{display:block;height:100%;width:0;background:var(--brass);transition:width .3s}
+.toast{position:fixed;z-index:25;left:50%;transform:translateX(-50%);top:calc(70px + env(safe-area-inset-top,0px));width:min(460px,calc(100% - 32px));
+  background:var(--bubble);color:var(--ink);border-radius:10px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:var(--font-ui);font-size:.95rem}
+.toast p{margin:0 0 8px}.toast .row{display:flex;gap:8px;flex-wrap:wrap}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.gb label{display:block;font-family:var(--font-sc);font-size:.8rem;letter-spacing:.06em;color:var(--wine);margin:10px 0 4px}
+.gb input,.gb textarea{width:100%;font:inherit;padding:8px;border:1px solid var(--rule);border-radius:3px;background:#fffaf0;color:var(--ink)}
+.gb textarea{min-height:7em}
+.gb .entry{border-top:1px solid var(--rule);padding:10px 0}.gb .entry b{font-family:var(--font-ui)}
+.chip .short{display:none}
+@media (max-width:760px){ .chip .long{display:none} .chip .short{display:inline} }
+.chip[aria-pressed="true"]{border-color:var(--brass);color:#fff;background:rgba(201,150,64,.25)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (max-width:760px){
@@ -138,12 +155,14 @@ dialog::backdrop{background:rgba(10,7,5,.7)}
 </head>
 <body>
 <canvas id="room" aria-hidden="true"></canvas>
-<div class="load" id="load"></div>
+<div class="load" id="load"><div class="in"><p class="lsign">Chez Déo</p><p class="lmsg" id="lmsg"></p><div class="lbar"><i id="lbar"></i></div></div></div>
+<div class="toast" id="toast" hidden role="status"></div>
 
 <header class="bar">
   <h1 class="sign">Chez Déo</h1><span class="tag" id="tag"></span>
   <nav aria-label="Site">
     <a class="chip" id="bClassic" href="classic.html"></a>
+    <button type="button" class="chip" id="bSound" aria-pressed="false"></button>
     <button type="button" class="chip" id="bCV"></button>
     <button type="button" class="chip" id="bLang" lang=""></button>
   </nav>
@@ -161,6 +180,7 @@ dialog::backdrop{background:rgba(10,7,5,.7)}
 </aside>
 
 <dialog id="dlgText" aria-labelledby="tmTitle"><div class="dlg-bar"><h2 id="tmTitle">Chez Déo</h2><div class="grow"><button type="button" class="btn" data-close></button></div></div><div class="dlg-body" id="tmBody"></div></dialog>
+<dialog id="dlgBook" aria-labelledby="gbTitle"><div class="dlg-bar"><h2 id="gbTitle"></h2><div class="grow"><button type="button" class="btn" data-close></button></div></div><div class="dlg-body gb" id="gbBody"></div></dialog>
 <dialog id="dlgCV" aria-labelledby="cvTitle"><div class="dlg-bar"><h2 id="cvTitle">CV</h2><div class="grow"><a class="btn" id="cvDl" href="cv/Deo_Gratias_Loutou_CV.pdf" download></a><button type="button" class="btn" data-close></button></div></div><div class="dlg-body"><img id="cvImg" src="img/cv-1.jpg" width="910" height="1287" alt="" loading="lazy"></div></dialog>
 
 <script src="content.js"></script>
@@ -188,13 +208,23 @@ const XS = {
        inside:"Il fait bon à l'intérieur. L'accueil est juste à votre gauche, on vous attend.", toDesk:"Aller à l'accueil",
        follow:"Parfait. Suivez-moi, je vous installe.", coming:"Très bon choix. Je vous apporte ça tout de suite.",
        seated:"Installez-vous. Avant de vous apporter la carte : qu'est-ce qui vous amène ce soir ?", waiter:"Déo · votre serveur",
-       bill:"Voici l'addition. Elle est offerte : il ne vous reste qu'à m'écrire." },
+       bill:"Voici l'addition. Elle est offerte : il ne vous reste qu'à m'écrire.",
+       code:"Voir le code ↗", report:"Lire le rapport ↗", sound:"Ambiance", soundOn:"Ambiance ♪",
+       quake:"Flamber la ville (séisme)", rebuild:"Rebâtir la ville", quakeSay:"Attention, on flambe ! Le même simulateur de séisme que dans Unity, en miniature.",
+       slow:"La 3D a du mal sur cet appareil. Vous pouvez passer à la version classique, plus légère.", stay:"Rester ici",
+       book:"Livre d'or", signBook:"Signer le livre d'or", bookIntro:"Un mot sur votre visite, une remarque, une offre ? Votre message m'arrive par e-mail ; je publie ici ceux que vous m'autorisez à afficher.",
+       bookName:"Votre nom (et entreprise)", bookMsg:"Votre message", bookSend:"Envoyer par e-mail", bookEmpty:"Le livre attend sa première page.", bookAllow:"J'accepte que ce message soit affiché sur le site." },
   en:{ narr:"Chez Déo · Data Street", street:"An October evening in Mulhouse. The winstub's lights are on and there's one table left. Click the door to go in.",
        enter:"Go in", skipTable:"Take me straight to a table", classic:"Classic version, no 3D", classicChip:"Classic version",
        inside:"It's warm inside. The front desk is just to your left, they're expecting you.", toDesk:"Go to the front desk",
        follow:"Perfect. Follow me, I'll show you to your table.", coming:"Good choice. I'll bring it right out.",
        seated:"Have a seat. Before I bring the menu: what brings you here tonight?", waiter:"Deo · your waiter",
-       bill:"Here's the bill. It's on the house: all you have to do is write to me." }
+       bill:"Here's the bill. It's on the house: all you have to do is write to me.",
+       code:"See the code ↗", report:"Read the report ↗", sound:"Ambience", soundOn:"Ambience ♪",
+       quake:"Flambé: shake the city", rebuild:"Rebuild the city", quakeSay:"Careful, it's flambé! The same earthquake simulator as in Unity, in miniature.",
+       slow:"The 3D is struggling on this device. You can switch to the lighter classic version.", stay:"Stay here",
+       book:"Guest book", signBook:"Sign the guest book", bookIntro:"A word about your visit, a comment, an offer? Your message reaches me by email; I publish here the ones you allow me to show.",
+       bookName:"Your name (and company)", bookMsg:"Your message", bookSend:"Send by email", bookEmpty:"The book is waiting for its first page.", bookAllow:"I agree that this message may be shown on the site." }
 };
 const X = () => XS[lang];
 
@@ -202,12 +232,15 @@ const X = () => XS[lang];
 function chrome(){
   document.documentElement.lang = lang;
   $("#tag").textContent = T().tagline;
-  $("#bClassic").textContent = X().classicChip;
+  $("#bClassic").innerHTML = `<span class="long">${esc(X().classicChip)}</span><span class="short">${lang === "fr" ? "Sans 3D" : "No 3D"}</span>`;
   $("#bCV").textContent = T().cv;
   $("#bLang").textContent = T().lang; $("#bLang").setAttribute("lang", T().langCode);
   $("#who").textContent = (view === "street" || view === "inside" || view === "entering") ? X().narr : X().waiter;
   document.querySelectorAll("[data-close]").forEach(b => b.textContent = T().close);
   $("#cvDl").textContent = T().download;
+  $("#bSound").innerHTML = `<span class="long">${esc(Sound.on ? X().soundOn : X().sound)}</span><span class="short" aria-hidden="true">♪</span>`;
+  $("#bSound").setAttribute("aria-label", X().sound);
+  $("#gbTitle").textContent = X().book;
   $("#cvImg").alt = lang === "fr" ? "CV d'une page de Deo Gratias Loutou." : "One-page CV of Deo Gratias Loutou.";
 }
 function say(fn){ lastSay = fn; $("#say").textContent = fn(); $("#waiter").hidden = false; }
@@ -238,12 +271,13 @@ function goDesk(){
 function welcome(){
   setView("welcome"); hideCard(); Scene.setHot([]);
   say(() => Scene.seated ? X().seated : T().hello);
-  $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("") + classicLink();
+  $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("")
+    + `<button type="button" class="link" data-act="book">${esc(X().signBook)}</button>` + classicLink();
 }
 function sitDown(){ Scene.sitNow(); welcome(); }
 $("#choices").addEventListener("click", e => {
   const a = e.target.closest("[data-act]");
-  if (a){ const act = a.dataset.act; if (act === "enter") enterResto(); else if (act === "sit") sitDown(); else if (act === "desk") goDesk(); return; }
+  if (a){ const act = a.dataset.act; if (act === "enter") enterResto(); else if (act === "sit") sitDown(); else if (act === "desk") goDesk(); else if (act === "book") openBook(); return; }
   const b = e.target.closest("[data-profile]"); if (!b) return;
   profile = b.dataset.profile; store.set("chezdeo-profile", profile);
   if (Scene.seated) return showMenu(true);
@@ -284,6 +318,7 @@ $("#cardScroll").addEventListener("click", e => {
   if (e.target.closest("[data-try]")) return toggleDemo();
   const cp = e.target.closest("[data-copy]"); if (cp) copyMail(cp);
   if (e.target.closest("[data-seecv]")) openCV();
+  if (e.target.closest("[data-book]")) openBook();
 });
 
 function sequence(){ return [C.starter, ...C.dishes.filter(d => d.section==="special"), ...ordered(), ...C.dishes.filter(d => d.section==="dessert")]; }
@@ -302,6 +337,7 @@ function openDish(id){
       <h4>${esc(R.result)}</h4><p>${esc(t.result)}</p>
       <h4>${esc(R.team)}</h4><p>${esc(t.team)}</p>
       <h4>${esc(R.tools)}</h4><div class="ingr">${d.tools.map(x => `<span>${esc(x)}</span>`).join("")}</div>
+      ${linksHtml(d)}
       ${d.demo ? `<div class="demo" id="demoBox" hidden></div>` : ""}
       ${(d.images||[]).map(src => `<figure><img src="img/${src}" alt="${esc(t.name)}" loading="lazy"></figure>`).join("")}`;
   }
@@ -309,6 +345,7 @@ function openDish(id){
   const seq = sequence(), i = seq.findIndex(x => x.id === id), nxt = seq[i+1];
   $("#cardFoot").hidden = false;
   $("#cardFoot").innerHTML = `<button type="button" data-back>${esc(T().back)}</button>${d.demo ? `<button type="button" data-try>${esc(T().tryIt)}</button>` : ""}`
+    + (d.plate === "city" && Scene.ok ? `<button type="button" data-quake>${esc(Scene.quaked ? X().rebuild : X().quake)}</button>` : "")
     + (nxt ? `<button type="button" class="primary" data-next="${nxt.id}">${esc(T().next)} →</button>` : `<button type="button" class="primary" data-billbtn>${esc(T().billTitle)} →</button>`);
   $("#card").hidden = false; document.body.classList.add("card-open"); $("#cardScroll").scrollTop = 0;
   $("#choices").innerHTML = "";
@@ -320,7 +357,14 @@ $("#cardFoot").addEventListener("click", e => {
   const n = e.target.closest("[data-next]"); if (n) return openDish(n.dataset.next);
   if (e.target.closest("[data-billbtn]")) return openBill();
   if (e.target.closest("[data-try]")) return toggleDemo();
+  const qb = e.target.closest("[data-quake]");
+  if (qb){ const on = Scene.quake(); qb.textContent = on ? X().rebuild : X().quake; if (on){ say(() => X().quakeSay); Sound.rumble(); } }
 });
+function linksHtml(d){
+  if (!d.links) return "";
+  return `<p class="links">${d.links.code ? `<a class="btn" href="${d.links.code}" target="_blank" rel="noopener">${esc(X().code)}</a>` : ""}`
+    + `${d.links.report ? `<a class="btn" href="${d.links.report}" target="_blank" rel="noopener">${esc(X().report)}</a>` : ""}</p>`;
+}
 
 let demoOn = false;
 function toggleDemo(){
@@ -340,6 +384,7 @@ function openBill(){
       <dt>LinkedIn</dt><dd><a href="${C.contact.linkedin}" target="_blank" rel="noopener">deo-gratias-loutou ↗</a></dd>
       <dt>GitHub</dt><dd><a href="${C.contact.github}" target="_blank" rel="noopener">LDGKM ↗</a></dd>
       <dt>CV</dt><dd><button type="button" class="btn" data-seecv>${esc(T().seeCV)}</button></dd>
+      <dt>${esc(X().book)}</dt><dd><button type="button" class="btn" data-book>${esc(X().signBook)}</button></dd>
     </dl></div>`;
   $("#cardFoot").hidden = false; $("#cardFoot").innerHTML = `<button type="button" data-back>${esc(T().back)}</button>`;
   $("#card").hidden = false; document.body.classList.add("card-open"); $("#cardScroll").scrollTop = 0;
@@ -364,7 +409,7 @@ function openText(){
     <div class="tm-dish"><h3>${esc(L(C.starter).name)}</h3><dl class="facts">${L(C.starter).lines.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>`
     + C.dishes.map(d => { const t = L(d); return `<div class="tm-dish recipe"><p class="sub" style="text-align:left;margin:0">${esc(T().sections[d.section])}</p><h3>${esc(t.name)}</h3><p class="lede">${esc(t.desc)}</p>
       <h4>${esc(R.problem)}</h4><p>${esc(t.problem)}</p><div class="did"><h4>${esc(R.did)}</h4><ul>${t.did.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
-      <h4>${esc(R.result)}</h4><p>${esc(t.result)}</p><h4>${esc(R.team)}</h4><p>${esc(t.team)}</p><h4>${esc(R.tools)}</h4><div class="ingr">${d.tools.map(x=>`<span>${esc(x)}</span>`).join("")}</div></div>`; }).join("")
+      <h4>${esc(R.result)}</h4><p>${esc(t.result)}</p><h4>${esc(R.team)}</h4><p>${esc(t.team)}</p><h4>${esc(R.tools)}</h4><div class="ingr">${d.tools.map(x=>`<span>${esc(x)}</span>`).join("")}</div>${linksHtml(d)}</div>`; }).join("")
     + `<div class="tm-dish"><h3>${esc(T().billTitle)}</h3><p>${esc(C.contact.email)} · <a href="${C.contact.linkedin}" target="_blank" rel="noopener">LinkedIn ↗</a> · <a href="${C.contact.github}" target="_blank" rel="noopener">GitHub ↗</a></p></div>
       <p class="note" style="font-family:var(--font-ui);font-size:.85rem;color:var(--muted)">${esc(T().footer)}</p>`;
   $("#tmTitle").textContent = T().textMenu;
@@ -383,8 +428,74 @@ $("#bLang").onclick = () => {
   if ($("#dlgText").open) openText();
 };
 
+/* ================================================================ guest book
+   GitHub Pages is a static host: there is no server to store messages. The
+   book therefore sends the message to me by email; the entries shown come
+   from content.js (C.guestbook), where I add the ones people allowed. */
+function openBook(){
+  const entries = C.guestbook || [];
+  $("#gbBody").innerHTML = `<p><em>${esc(X().bookIntro)}</em></p>
+    <label for="gbName">${esc(X().bookName)}</label><input id="gbName" autocomplete="name">
+    <label for="gbMsg">${esc(X().bookMsg)}</label><textarea id="gbMsg"></textarea>
+    <p><label style="display:flex;gap:8px;align-items:center;font-family:var(--font-ui);font-size:.9rem;color:var(--ink);letter-spacing:0">
+      <input type="checkbox" id="gbAllow" style="width:auto"> ${esc(X().bookAllow)}</label></p>
+    <p><a class="btn" id="gbSend" href="#">${esc(X().bookSend)}</a></p>
+    <h3 style="margin-top:18px">${esc(X().book)}</h3>
+    ${entries.length ? entries.map(e => `<div class="entry"><b>${esc(e.name)}</b> <span class="note">${esc(e.date || "")}</span><p>${esc(e.text)}</p></div>`).join("") : `<p class="note">${esc(X().bookEmpty)}</p>`}`;
+  const upd = () => {
+    const body = `${$("#gbMsg").value}\n\n— ${$("#gbName").value}\n${$("#gbAllow").checked ? (lang === "fr" ? "Affichage sur le site : oui" : "May be shown on the site: yes") : (lang === "fr" ? "Affichage sur le site : non" : "May be shown on the site: no")}`;
+    $("#gbSend").href = `mailto:${C.contact.email}?subject=${encodeURIComponent(X().book + " · Chez Déo")}&body=${encodeURIComponent(body)}`;
+  };
+  $("#gbBody").addEventListener("input", upd); upd();
+  show($("#dlgBook"));
+}
+
+/* ================================================================ sound: a quiet winstub, generated (no audio files) */
+const Sound = (() => {
+  let ctx = null, master = null, on = false, clinkTimer = 0;
+  function init(){
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    ctx = new AC(); master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    // murmur of voices: noise through a voice-band filter, slowly swelling
+    const len = ctx.sampleRate * 4, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    let b = 0; for (let i = 0; i < len; i++){ b = 0.97 * b + 0.03 * (Math.random() * 2 - 1); d[i] = b * 4; }
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 520; bp.Q.value = 0.8;
+    const g = ctx.createGain(); g.gain.value = 0.55;
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.23; const lg = ctx.createGain(); lg.gain.value = 0.2; lfo.connect(lg); lg.connect(g.gain);
+    src.connect(bp); bp.connect(g); g.connect(master); src.start(); lfo.start();
+    return true;
+  }
+  function tone(freq, dur, vol, type = "sine"){
+    if (!ctx || !on) return;
+    const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+    o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur);
+  }
+  function clinks(){ clearTimeout(clinkTimer); if (!on) return;
+    tone(2600 + Math.random() * 1400, 0.25, 0.05); clinkTimer = setTimeout(clinks, 1800 + Math.random() * 5000); }
+  return {
+    get on(){ return on; },
+    toggle(){
+      if (!ctx && !init()) return;
+      on = !on; ctx.resume();
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.linearRampToValueAtTime(on ? 0.06 : 0, ctx.currentTime + 0.6);
+      clinks();
+    },
+    ding(){ tone(1760, 1.2, 0.12); tone(3520, 0.8, 0.04); },
+    rumble(){ if (!ctx || !on) return; const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+      o.type = "sawtooth"; o.frequency.value = 38; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.5);
+      const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 120; o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + 3.6); },
+  };
+})();
+$("#bSound").onclick = () => { Sound.toggle(); $("#bSound").setAttribute("aria-pressed", String(Sound.on)); chrome(); };
+
+function toast(html){ const t = $("#toast"); t.innerHTML = html; t.hidden = false; setTimeout(() => { t.hidden = true; }, 15000); }
+$("#toast").addEventListener("click", e => { if (e.target.closest("[data-stay]")) $("#toast").hidden = true; });
+
 /* ================================================================ 3D ROOM */
-const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet(){},enter(cb){cb&&cb()},toDesk(cb){cb&&cb()},lead(cb){cb&&cb()},sitNow(){},setHot(){},relabel(){},needsTrip(){return false},seated:true,ok:false} : (() => {
+const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet(){},enter(cb){cb&&cb()},toDesk(cb){cb&&cb()},lead(cb){cb&&cb()},sitNow(){},setHot(){},relabel(){},needsTrip(){return false},quake(){return false},quaked:false,seated:true,ok:false} : (() => {
   const canvas = $("#room");
   let R, scene, cam, ok = false;
   const camPos = new THREE.Vector3(0,1.65,15), camLook = new THREE.Vector3(0,2.4,6);
@@ -397,17 +508,19 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     street:[[0,1.65,15],[0,2.4,6]],
     table: [[0,1.14,0.62],[0,0.92,-1.4]],
     plate: [[0,1.04,0.44],[0,0.77,-0.03]],
-    wait:  [[0,1.14,0.62],[-1.1,1.0,-1.7]],
+    wait:  [[0,1.14,0.62],[-1.3,0.95,-0.35]],
   };
   const PLATE = new THREE.Vector3(0,0.772,0.0);
   let tableHolder, waiter, kDoor, onTable = null, pending = null, seated = false, walk = null, wState = "desk", fGoal = 0, fT = 0, bob = 0;
-  let cityGeo = null, cityU = {uYear:{value:2045}}, hotOn = new Set();
+  let cityGeo = null, cityU = {uYear:{value:2045}, uQuake:{value:-1}}, hotOn = new Set(), quakeT0 = 0, trolley = null;
   const fDoors = [], tweens = [], hot = [], signs = [], D0 = -3.5, D1 = 6, HW = 3.5, ray = new THREE.Raycaster(), lookT = new THREE.Vector3();
   const V = (x,y,z) => new THREE.Vector3(x,y,z);
-  // the waiter's routes (x, z on the floor)
-  const K_IN = [-2.85,-3.3], K_OUT = [-2.85,-2.95];
-  const TO_TABLE = [K_OUT,[-1.4,-2.75],[-1.05,-1.1],[-0.95,0.0],[-0.8,0.35]];
-  const TO_KITCHEN = [[-0.95,0.0],[-1.05,-1.1],[-1.4,-2.75],K_OUT,K_IN];
+  // Where the waiter stands (x, z on the floor). The kitchen has filled a
+  // service trolley next to the table, so after seating the guest the waiter
+  // waits beside it and each dish takes a couple of seconds to serve.
+  const K_IN = [-2.85,-3.3];
+  const STANDBY = [-1.0,-0.05], SERVE = [-0.8,0.35];
+  const FACE_TROLLEY = -Math.PI/2, FACE_TABLE = Math.PI/2;
 
   function tex(w,h,draw,rep){ const c = document.createElement("canvas"); c.width=w; c.height=h; draw(c.getContext("2d"),w,h);
     const t = new THREE.CanvasTexture(c); t._redraw = () => { draw(c.getContext("2d"),w,h); t.needsUpdate = true; }; t.anisotropy = 4; if (rep){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0],rep[1]); } return t; }
@@ -516,7 +629,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
 
     // where the plates go, plus the parts of the building you walk through
     tableHolder = new THREE.Group(); tableHolder.position.copy(PLATE); scene.add(tableHolder);
-    buildFront(); buildDesk(); buildKitchen();
+    buildFront(); buildDesk(); buildKitchen(); buildTrolley();
     waiter = makeWaiter(); scene.add(waiter.root); hot.push(waiter.root); placeWaiter(-3.15, 4.3, Math.PI/2);
     const moon = new THREE.DirectionalLight(0x8fa6d8, 0.22); moon.position.set(4,8,20); scene.add(moon);
 
@@ -600,6 +713,23 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     scene.add(kDoor);
     const fr = lambert(0x3B2416); box(0.08,2.2,0.08,fr,-3.24,1.1,D0+0.04); box(0.08,2.2,0.08,fr,-2.46,1.1,D0+0.04); box(0.86,0.08,0.08,fr,-2.85,2.18,D0+0.04);
   }
+  /* ---------- service trolley beside the table ---------- */
+  function buildTrolley(){
+    const g = new THREE.Group(); g.position.set(-1.5, 0, -0.1);
+    const wood = lambert(0x5A3A24), brass = new THREE.MeshPhongMaterial({color:0xC99640, shininess:80});
+    const add = (geo, mat, x, y, z) => { const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); g.add(o); return o; };
+    add(new THREE.BoxGeometry(0.46, 0.03, 0.82), wood, 0, 0.82, 0);
+    add(new THREE.BoxGeometry(0.46, 0.03, 0.82), wood, 0, 0.34, 0);
+    [[-0.21,-0.39],[0.21,-0.39],[-0.21,0.39],[0.21,0.39]].forEach(([x,z]) => { add(new THREE.CylinderGeometry(0.012,0.012,0.8,8), brass, x, 0.44, z);
+      add(new THREE.CylinderGeometry(0.035,0.035,0.025,12), lambert(0x1d1714), x, 0.035, z).rotation.z = Math.PI/2; });
+    add(new THREE.TorusGeometry(0.16, 0.01, 6, 20, Math.PI), brass, 0, 0.92, 0.41).rotation.y = Math.PI;
+    // two covered plates waiting on top (decor; the front one is the "next dish")
+    const decor = [0.15, -0.25].map(z => { const sv = makeServing(null); sv.g.position.set(0, 0.835, z); g.add(sv.g); return sv.g; });
+    const top = new THREE.Group(); top.position.set(0, 0.835, 0.15); g.add(top);
+    const shelf = new THREE.Group(); shelf.position.set(0, 0.355, 0.0); g.add(shelf);
+    scene.add(g);
+    trolley = { g, decor, top, shelf };
+  }
   /* ---------- the waiter: a faceless figure in a black vest and white apron ---------- */
   function makeWaiter(){
     const root = new THREE.Group(), body = new THREE.Group(); root.add(body); root.userData.hot = "desk";
@@ -654,7 +784,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     const rim = new THREE.Mesh(new THREE.TorusGeometry(0.139,0.0016,6,60), MAT.rim); rim.rotation.x = -Math.PI/2; rim.position.y = 0.016; g.add(rim);
     const cl = new THREE.Group(); const dome = new THREE.Mesh(new THREE.SphereGeometry(0.135,32,16,0,Math.PI*2,0,Math.PI/2), MAT.steel); dome.scale.y = 0.85; cl.add(dome);
     const knob = new THREE.Mesh(new THREE.SphereGeometry(0.014,12,8), MAT.steel); knob.position.y = 0.122; cl.add(knob); cl.position.y = 0.012; g.add(cl);
-    const food = PLATES[kind] ? PLATES[kind]() : null; if (food) g.add(food);
+    const food = kind && PLATES[kind] ? PLATES[kind]() : null; if (food) g.add(food);
     return {g, cloche:cl, food, kind};
   }
   function moveTo(obj, parent, local, dur, done, arc=0.12){
@@ -670,25 +800,36 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
   }
   function freeKids(g, keep){ for (let i = g.children.length-1; i >= keep; i--){ const o = g.children[i]; g.remove(o); o.traverse(x => { if (x.material && x.material.map) x.material.map.dispose(); }); } }
   function kick(){
-    if (wState !== "kitchen" || !pending) return;
+    if (wState !== "standby" || !pending) return;
     const kind = pending; pending = null;
     if (onTable && onTable.kind === kind){ reveal(kind); return; }
-    const s = makeServing(kind); waiter.tray.add(s.g); waiter.carry = s;
-    placeWaiter(K_IN[0], K_IN[1], 0); waiter.root.visible = true; wState = "toTable";
-    waiterGo(TO_TABLE, place, Math.PI/2);
+    wState = "busy";
+    // 1. take the front covered plate from the trolley (the decor plate hides while it travels)
+    const s = makeServing(kind); trolley.top.add(s.g); trolley.decor[0].visible = false; waiter.carry = s;
+    moveTo(s.g, waiter.tray, V(0,0,0), 0.4, () => {
+      // 2. step to the table
+      waiterGo([SERVE], place, FACE_TABLE);
+    }, 0.08);
   }
   function place(){
-    wState = "placing"; const s = waiter.carry, old = onTable;
-    const putNew = () => moveTo(s.g, tableHolder, V(0,0,0), 0.7, () => {
+    const s = waiter.carry, old = onTable;
+    const putNew = () => moveTo(s.g, tableHolder, V(0,0,0), 0.55, () => {
       onTable = s; waiter.carry = null;
-      moveTo(s.cloche, waiter.tray, V(0,0.006,0), 0.7, null, 0.22);
+      moveTo(s.cloche, waiter.tray, V(0,0.006,0), 0.55, null, 0.2);       // 3. lift the cloche
       if (s.food) s.food.userData.t0 = performance.now();
       reveal(s.kind);
-      setTimeout(() => { wState = "toKitchen"; waiterGo(TO_KITCHEN, home); }, reduced ? 0 : 1000);
+      setTimeout(() => waiterGo([STANDBY], backToTrolley, FACE_TROLLEY), reduced ? 0 : 500);
     }, 0.1);
-    if (old){ waiter.old = old; moveTo(old.g, waiter.hold, V(0,0,0), 0.6, putNew, 0.1); } else putNew();
+    if (old){ waiter.old = old; moveTo(old.g, waiter.hold, V(0,0,0), 0.45, putNew, 0.08); } else putNew();
   }
-  function home(){ wState = "kitchen"; waiter.root.visible = false; freeKids(waiter.tray, 1); freeKids(waiter.hold, 0); waiter.old = null; kick(); }
+  function backToTrolley(){
+    // 4. empty plate to the lower shelf, cloche back on top, then wait for the next order
+    const cl = waiter.tray.children[1];
+    const done = () => { freeKids(waiter.tray, 1); freeKids(trolley.shelf, 0); trolley.decor[0].visible = true; waiter.old = null; wState = "standby"; kick(); };
+    let n = 0; const one = () => { if (++n === 2) done(); };
+    if (waiter.old){ moveTo(waiter.old.g, trolley.shelf, V(0,0,0), 0.4, one, 0.05); } else one();
+    if (cl){ moveTo(cl, trolley.top, V(0,0.012,0), 0.4, () => { trolley.top.remove(cl); one(); }, 0.1); } else one();
+  }
   function reveal(kind){ api.onReveal && api.onReveal(kind); }
   function pick(e){
     if (!hotOn.size || !cam) return null;
@@ -718,11 +859,11 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     wState = "leading"; waiterGo([[-3.2,3.3],[-1.6,3.1],[-0.6,1.9],[-0.78,1.0]], null, Math.PI/2);
     setTimeout(() => camWalk([{p:[-1.2,1.65,3.2],l:[-0.5,1.3,1.6]},{p:[-0.4,1.65,2.0],l:[0,1.0,0]},{p:[0,1.65,1.35],l:[0,0.9,-0.6]},{p:SHOTS.table[0],l:SHOTS.table[1]}], 1.2, () => {
       seated = true; done && done();
-      setTimeout(() => { wState = "toKitchen"; waiterGo(TO_KITCHEN, home); }, reduced ? 0 : 500);
+      setTimeout(() => { wState = "toStandby"; waiterGo([[-0.95,0.6], STANDBY], () => { wState = "standby"; kick(); }, FACE_TROLLEY); }, reduced ? 0 : 400);
     }), reduced ? 0 : 1600);
   }
   function sitNow(){ walk = null; seated = true; fGoal = 1; const s = SHOTS.table; camPos.set(...s[0]); camLook.set(...s[1]); goalPos.copy(camPos); goalLook.copy(camLook);
-    if (wState === "desk" || wState === "leading"){ placeWaiter(K_IN[0], K_IN[1], 0); waiter.root.visible = false; wState = "kitchen"; kick(); } }
+    if (wState === "desk" || wState === "leading" || wState === "toStandby"){ placeWaiter(STANDBY[0], STANDBY[1], FACE_TROLLEY); waiter.root.visible = true; wState = "standby"; kick(); } }
   function chair(x,z,ry){
     const g = new THREE.Group(), m = lambert(0x4a2e1c);
     const add = (w,h,d,px,py,pz) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.position.set(px,py,pz); g.add(o); };
@@ -751,7 +892,17 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     const m = new THREE.MeshLambertMaterial({vertexColors:true});
     if (grow) m.onBeforeCompile = sh => { Object.assign(sh.uniforms, uniforms);
       sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nattribute float aYear; uniform float uYear;")
-        .replace("#include <begin_vertex>", "vec3 transformed = vec3(position); float g = clamp((uYear-aYear)/10.0,0.0,1.0); transformed.y = transformed.y*g - (1.0-step(0.002,g))*3.0;"); };
+        .replace("#include <common>", "#include <common>\nuniform float uQuake;")
+        .replace("#include <begin_vertex>", `vec3 transformed = vec3(position);
+          float g = clamp((uYear-aYear)/10.0,0.0,1.0); transformed.y = transformed.y*g - (1.0-step(0.002,g))*3.0;
+          if (uQuake > 0.0) {                       // earthquake: shake, then a third of the blocks collapse
+            float h = fract(sin(dot(floor(position.xz/9.0), vec2(12.9898,78.233)))*43758.5453);
+            float shake = exp(-0.55*uQuake) * step(uQuake, 7.0) * (transformed.y/18.0);
+            transformed.x += sin(uQuake*38.0 + h*20.0) * 1.6 * shake;
+            transformed.z += cos(uQuake*33.0 + h*17.0) * 1.6 * shake;
+            float fall = step(h, 0.35) * clamp((uQuake - 0.8 - h*2.5)/1.0, 0.0, 1.0);
+            transformed.y *= 1.0 - 0.88*fall;
+          }`); };
     return new THREE.Mesh(cityGeo, m);
   }
   function loadCity(){
@@ -784,6 +935,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     city(){ const d = Scene._cityData; if (!d) return PLATES.card();
       const g = new THREE.Group(); const m = cityMesh(d, cityU, true); const s = DISC_R/430; m.scale.set(s, s*1.8, s); g.add(m);
       const base = new THREE.Mesh(new THREE.CircleGeometry(DISC_R,48), new THREE.MeshLambertMaterial({color:0x8a9a83})); base.rotation.x=-Math.PI/2; base.position.y=-0.0005; g.add(base);
+      cityU.uQuake.value = -1;
       g.position.y = 0.007; g.userData.update = (now) => { cityU.uYear.value = g.userData.t0 ? Math.min(2045, 1440 + (now - g.userData.t0)*0.12) : 1440; }; return g; },
     boids(){ const n = 90, geo = new THREE.ConeGeometry(0.0035,0.012,5); geo.rotateX(Math.PI/2);
       const mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({color:0x2B1F17}), n);
@@ -815,11 +967,6 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
           else { const sum = s.c.map(() => [0,0,0]); P.forEach(p => { let b=0,bd=1e9; s.c.forEach((c,j) => { const d=(p[0]-c[0])**2+(p[1]-c[1])**2; if(d<bd){bd=d;b=j;} }); sum[b][0]+=p[0]; sum[b][1]+=p[1]; sum[b][2]++; }); s.c = s.c.map((c,j) => sum[j][2] ? [sum[j][0]/sum[j][2], sum[j][1]/sum[j][2]] : c); } }
         P.forEach(p => { let b=0,bd=1e9; s.c.forEach((c,j) => { const d=(p[0]-c[0])**2+(p[1]-c[1])**2; if(d<bd){bd=d;b=j;} }); x.fillStyle=cols[b]; x.beginPath(); x.arc(p[0],p[1],6,0,7); x.fill(); });
         s.c.forEach((c,j) => { x.fillStyle=cols[j]; x.strokeStyle="#2B1F17"; x.lineWidth=4; x.beginPath(); x.rect(c[0]-13,c[1]-13,26,26); x.fill(); x.stroke(); }); }); },
-    life(){ const W=40, g = new Uint8Array(W*W).map(() => rnd()<0.3?1:0);
-      return canvasFood((x,t,s) => { const step = Math.floor(t/140); if (s.step !== step){ s.step = step; const n = new Uint8Array(W*W);
-          for (let y=0;y<W;y++) for (let xx=0;xx<W;xx++){ let c=0; for (let dy=-1;dy<=1;dy++) for (let dx=-1;dx<=1;dx++) if (dx||dy) c += g[((y+dy+W)%W)*W+(xx+dx+W)%W]; const a=g[y*W+xx]; n[y*W+xx] = (a&&(c===2||c===3))||(!a&&c===3) ? 1:0; }
-          g.set(n); if (n.reduce((a,v)=>a+v,0) < 40) g.forEach((_,i) => g[i] = rnd()<0.3?1:0); }
-        x.fillStyle="#FBF6EA"; x.fillRect(0,0,512,512); x.fillStyle="#2B1F17"; const c = 512/W; for (let i=0;i<W*W;i++) if (g[i]) x.fillRect((i%W)*c+1,((i/W)|0)*c+1,c-2,c-2); }); },
     membrana(){ const cells = Array.from({length:14}, () => ({x:80+rnd()*352, y:80+rnd()*352, r:26+rnd()*30, ph:rnd()*6, guest: rnd()<0.4}));
       return canvasFood((x,t) => { x.fillStyle="#141018"; x.fillRect(0,0,512,512);
         cells.forEach(c => { const cx = c.x + 10*Math.sin(t/2000+c.ph), cy = c.y + 10*Math.cos(t/2300+c.ph);
@@ -844,38 +991,75 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     nsga(){ return canvasFood((x,t) => { x.fillStyle="#FBF6EA"; x.fillRect(0,0,512,512); x.strokeStyle="#2B1F17"; x.lineWidth=3; x.beginPath(); x.moveTo(90,80); x.lineTo(90,430); x.lineTo(440,430); x.stroke();
         x.strokeStyle="rgba(46,76,140,.35)"; x.lineWidth=2; for (let i=0;i<=10;i++){ const a=i/10*Math.PI/2; x.beginPath(); x.moveTo(90,430); x.lineTo(90+330*Math.cos(a), 430-330*Math.sin(a)); x.stroke(); }
         const k = (Math.sin(t/1800)+1)/2; for (let i=0;i<=10;i++){ const a=i/10*Math.PI/2, r = 300 + 90*(1-k)*(0.5+0.5*Math.sin(i*2.1)); x.fillStyle="#9C3029"; x.beginPath(); x.arc(90+r*Math.cos(a)*0.9, 430-r*Math.sin(a)*0.9, 9, 0, 7); x.fill(); } }); },
-    selenium(){ return canvasFood((x,t) => { x.fillStyle="#FFFDF7"; x.fillRect(0,0,512,512); x.font="28px Alegreya Sans, sans-serif"; x.textAlign="left";
-        const shown = Math.min(10, 1 + Math.floor((t % 9000)/700));
-        for (let i=0;i<shown;i++){ const y = 70+i*38, fail = i===6; x.fillStyle = fail ? "#9C3029" : "#4E7A3A"; x.fillText(fail ? "✗" : "✓", 120, y); x.fillStyle="#2B1F17"; x.fillText("test_" + String(i+1).padStart(2,"0"), 160, y); } }); },
-    piano(){ return canvasFood((x,t) => { x.fillStyle="#1d1712"; x.fillRect(0,0,512,512); const n=10, w=320/n, on = Math.floor(t/350) % n;
-        for (let i=0;i<n;i++){ x.fillStyle = i===on ? "#E8C15A" : "#F7F1E3"; x.fillRect(96+i*w, 170, w-4, 190); }
-        [0,1,3,4,5,7,8].forEach(i => { x.fillStyle="#111"; x.fillRect(96+(i+1)*w-w*0.3, 170, w*0.6, 115); });
-        x.fillStyle="rgba(232,193,90,.8)"; x.beginPath(); x.arc(96+on*w+w/2, 150+8*Math.sin(t/120), 12, 0, 7); x.fill(); }); },
+    roads(){ const R = Scene._roads; if (!R) return PLATES.card();
+      // every injury accident in Haut-Rhin, appearing year by year; red = fatal
+      const xs = R.outline.map(p => p[0]), ys = R.outline.map(p => p[1]);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), k = Math.cos(47.8 * Math.PI / 180);
+      const sc = 400 / Math.max((x1 - x0) * k, y1 - y0), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const P = ([lon, lat]) => [256 + (lon - cx) * k * sc, 256 - (lat - cy) * sc];
+      return canvasFood((x, t) => { x.fillStyle = "#EFE6D4"; x.fillRect(0, 0, 512, 512);
+        x.beginPath(); R.outline.forEach((p, i) => { const [a, b] = P(p); i ? x.lineTo(a, b) : x.moveTo(a, b); }); x.closePath();
+        x.fillStyle = "#FBF6EA"; x.fill(); x.strokeStyle = "#5a3a24"; x.lineWidth = 3; x.stroke();
+        const upto = 2019 + Math.min(5, Math.floor(t / 900));
+        R.points.forEach(([lon, lat, f, y]) => { if (y > upto) return; const [a, b] = P([lon, lat]);
+          x.fillStyle = f ? "#C62828" : "rgba(46,76,140,.55)"; x.beginPath(); x.arc(a, b, f ? 6 : 2.6, 0, 7); x.fill(); });
+        x.fillStyle = "#2B1F17"; x.font = "bold 34px Alegreya, Georgia, serif"; x.textAlign = "center"; x.fillText(String(upto), 256, 488); }); },
+    medicines(){ const bn = [19.1, 19.2, 20.7, 22.7, 24.4, 26.0, 27.4], boxes = [2.31, 2.24, 2.28, 2.37, 2.35, 2.37, 2.33];
+      // one pill = EUR 1 bn reimbursed; the dashed line = boxes dispensed (flat)
+      const cols = ["#E8A0A0", "#F4EBDA", "#9EC5E8", "#F2C46D"];
+      return canvasFood((x, t) => { x.fillStyle = "#FBF6EA"; x.fillRect(0, 0, 512, 512);
+        const grow = Math.min(1, t / 2500);
+        bn.forEach((v, i) => { const n = Math.round(v * grow), bx = 92 + i * 50;
+          for (let j = 0; j < n; j++){ const y = 432 - j * 11; x.fillStyle = cols[(i + j) % cols.length];
+            x.beginPath(); if (x.roundRect) x.roundRect(bx, y, 36, 9, 4.5); else x.rect(bx, y, 36, 9); x.fill(); x.strokeStyle = "rgba(43,31,23,.35)"; x.lineWidth = 1; x.stroke(); }
+          x.fillStyle = "#2B1F17"; x.font = "18px Alegreya Sans, sans-serif"; x.textAlign = "center"; x.fillText(String(2019 + i).slice(2), bx + 18, 462); });
+        x.setLineDash([8, 6]); x.strokeStyle = "#2E4C8C"; x.lineWidth = 3; x.beginPath();
+        boxes.forEach((v, i) => { const y = 432 - v * 90 * grow; i ? x.lineTo(110 + i * 50, y) : x.moveTo(110, y); }); x.stroke(); x.setLineDash([]);
+        x.fillStyle = "#9C3029"; x.font = "bold 30px Alegreya, Georgia, serif"; x.fillText("+43 %", 256, 120); }); },
     dashboard(){ return canvasFood((x,t) => { x.fillStyle="#F8F3E8"; x.fillRect(0,0,512,512); x.fillStyle="#2B1F17"; x.font="bold 26px Alegreya Sans, sans-serif"; x.textAlign="center";
         x.fillText(lang==="fr" ? "Conformité par crèche" : "Compliance by facility", 256, 120);
         const v = [0.82,0.64,0.91,0.55,0.74]; v.forEach((a,i) => { const h = 220*a*(0.85+0.15*Math.sin(t/900+i)); x.fillStyle = i===2 ? "#2E4C8C" : "#C99640"; x.fillRect(115+i*60, 400-h, 40, h); });
         x.fillStyle="#2B1F17"; x.fillRect(100,400,320,3); }); },
     bill(){ return canvasFood((x) => { x.fillStyle="#E9DCC2"; x.fillRect(0,0,512,512); x.save(); x.translate(256,256); x.rotate(-0.12);
         x.fillStyle="#FFFDF7"; x.fillRect(-120,-180,240,360); x.fillStyle="#2B1F17"; x.textAlign="center"; x.font="bold 40px UnifrakturCook, Georgia, serif"; x.fillText("Chez Déo",0,-120);
-        x.font="22px Alegreya, Georgia, serif"; ["Python, SQL ........ ✓", (lang==="fr"?"Statistiques":"Statistics")+" ..... ✓", (lang==="fr"?"Projets":"Projects")+" ......... 12"].forEach((l,i) => x.fillText(l,0,-60+i*36));
+        x.font="22px Alegreya, Georgia, serif"; ["Python, SQL ........ ✓", (lang==="fr"?"Statistiques":"Statistics")+" ..... ✓", (lang==="fr"?"Projets":"Projects")+" ......... " + C.dishes.length].forEach((l,i) => x.fillText(l,0,-60+i*36));
         x.font="bold 26px Alegreya, Georgia, serif"; x.fillText(lang==="fr" ? "Total : 0 €" : "Total: €0",0,90); x.font="italic 20px Alegreya, Georgia, serif"; x.fillText(lang==="fr" ? "offert par la maison" : "on the house",0,124); x.restore(); }); },
   };
 
   function serve(kind){
     if (!ok || !kind) return;
-    if (onTable && onTable.kind === kind && wState !== "toTable" && wState !== "placing"){ reveal(kind); return; }
+    if (onTable && onTable.kind === kind && wState !== "busy"){ reveal(kind); return; }
     pending = kind; kick();
+  }
+  function quake(){
+    if (cityU.uQuake.value >= 0){ cityU.uQuake.value = -1; return false; }
+    quakeT0 = performance.now(); cityU.uQuake.value = 0.001; return true;
   }
   function go(shot){ if (!seated || walk) return; const s = SHOTS[shot]; goalPos.set(...s[0]); goalLook.set(...s[1]); if (reduced){ camPos.copy(goalPos); camLook.copy(goalLook); } }
 
   function resize(){ if (!R) return; const w = innerWidth, h = innerHeight; R.setSize(w,h,false); cam.aspect = w/h;
     cam.fov = w < 760 ? 62 : 50; cam.updateProjectionMatrix();
     SHOTS.plate = w < 760 ? [[0,1.16,0.52],[0,0.76,-0.02]] : [[0,1.04,0.44],[0,0.77,-0.03]];
-    SHOTS.wait = w < 760 ? [[0,1.2,0.8],[-1.4,1.0,-1.6]] : [[0,1.14,0.62],[-1.1,1.0,-1.7]];
+    SHOTS.wait = w < 760 ? [[0,1.2,0.8],[-1.5,0.95,-0.3]] : [[0,1.14,0.62],[-1.3,0.95,-0.35]];
     SHOTS.table = w < 760 ? [[0,1.2,0.8],[0,0.9,-1.3]] : [[0,1.14,0.62],[0,0.92,-1.4]]; }
 
+  // Performance watchdog: if the room renders slowly, first lower the
+  // resolution; if it is still slow, offer the classic version.
+  const perf = { t0: 0, frames: 0, stage: 0 };
+  function watchPerf(now){
+    if (perf.stage > 1 || !$("#load").classList.contains("done")) return;
+    if (!perf.t0){ perf.t0 = now; perf.frames = 0; return; }
+    perf.frames++;
+    if (now - perf.t0 < 4000) return;
+    const fps = perf.frames * 1000 / (now - perf.t0); perf.t0 = 0;
+    if (fps >= 22){ perf.stage = 2; return; }
+    if (perf.stage === 0){ perf.stage = 1; R.setPixelRatio(1); resize(); return; }
+    perf.stage = 2;
+    toast(`<p>${esc(X().slow)}</p><div class="row"><a class="btn" href="classic.html">${esc(X().classic)}</a><button type="button" class="btn" data-stay>${esc(X().stay)}</button></div>`);
+  }
   let prev = performance.now();
   function frame(now){
+    watchPerf(now);
     const dt = Math.min(0.1,(now-prev)/1000); prev = now;
     const k = reduced ? 1 : 1 - Math.pow(0.0025, dt);
     if (walk) walkUpdate(dt); else { camPos.lerp(goalPos, k); camLook.lerp(goalLook, k); }
@@ -886,20 +1070,26 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     kDoor.userData.t += (kd - kDoor.userData.t)*Math.min(1, dt*8); kDoor.rotation.y = 1.25*kDoor.userData.t;
     fT += (fGoal - fT)*(reduced ? 1 : Math.min(1, dt*3)); fDoors.forEach(p => p.rotation.y = p.userData.sg*1.35*fT);
     if (onTable && onTable.food && onTable.food.userData.update) onTable.food.userData.update(now, dt);
+    if (cityU.uQuake.value > 0){ const tq = (now - quakeT0) / 1000; cityU.uQuake.value = tq;
+      const a = tq < 4 ? 0.0025 * Math.exp(-0.7 * tq) : 0; tableHolder.position.set(PLATE.x + (Math.random()-.5)*a, PLATE.y, PLATE.z + (Math.random()-.5)*a);
+      cam.position.x += (Math.random()-.5) * a * 2; }
     R.render(scene, cam);
     requestAnimationFrame(frame);
   }
   function start(){
     try { build(); } catch(e){ console.error(e); return false; }
     if (document.fonts && document.fonts.load) Promise.all(["700 40px UnifrakturCook","20px Alegreya","italic 20px Alegreya","500 20px 'Alegreya Sans SC'"].map(f => document.fonts.load(f))).then(relabel, () => {});
-    $("#load").textContent = T().loading;
-    loadCity().then(() => { $("#load").hidden = true; });
+    $("#lmsg").textContent = T().loading; $("#lbar").style.width = "35%";
+    fetch("data/roads68.json").then(r => r.json()).then(d => { Scene._roads = d; }).catch(() => {});
+    const hide = () => { $("#lbar").style.width = "100%"; setTimeout(() => $("#load").classList.add("done"), 250); };
+    loadCity().then(hide); setTimeout(hide, 8000);
     requestAnimationFrame(frame);
     return true;
   }
   function relabel(){ signs.forEach(t => t._redraw()); }
   const api = { start, go, serve, toStreet, enter, toDesk, lead, sitNow, relabel, setHot(ids){ hotOn = new Set(ids); },
-    needsTrip(kind){ return !(onTable && onTable.kind === kind); }, get seated(){ return seated; }, get ok(){ return ok; }, onHot:null, onReveal:null };
+    needsTrip(kind){ return !(onTable && onTable.kind === kind); }, quake, get quaked(){ return cityU.uQuake.value >= 0; },
+    get seated(){ return seated; }, get ok(){ return ok; }, onHot:null, onReveal:null };
   return api;
 })();
 
@@ -941,20 +1131,15 @@ const DEMOS = {
       const rows = [[lang==="fr"?"Vocabulaire commun":"Shared vocabulary", jac(new Set(wa),new Set(wb))],[lang==="fr"?"Phrases communes":"Shared phrases", jac(ga,gb)],[lang==="fr"?"Score de plagiat":"Plagiarism score", gb.size?[...gb].filter(v=>ga.has(v)).length/gb.size:0]];
       host.querySelector("#pm").innerHTML = rows.map(([k,v]) => `<div class="row"><span>${k}</span><span class="barx"><i style="width:${(v*100).toFixed(0)}%"></i></span><span>${(v*100).toFixed(0)} %</span></div>`).join(""); };
     host.addEventListener("input", run); run(); },
-  life(host){ const W=56,H=40,S=10; const {c,x,w,h,loc} = mk(host,W*S,H*S); let g = new Uint8Array(W*H).map(()=>Math.random()<0.25?1:0), run=!reduced;
-    const ctl = document.createElement("div"); ctl.className="ctl"; ctl.innerHTML = `<button type="button" class="btn" id="lp">${run?(lang==="fr"?"Pause":"Pause"):(lang==="fr"?"Lancer":"Start")}</button><span class="note">${lang==="fr"?"Cliquez pour ajouter des cellules.":"Click to add cells."}</span>`; host.append(ctl);
-    const draw = () => { x.clearRect(0,0,w,h); x.fillStyle="#2B1F17"; for (let i=0;i<W*H;i++) if (g[i]) x.fillRect((i%W)*S+1,((i/W)|0)*S+1,S-2,S-2); };
-    const next = () => { const n=new Uint8Array(W*H); for (let y=0;y<H;y++) for (let xx=0;xx<W;xx++){ let s=0; for (let dy=-1;dy<=1;dy++) for (let dx=-1;dx<=1;dx++) if (dx||dy) s+=g[((y+dy+H)%H)*W+(xx+dx+W)%W]; const a=g[y*W+xx]; n[y*W+xx]=(a&&(s===2||s===3))||(!a&&s===3)?1:0; } g=n; draw(); };
-    let tm = run ? setInterval(next,100) : 0; ctl.querySelector("#lp").onclick = e => { run=!run; clearInterval(tm); if (run) tm=setInterval(next,100); e.target.textContent = run ? "Pause" : (lang==="fr"?"Lancer":"Start"); };
-    c.addEventListener("pointerdown", e => { const [a,b]=loc(e); const i=((b/S)|0)*W+((a/S)|0); g[i]=1-g[i]; draw(); }); draw(); },
 };
 
 /* ================================================================ start */
 if (!/github\.io$/.test(location.hostname)) $("#cvDl").hidden = true;   // downloads only work on the real site
+if (!window.THREE) $("#load").classList.add("done");
 chrome();
 const has3D = (() => { try { const c = document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"))) && window.THREE; } catch(e){ return false; } })();
 Scene.onHot = id => { if (id === "door") enterResto(); else if (id === "desk") goDesk(); };
-Scene.onReveal = kind => { if (waitLine && waitLine.kind === kind){ say(waitLine.lineFn); Scene.go("plate"); } };
+Scene.onReveal = kind => { Sound.ding(); if (waitLine && waitLine.kind === kind){ say(waitLine.lineFn); Scene.go("plate"); } };
 const live3D = has3D && Scene.start(); if (!live3D) $("#room").hidden = true;
 const h0 = location.hash.slice(1);
 if (h0 && ALL.some(d => d.id === h0)) { profile = store.get("chezdeo-profile"); Scene.sitNow(); openDish(h0); }
