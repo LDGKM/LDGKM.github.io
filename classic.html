@@ -268,7 +268,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <div class="section-head">
       <h2 id="nb-title">Lab notebook</h2>
-      <p>One entry per project from this year, newest first. The first two are complete data analyses, with public code and a written report. Entries marked live demo run in your browser.</p>
+      <p>One entry per project from this year, newest first. The first three come with public code and a written report: a small research study and two data analyses. Entries marked live demo run in your browser.</p>
     </div>
     <ol class="entries" id="entries"></ol>
   </div>
@@ -297,7 +297,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 </main>
 
 <dialog id="cvDialog" aria-labelledby="cvTitle">
-  <div class="cv-bar"><h2 id="cvTitle">CV</h2><span class="hint">Deo Gratias Loutou · 1 page · October 2026</span><a class="btn" href="cv/Deo_Gratias_Loutou_CV.pdf" download>Download PDF</a><button type="button" class="btn" id="cvClose">Close</button></div>
+  <div class="cv-bar"><h2 id="cvTitle">CV</h2><span class="hint">Deo Gratias Loutou · 1 page · October 2026</span><a class="btn" href="cv/Deo_Gratias_Loutou_CV.pdf" download>Download PDF</a><a class="btn" href="cv/Deo_Gratias_Loutou_CV_Research.pdf" download>Research CV</a><button type="button" class="btn" id="cvClose">Close</button></div>
   <div class="cv-pages">
     <img src="img/cv-1.jpg" width="910" height="1287" alt="One-page CV: profile, skills (Python, SQL, statistics), DataCamp certifications, projects (3D city and drone simulator of Mulhouse, Membrana, Voronoi restaurant finder), internship at PetitAvis, IT internship at JASPE Technologies, and education at Université de Haute-Alsace and IFRI." loading="lazy">
   </div>
@@ -567,6 +567,15 @@ fetch("data/district.json").then(r => { if (!r.ok) throw new Error(r.status); re
    2. THE NOTEBOOK
    ===================================================================== */
 const ENTRIES = [
+ { id:"surgery", date:"Oct 2026", title:"From data to robust surgery schedules", tags:["Python","scikit-learn","conformal prediction","HiGHS (MILP)","research"],
+   one:"How uncertain is the length of an operation, and what does learning that uncertainty change in an operating-room schedule? A small research study on 6,385 open surgeries.",
+   links:[["Code and notebook","https://github.com/LDGKM/surgery-duration-uncertainty"],["Paper-style report (PDF)","https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf"]],
+   notes:[
+    ["Question","Operating-room schedules rely on predicted durations, but the uncertainty around them is usually replaced by a fixed margin. Can it be learned from data, and does it make better schedules?"],
+    ["Uncertainty","Gradient boosting predicts the time in the operating room (46 min mean error against 51 for the procedure's history). Historical 10th-90th percentiles cover only 76.5% of new cases; conformalized quantile regression covers 80.1% and has the best interval score in 10 of 10 random splits. Coverage still drops in small contexts such as robotic surgery."],
+    ["Schedules","An exact mixed-integer model (set packing, solved with HiGHS) fills four 8-hour rooms; each plan is replayed with the real durations. Planning every case at its learned 80th percentile cuts overtime from 113 to 19 minutes per room and day, with more utilisation than a uniform 15% buffer."],
+    ["Negative result","A budgeted robust model built on the learned deviations was too conservative: it protects against the worst deviations happening together, which rarely occurs."]],
+   images:[["surgery_frontier.jpg","Utilisation vs overtime for each planning rule, 200 simulated days"],["surgery_coverage.jpg","Does the 80% interval hold in every surgical context?"]]},
  { id:"roads", date:"Oct 2026", title:"Road accidents in France and Haut-Rhin", tags:["Python","SQL (DuckDB)","pandas","statsmodels","open data"],
    one:"310,000 injury accidents and 18,356 deaths, 2019 to 2024: when, where and to whom road deaths happen, and what turns a crash into a death.",
    links:[["Code and notebook","https://github.com/LDGKM/road-accidents-france"],["Report (PDF)","https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf"]],
