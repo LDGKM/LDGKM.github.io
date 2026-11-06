@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mulhouse en données · Deo Gratias Loutou</title>
+<meta name="description" content="Un portfolio raconté avec de vraies données : les bâtiments de Mulhouse, puis les accidents du Haut-Rhin, en 3D.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* A night map: the 3D scene is fixed behind, the story scrolls over it. */
+:root{
+  --night:#0B1117;--panel:rgba(14,21,28,.86);--ink:#E8ECE9;--muted:#9AA7AF;--line:#2A3742;
+  --ochre:#E3AE2A;--blue:#60A5FA;--red:#EF4444;
+  --font-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--font-body);font-size:clamp(.98rem,.95rem + .15vw,1.06rem);line-height:1.62}
+a{color:var(--ochre);text-underline-offset:.18em}
+:focus-visible{outline:2px solid var(--ochre);outline-offset:3px;border-radius:2px}
+#scene{position:fixed;inset:0;width:100vw;height:100vh;height:100lvh;display:block;pointer-events:none}
+.top{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-left));background:linear-gradient(rgba(11,17,23,.85),rgba(11,17,23,0))}
+.top .brand{font-family:var(--font-display);font-weight:800;font-size:1.25rem;text-transform:uppercase;color:var(--ink);text-decoration:none;letter-spacing:.02em}
+.top nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+.top nav a{color:var(--ink);text-decoration:none;font-size:.8rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding-block:6px}
+.top nav a:hover{color:var(--ochre)}
+/* HUD */
+.hud{position:fixed;z-index:3;pointer-events:none;font-family:var(--font-mono);transition:opacity .35s}
+#year{right:max(20px,4vw);bottom:28px;font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,2rem + 6vw,7rem);line-height:1;color:var(--ink);text-shadow:0 2px 18px rgba(0,0,0,.6)}
+#year small{display:block;font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--muted);text-align:right;letter-spacing:.06em}
+.legend{right:max(20px,4vw);top:76px;display:grid;gap:4px;font-size:.74rem;color:var(--muted);background:rgba(11,17,23,.6);padding:10px 12px;border:1px solid var(--line);border-radius:3px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px}
+.legend .dot{border-radius:50%}
+.lab{position:fixed;z-index:1;pointer-events:none;transform:translate(-50%,-140%);font-family:var(--font-mono);font-size:.78rem;color:var(--ink);background:rgba(11,17,23,.72);border:1px solid var(--line);padding:2px 7px;border-radius:2px;white-space:nowrap;transition:opacity .35s}
+.lab b{color:var(--ochre);font-weight:600}
+/* story */
+main{position:relative;z-index:2}
+.step{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:90px max(16px,4vw) 60px}
+.card{width:min(440px,100%);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 24px;backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
+h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
+h1{font-size:clamp(2.6rem,1.8rem + 4vw,4.6rem)}
+h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.5rem)}
+.card p{margin:0 0 12px}
+.card p:last-child{margin-bottom:0}
+.src{font-size:.8rem;color:var(--muted)}
+.big{font-family:var(--font-display);font-weight:800;color:var(--ochre)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:9px 15px;border:1.5px solid var(--ink);border-radius:2px;color:var(--ink);text-decoration:none;font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
+.btn.main{background:var(--ochre);border-color:var(--ochre);color:#16110A}
+.btn:hover{border-color:var(--ochre)}
+.cue{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);margin-top:14px}
+#load{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:4;font-family:var(--font-mono);font-size:.8rem;color:var(--muted);background:rgba(11,17,23,.8);padding:6px 12px;border-radius:3px}
+.nogl #scene{display:none}
+.nogl body{background:var(--night) url("../img/roads_map.jpg") center/cover fixed}
+@media (max-width:760px){
+  .step{align-items:flex-end;padding-bottom:28px}
+  .card{padding:18px 18px;background:rgba(14,21,28,.9)}
+  #legEras{display:none}
+  .legend{top:96px;right:auto;left:12px;font-size:.7rem;padding:7px 9px}
+  #year{bottom:auto;top:92px;right:auto;left:16px;font-size:3rem}
+  #year small{text-align:left}
+}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<header class="top">
+  <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+  <nav aria-label="Menu principal">
+    <a href="../classic-fr.html#notebook">Projets</a>
+    <a href="../etudes/">Études</a>
+    <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV</a>
+    <a href="../classic-fr.html#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hud" id="year" style="opacity:0"><span id="yearN">1450</span><small id="yearS">bâtiments debout : 0</small></div>
+<div class="hud legend" id="legEras" style="opacity:0"></div>
+<div class="hud legend" id="legAcc" style="opacity:0">
+  <span><i class="dot" style="background:var(--blue)"></i>accident corporel</span>
+  <span><i class="dot" style="background:var(--red)"></i>accident mortel</span>
+  <span id="accCount">0 accident</span>
+</div>
+<div class="lab" id="labMul" style="opacity:0">Mulhouse</div>
+<div class="lab" id="labCol" style="opacity:0">Colmar</div>
+<div id="load">Chargement de la ville…</div>
+
+<main>
+  <section class="step" data-step="0">
+    <div class="card">
+      <p class="kick">Deo Gratias Loutou · alternance data &amp; R&amp;D 2027 · Mulhouse</p>
+      <h1>Mulhouse en données</h1>
+      <p>Un portfolio raconté avec de vraies données : chaque bâtiment, chaque arbre et chaque accident que vous allez voir existe, à sa vraie place.</p>
+      <p class="cue">Faites défiler ↓</p>
+      <div class="btns"><a class="btn" href="../classic-fr.html">Version sans 3D</a></div>
+    </div>
+  </section>
+
+  <section class="step" data-step="1">
+    <div class="card">
+      <p class="kick">Chapitre 1 · la ville</p>
+      <h2>1 678 bâtiments, chacun à sa date</h2>
+      <p>Le centre de Mulhouse, dans un rayon de 420 m autour de la place de la Réunion, reconstruit à partir de la BD TOPO de l'IGN. En faisant défiler, chaque bâtiment s'élève l'année de sa construction et s'arrête à sa hauteur mesurée.</p>
+      <p>Le plus ancien daté remonte à 1450 ; l'année médiane est 1900. 822 bâtiments n'ont pas de date connue : ils montent en dernier, en gris.</p>
+      <p class="src">Source : IGN BD TOPO® V3, Licence Ouverte Etalab 2.0.</p>
+    </div>
+  </section>
+
+  <section class="step" data-step="2">
+    <div class="card">
+      <p class="kick">Chapitre 1 · la ville</p>
+      <h2>533 arbres, trouvés sur photo aérienne</h2>
+      <p>Aucune base publique ne recense les arbres du centre-ville. Je les ai détectés automatiquement, comme des taches vert foncé sur les photos aériennes à 20 cm de l'IGN.</p>
+      <p>Ce modèle vient de mon simulateur de drone sous Unity, qui produit aussi des images de bâtiments endommagés pour entraîner des modèles de détection.</p>
+      <p class="src">Source : IGN BD ORTHO® 20 cm.</p>
+    </div>
+  </section>
+
+  <section class="step" data-step="3">
+    <div class="card">
+      <p class="kick">Chapitre 2 · la route</p>
+      <h2>On prend de la hauteur</h2>
+      <p>Le même réflexe, à l'échelle du département : partir des données publiques, les vérifier, puis les regarder là où elles se trouvent.</p>
+      <p>Voici le Haut-Rhin. Le quartier que vous venez de voir n'est plus qu'un point, au sud.</p>
+    </div>
+  </section>
+
+  <section class="step" data-step="4">
+    <div class="card">
+      <p class="kick">Chapitre 2 · la route</p>
+      <h2>2 164 accidents corporels, à leur vraie place</h2>
+      <p>Chaque point est un accident avec au moins un blessé, enregistré par la police ou la gendarmerie entre 2019 et 2024. Ils apparaissent année par année.</p>
+      <p>Pour en arriver là : 24 fichiers nationaux dont le format change d'une année à l'autre, nettoyés en SQL. À l'échelle de la France, mes nombres de tués sont identiques aux chiffres officiels.</p>
+      <p class="src">Source : fichier BAAC de l'ONISR, data.gouv.fr.</p>
+    </div>
+  </section>
+
+  <section class="step" data-step="5">
+    <div class="card">
+      <p class="kick">Chapitre 2 · la route</p>
+      <h2>156 accidents mortels</h2>
+      <p>En rouge, les accidents où au moins une personne est morte dans les 30 jours.</p>
+      <p>Le Haut-Rhin compte <span class="big">36</span> tués par million d'habitants et par an, contre <span class="big">46</span> en France métropolitaine : c'est le 11<sup>e</sup> département le plus sûr sur 96.</p>
+    </div>
+  </section>
+
+  <section class="step" data-step="6">
+    <div class="card">
+      <p class="kick">Chapitre 2 · la route</p>
+      <h2>Le piège : trop peu d'accidents à Mulhouse</h2>
+      <p>La commune de Mulhouse enregistre en moyenne 17 accidents par an, Colmar 28, alors que Mulhouse est plus grande et compte autant de tués (13 chacune de 2019 à 2024). Strasbourg, environ trois fois plus peuplée, en enregistre 266.</p>
+      <p>Les accidents légers sont très probablement sous-enregistrés à Mulhouse : pour ce secteur, seuls les indicateurs fondés sur les décès sont fiables. Repérer ce genre de biais avant de conclure, c'est le cœur du métier.</p>
+      <div class="btns"><a class="btn main" href="../etudes/accidents-route.html">Lire l'étude</a></div>
+    </div>
+  </section>
+
+  <section class="step" data-step="7">
+    <div class="card">
+      <p class="kick">Prototype · deux chapitres sur cinq</p>
+      <h2>La suite du récit</h2>
+      <p>Viendront : le séisme simulé sur ces mêmes bâtiments, l'incertitude des durées au bloc opératoire, et les médicaments remboursés.</p>
+      <p>Je cherche une alternance en data ou en R&amp;D pour 2027-2028, ou un stage à partir de mai 2027 qui pourrait y mener.</p>
+      <div class="btns">
+        <a class="btn main" href="../classic-fr.html#notebook">Tous les projets</a>
+        <a class="btn" href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+        <a class="btn" href="../classic-fr.html#contact">Me contacter</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = s => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = t => t * t * (3 - 2 * t);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+/* geography: local metres around place de la Réunion (same origin as the district file) */
+const LAT0 = 47.74585, LON0 = 7.33895, KX = 111320 * Math.cos(LAT0 * Math.PI / 180), KZ = 110574;
+const geo = (lon, lat) => [(lon - LON0) * KX, -(lat - LAT0) * KZ];
+const CITIES = { mul: geo(7.3359, 47.7508), col: geo(7.3585, 48.0794) };
+
+const ERAS = [
+  {to:1789, name:"avant 1790", col:"#B4604F"}, {to:1870, name:"1790–1870", col:"#D29458"},
+  {to:1918, name:"1871–1918", col:"#C2AC80"}, {to:1975, name:"1919–1975", col:"#94A3AA"},
+  {to:2100, name:"après 1975", col:"#7A9CB8"} ];
+const UNKNOWN = {name:"date inconnue", col:"#6B7378"};
+$("#legEras").innerHTML = [...ERAS, UNKNOWN].map(e => `<span><i style="background:${e.col}"></i>${e.name}</span>`).join("");
+
+/* camera key poses, one per step: target x/z, distance (m), elevation and azimuth (rad) */
+const DEPT = [-6500, -13000];
+// m: extra distance on phones, where the story card hides the lower part of the screen
+const KEYS = [
+  {t:[0,-30], d:900, e:0.88, a:0.55, m:1.2},
+  {t:[0,-30], d:640, e:0.62, a:1.15, m:1.35},
+  {t:[-20,-10], d:430, e:0.50, a:1.85, m:1.35},
+  {t:DEPT, d:150000, e:1.22, a:0.12, m:1.2},
+  {t:DEPT, d:132000, e:1.02, a:0.0, m:1.2},
+  {t:DEPT, d:126000, e:0.98, a:-0.08, m:1.2},
+  {t:[730,-17600], d:68000, e:0.92, a:-0.05, m:2.3},
+  {t:DEPT, d:165000, e:1.18, a:0.22, m:1.2} ];
+
+/* scroll → continuous story position p (step index + progress inside the step) */
+const steps = [...document.querySelectorAll(".step")];
+function storyPos(){
+  const line = innerHeight * 0.55; let p = 0;
+  for (const s of steps){ const r = s.getBoundingClientRect(); p += clamp((line - r.top) / r.height, 0, 1); }
+  return clamp(p - 0.5, 0, steps.length - 1);   // p = i exactly when step i is centred
+}
+const local = (p, i) => clamp(p - (i - 0.5), 0, 1);    // progress through step i (0 → 1)
+
+let seen = 0;
+function stepReached(i){ if (i > seen){ seen = i; track("recit/etape/" + i); } }
+
+/* ------------------------------------------------------------------ 3D */
+const canvas = $("#scene");
+let gl = false;
+try { gl = !!(window.THREE && (canvas.getContext("webgl2") || canvas.getContext("webgl"))); } catch (e) {}
+if (!gl){ document.documentElement.classList.add("nogl"); $("#load").textContent = "La 3D n'est pas disponible sur cet appareil : le récit reste lisible."; }
+else start();
+
+function start(){
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, logarithmicDepthBuffer:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, matchMedia("(max-width:760px)").matches ? 1.5 : 2));
+  renderer.setClearColor(0x0B1117);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 1, 600000);
+  scene.add(new THREE.HemisphereLight(0xdfe7ff, 0x1a2128, 0.75));
+  const sun = new THREE.DirectionalLight(0xfff1dc, 0.65); sun.position.set(-300, 520, 260); scene.add(sun);
+
+  const U = { uYear:{value:1440}, uTrees:{value:0}, uShow:{value:2018}, uFatal:{value:0}, uAcc:{value:0}, uPx:{value:renderer.getPixelRatio()} };
+  const fades = [];   // materials that fade with the department view
+
+  Promise.all([fetch("../data/district.json").then(r => r.json()), fetch("../data/roads68.json").then(r => r.json())])
+    .then(([district, acc]) => { buildDistrict(district); buildDept(acc); $("#load").hidden = true; requestAnimationFrame(frame); })
+    .catch(err => { console.error(err); $("#load").textContent = "Les données n'ont pas pu se charger : le récit reste lisible."; });
+
+  let bYears = [], districtGroup, deptFill, deptLine, rings = [], accCum = [];
+  function buildDistrict(data){
+    districtGroup = new THREE.Group(); scene.add(districtGroup);
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(440, 96), new THREE.MeshLambertMaterial({color:0x151D25}));
+    ground.rotation.x = -Math.PI / 2; ground.position.y = -0.05; districtGroup.add(ground);
+    const rp = [];
+    for (const [pts, width] of data.roads){
+      const w = (parseFloat(width) || 3) / 2 + 0.6;
+      for (let i = 0; i + 3 < pts.length; i += 2){
+        const ax = pts[i], az = -pts[i+1], bx = pts[i+2], bz = -pts[i+3];
+        const dx = bx-ax, dz = bz-az, L = Math.hypot(dx,dz) || 1, nx = -dz/L*w, nz = dx/L*w;
+        rp.push(ax+nx,0.02,az+nz, bx+nx,0.02,bz+nz, bx-nx,0.02,bz-nz,  ax+nx,0.02,az+nz, bx-nx,0.02,bz-nz, ax-nx,0.02,az-nz);
+      }
+    }
+    const rg = new THREE.BufferGeometry(); rg.setAttribute("position", new THREE.Float32BufferAttribute(rp, 3));
+    districtGroup.add(new THREE.Mesh(rg, new THREE.MeshBasicMaterial({color:0x2E3B47, side:THREE.DoubleSide})));
+
+    const P=[], N=[], C=[], AY=[];
+    const col = new THREE.Color(), roof = new THREE.Color();
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const years = [];
+    for (const b of data.buildings){
+      const [flat, h, , , year] = b;
+      const shape = new THREE.Shape();
+      for (let i = 0; i < flat.length; i += 2) i ? shape.lineTo(flat[i], flat[i+1]) : shape.moveTo(flat[i], flat[i+1]);
+      const g0 = new THREE.ExtrudeGeometry(shape, {depth:Math.max(2.5, h), bevelEnabled:false}); g0.rotateX(-Math.PI / 2);
+      const g = g0.index ? g0.toNonIndexed() : g0; g.computeVertexNormals();
+      const pos = g.attributes.position.array, nor = g.attributes.normal.array;
+      const era = year ? ERAS.find(e => year <= e.to) : UNKNOWN;
+      col.set(era.col); roof.copy(col).offsetHSL(0, -0.05, 0.1);
+      const yr = year || 2030 + rnd() * 10; years.push(yr);
+      for (let k = 0; k < pos.length; k += 3){
+        P.push(pos[k], pos[k+1], pos[k+2]); N.push(nor[k], nor[k+1], nor[k+2]);
+        const c = nor[k+1] > 0.7 ? roof : col; C.push(c.r, c.g, c.b); AY.push(yr);
+      }
+    }
+    years.sort((a, b) => a - b); bYears = years;
+    const bg = new THREE.BufferGeometry();
+    bg.setAttribute("position", new THREE.Float32BufferAttribute(P, 3));
+    bg.setAttribute("normal", new THREE.Float32BufferAttribute(N, 3));
+    bg.setAttribute("color", new THREE.Float32BufferAttribute(C, 3));
+    bg.setAttribute("aYear", new THREE.Float32BufferAttribute(AY, 1));
+    const bm = new THREE.MeshLambertMaterial({vertexColors:true});
+    bm.onBeforeCompile = sh => {
+      sh.uniforms.uYear = U.uYear;
+      sh.vertexShader = sh.vertexShader
+        .replace("#include <common>", "#include <common>\nattribute float aYear; uniform float uYear;")
+        .replace("#include <begin_vertex>", `vec3 transformed = vec3(position);
+          float g = clamp((uYear - aYear) / 9.0, 0.0, 1.0); g = g*g*(3.0-2.0*g);
+          transformed.y *= g; if (g < 0.002) transformed = vec3(0.0, -5000.0, 0.0);`);
+    };
+    districtGroup.add(new THREE.Mesh(bg, bm));
+
+    const tm = new THREE.MeshLambertMaterial({color:0x4F7F45});
+    tm.onBeforeCompile = sh => { sh.uniforms.uTrees = U.uTrees;
+      sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nuniform float uTrees;")
+        .replace("#include <begin_vertex>", "vec3 transformed = vec3(position) * max(uTrees, 0.0001);"); };
+    const trees = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), tm, data.trees.length);
+    const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), T = new THREE.Vector3();
+    data.trees.forEach(([x, z, r, h], i) => { const rr = Math.max(2, r * 1.1), hh = Math.max(5, h);
+      T.set(x, hh * 0.62, -z); S.set(rr, Math.max(rr, hh * 0.45), rr); M.compose(T, Q, S); trees.setMatrixAt(i, M); });
+    districtGroup.add(trees);
+  }
+
+  function buildDept(acc){
+    const pts = acc.outline.map(([lon, lat]) => geo(lon, lat));
+    const shape = new THREE.Shape(); pts.forEach(([x, z], i) => i ? shape.lineTo(x, -z) : shape.moveTo(x, -z));
+    const fg = new THREE.ShapeGeometry(shape); fg.rotateX(-Math.PI / 2);
+    deptFill = new THREE.Mesh(fg, new THREE.MeshBasicMaterial({color:0x16202A, transparent:true, opacity:0, depthWrite:false}));
+    deptFill.position.y = -2; scene.add(deptFill);
+    const lg = new THREE.BufferGeometry().setFromPoints(pts.map(([x, z]) => new THREE.Vector3(x, 0, z)));
+    deptLine = new THREE.LineLoop(lg, new THREE.LineBasicMaterial({color:0xE3AE2A, transparent:true, opacity:0})); scene.add(deptLine);
+
+    // accidents: fatal ones drawn last so they sit on top
+    const list = acc.points.slice().sort((a, b) => a[2] - b[2]);
+    const pos = [], AY = [], AF = [];
+    for (const [lon, lat, fatal, year] of list){ const [x, z] = geo(lon, lat); pos.push(x, 30, z); AY.push(year); AF.push(fatal); }
+    const ys = acc.points.map(p => p[3]);
+    accCum = [2019, 2020, 2021, 2022, 2023, 2024].map(y => ys.filter(v => v <= y).length);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("aYear", new THREE.Float32BufferAttribute(AY, 1));
+    g.setAttribute("aFatal", new THREE.Float32BufferAttribute(AF, 1));
+    const m = new THREE.ShaderMaterial({ uniforms:U, transparent:true, depthTest:false, depthWrite:false,
+      vertexShader:`attribute float aYear; attribute float aFatal; uniform float uShow, uFatal, uAcc, uPx; varying float vA; varying float vF;
+        void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          float shown = smoothstep(aYear - 0.6, aYear + 0.1, uShow) * uAcc;
+          float s = aFatal > 0.5 ? mix(4.0, 9.0, uFatal) : mix(3.4, 2.6, uFatal);
+          gl_PointSize = s * uPx * shown; vF = aFatal;
+          vA = shown * (aFatal > 0.5 ? 1.0 : mix(0.8, 0.32, uFatal)); }`,
+      fragmentShader:`varying float vA; varying float vF;
+        void main(){ vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard;
+          vec3 col = vF > 0.5 ? vec3(0.937, 0.267, 0.267) : vec3(0.376, 0.647, 0.98);
+          gl_FragColor = vec4(col, vA); }` });
+    const pts3 = new THREE.Points(g, m); pts3.renderOrder = 10; pts3.frustumCulled = false; scene.add(pts3);
+
+    // 3 km rings around Mulhouse and Colmar for the "trap" chapter
+    for (const k of ["mul", "col"]){
+      const r = new THREE.Mesh(new THREE.RingGeometry(2900, 3300, 96), new THREE.MeshBasicMaterial({color:0xE3AE2A, transparent:true, opacity:0, depthTest:false}));
+      r.rotation.x = -Math.PI / 2; r.position.set(CITIES[k][0], 40, CITIES[k][1]); r.renderOrder = 11; scene.add(r); rings.push(r);
+    }
+  }
+
+  function resize(){
+    const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
+    camera.fov = w < 760 ? 50 : 38;
+    // keep the subject clear of the story card: shift the picture right (desktop) or up (phone)
+    if (w < 760) camera.setViewOffset(w, h, 0, h * 0.24, w, h); else camera.setViewOffset(w, h, -w * 0.16, 0, w, h);
+    camera.updateProjectionMatrix(); U.uPx.value = renderer.getPixelRatio();
+  }
+  addEventListener("resize", resize); resize();
+
+  const v = new THREE.Vector3();
+  function placeLabel(el, x, z, on){
+    v.set(x, 0, z).project(camera);
+    const vis = on > 0.02 && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
+    el.style.opacity = vis ? on : 0;
+    if (vis){ el.style.left = ((v.x + 1) / 2 * innerWidth) + "px"; el.style.top = ((1 - v.y) / 2 * innerHeight) + "px"; }
+  }
+
+  let pSmooth = 0, tPrev = performance.now();
+  function frame(now){
+    const dt = Math.min(0.05, (now - tPrev) / 1000); tPrev = now;
+    const target = storyPos();
+    pSmooth += (target - pSmooth) * (reduced ? 1 : Math.min(1, dt * 6));
+    const p = pSmooth; stepReached(Math.round(target));
+
+    // camera: blend the two nearest key poses (log-distance so the zoom-out feels steady)
+    const i = Math.min(KEYS.length - 2, Math.floor(p)), f = smooth(clamp(p - i, 0, 1)), A = KEYS[i], B = KEYS[i + 1];
+    const tx = lerp(A.t[0], B.t[0], f), tz = lerp(A.t[1], B.t[1], f);
+    const phone = innerWidth < 760;
+    const d = Math.exp(lerp(Math.log(A.d * (phone ? A.m : 1)), Math.log(B.d * (phone ? B.m : 1)), f)), e = lerp(A.e, B.e, f);
+    const a = lerp(A.a, B.a, f) + (reduced ? 0 : 0.05 * Math.sin(now / 9000));
+    camera.position.set(tx + d * Math.cos(e) * Math.sin(a), d * Math.sin(e), tz + d * Math.cos(e) * Math.cos(a));
+    camera.lookAt(tx, 0, tz);
+
+    // chapter 1: the city rises with the scroll, then the trees
+    const l1 = local(p, 1), l2 = local(p, 2), l3 = local(p, 3), l4 = local(p, 4), l5 = local(p, 5), l6 = local(p, 6);
+    const year = p < 0.5 ? 1440 : lerp(1440, 2041, smooth(clamp(l1 * 1.15, 0, 1)));
+    U.uYear.value = year; U.uTrees.value = smooth(l2);
+    // chapter 2: department, accidents by year, fatal focus, the trap
+    const dept = smooth(l3);
+    deptFill.material.opacity = 0.9 * dept; deptLine.material.opacity = dept;
+    U.uAcc.value = l4 > 0 ? 1 : 0; U.uShow.value = lerp(2018.4, 2024.2, clamp(l4 * 1.2, 0, 1)); U.uFatal.value = smooth(l5) * (1 - smooth(l6));
+    const ring = smooth(l6) * (1 - local(p, 7)); rings.forEach(r => r.material.opacity = 0.9 * ring);
+
+    // HUD
+    const y1 = p > 0.55 && p < 2.6 ? 1 : 0;
+    $("#year").style.opacity = y1; $("#legEras").style.opacity = y1;
+    if (y1){ const yy = Math.min(2026, Math.round(year)); $("#yearN").textContent = year > 2026.5 ? "2026" : yy;
+      const up = bYears.filter(v => v <= year - 4).length; $("#yearS").textContent = "bâtiments debout : " + up.toLocaleString("fr-FR"); }
+    const accOn = p > 3.55 ? 1 : 0; $("#legAcc").style.opacity = accOn;
+    if (accOn && accCum.length){ const yi = clamp(Math.floor(U.uShow.value - 2018.4), 0, 5);
+      const n = U.uShow.value < 2018.9 ? 0 : accCum[yi]; $("#accCount").textContent = n.toLocaleString("fr-FR") + " accidents · 2019–" + (2019 + yi); }
+    placeLabel($("#labMul"), CITIES.mul[0], CITIES.mul[1], dept);
+    placeLabel($("#labCol"), CITIES.col[0], CITIES.col[1], dept);
+    const unit = phone ? " acc. (3 km)" : " accidents à moins de 3 km";
+    $("#labMul").innerHTML = ring > 0.3 ? "Mulhouse · <b>115</b>" + unit : "Mulhouse";
+    $("#labCol").innerHTML = ring > 0.3 ? "Colmar · <b>157</b>" + unit : "Colmar";
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+}
+</script>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
