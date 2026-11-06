@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ldgkm.github.io/sitemap.xml

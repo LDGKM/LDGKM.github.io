@@ -7,6 +7,17 @@
 <meta property="og:title" content="Chez Déo · Deo Gratias Loutou">
 <meta property="og:description" content="Portfolio served as a menu in a 3D Alsatian winstub: data analysis, 3D, algorithms.">
 <meta property="og:image" content="https://ldgkm.github.io/img/og.jpg">
+<meta property="og:url" content="https://ldgkm.github.io/">
+<link rel="canonical" href="https://ldgkm.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Deo Gratias Loutou","url":"https://ldgkm.github.io/",
+ "jobTitle":"Computer science master's student (data analysis, R&D)","email":"mailto:loutoudeogratias@gmail.com",
+ "address":{"@type":"PostalAddress","addressLocality":"Mulhouse","addressCountry":"FR"},
+ "alumniOf":{"@type":"CollegeOrUniversity","name":"Université de Haute-Alsace"},
+ "knowsAbout":["Data analysis","SQL","Python","Conformal prediction","Mixed-integer programming","Operations research"],
+ "sameAs":["https://github.com/LDGKM","https://www.linkedin.com/in/deo-gratias-loutou-545263278"]}
+</script>
 <meta name="description" content="Chez Déo: the portfolio of Deo Gratias Loutou, served as a menu in a 3D Alsatian winstub.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -192,6 +203,7 @@ const C = window.CONTENT;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 
 let lang = store.get("chezdeo-lang") || ((navigator.language||"en").toLowerCase().startsWith("fr") ? "fr" : "en");
@@ -277,12 +289,12 @@ function welcome(){
   $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("")
     + `<button type="button" class="link" data-act="book">${esc(X().signBook)}</button>` + classicLink();
 }
-function sitDown(){ Scene.sitNow(); welcome(); }
+function sitDown(){ Scene.sitNow(); welcome(); track("3d/seated"); }
 $("#choices").addEventListener("click", e => {
   const a = e.target.closest("[data-act]");
   if (a){ const act = a.dataset.act; if (act === "enter") enterResto(); else if (act === "sit") sitDown(); else if (act === "desk") goDesk(); else if (act === "book") openBook(); return; }
   const b = e.target.closest("[data-profile]"); if (!b) return;
-  profile = b.dataset.profile; store.set("chezdeo-profile", profile);
+  profile = b.dataset.profile; store.set("chezdeo-profile", profile); track("3d/profile/" + profile);
   if (Scene.seated) return showMenu(true);
   setView("leading"); $("#choices").innerHTML = ""; say(() => X().follow);
   Scene.lead(() => showMenu(true));
@@ -325,7 +337,7 @@ $("#cardScroll").addEventListener("click", e => {
 });
 
 function sequence(){ return [C.starter, ...C.dishes.filter(d => d.section==="special"), ...ordered(), ...C.dishes.filter(d => d.section==="dessert")]; }
-function openDish(id){
+function openDish(id){ track("3d/dish/" + id);
   const d = ALL.find(x => x.id === id); if (!d) return;
   setView("dish"); current = id; const t = L(d), R = T().recipe;
   let body;
@@ -418,7 +430,7 @@ function openText(){
   $("#tmTitle").textContent = T().textMenu;
   show($("#dlgText"));
 }
-function openCV(){ const r = profile === "research";   // research visitors get the research CV
+function openCV(){ track("3d/cv"); const r = profile === "research";   // research visitors get the research CV
   const fr = lang === "fr" ? "-fr" : "", FR = lang === "fr" ? "_FR" : "";
   $("#cvImg").src = r ? `img/cv-research${fr}-1.jpg` : `img/cv${fr}-1.jpg`;
   $("#cvDl").href = r ? `cv/Deo_Gratias_Loutou_CV_Research${FR}.pdf` : `cv/Deo_Gratias_Loutou_CV${FR}.pdf`;
@@ -1178,5 +1190,6 @@ else if (live3D) {
 else { welcome(); say(() => T().noGL); if (h0 === "cv") openCV(); }
 </script>
 
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

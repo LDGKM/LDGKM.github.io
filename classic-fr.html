@@ -3,10 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta property="og:title" content="Deo Gratias Loutou">
-<meta property="og:description" content="Étudiant en master d'informatique à Mulhouse. Un quartier reconstruit à partir des données cartographiques ouvertes, et un carnet de laboratoire de projets.">
-<title>Deo Gratias Loutou</title>
-<meta name="description" content="Portfolio de Deo Gratias Loutou, étudiant en master d'informatique à Mulhouse : un quartier reconstruit à partir des données cartographiques ouvertes, et un carnet de laboratoire de projets.">
+<meta property="og:title" content="Deo Gratias Loutou · Stage data &amp; R&amp;D">
+<meta property="og:description" content="Étudiant en master d'informatique à Mulhouse, je cherche un stage de data analyst ou de R&amp;D. Trois études avec code public et rapport : plannings de bloc sous incertitude, accidents de la route, médicaments remboursés.">
+<title>Deo Gratias Loutou · Stage data &amp; R&amp;D · Portfolio</title>
+<meta name="description" content="Portfolio de Deo Gratias Loutou, étudiant en master d'informatique à Mulhouse, à la recherche d'un stage de data analyst ou de R&amp;D : prédiction conforme et planification, analyses de données ouvertes en SQL et Python.">
+<link rel="canonical" href="https://ldgkm.github.io/classic-fr.html">
+<link rel="alternate" hreflang="en" href="https://ldgkm.github.io/classic.html">
+<link rel="alternate" hreflang="fr" href="https://ldgkm.github.io/classic-fr.html">
+<link rel="alternate" hreflang="x-default" href="https://ldgkm.github.io/classic.html">
+<meta property="og:url" content="https://ldgkm.github.io/classic-fr.html">
+<meta property="og:type" content="profile">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://ldgkm.github.io/img/og-classic-fr.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Deo Gratias Loutou","url":"https://ldgkm.github.io/",
+ "jobTitle":"Computer science master's student (data analysis, R&D)","email":"mailto:loutoudeogratias@gmail.com",
+ "address":{"@type":"PostalAddress","addressLocality":"Mulhouse","addressCountry":"FR"},
+ "alumniOf":{"@type":"CollegeOrUniversity","name":"Université de Haute-Alsace"},
+ "knowsAbout":["Data analysis","SQL","Python","Conformal prediction","Mixed-integer programming","Operations research"],
+ "sameAs":["https://github.com/LDGKM","https://www.linkedin.com/in/deo-gratias-loutou-545263278"]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -350,6 +369,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 "use strict";
+const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
 try { localStorage.setItem("chezdeo-lang", "fr"); } catch (e) {}
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -718,7 +738,7 @@ moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
 
 const started = new Set();
 const onToggle = e => {
-  const d = e.target; if (!d.open) return;
+  const d = e.target; if (!d.open) return; track("project/" + d.dataset.id);
   const ent = ENTRIES.find(x => x.id === d.dataset.id);
   if (ent && ent.demo && !started.has(ent.id)){ started.add(ent.id); DEMOS[ent.demo](document.getElementById("stage-"+ent.id)); }
 };
@@ -895,7 +915,8 @@ new MutationObserver(rerunTheme).observe(document.documentElement, {attributes:t
 
 /* CV viewer */
 const cvD = document.getElementById("cvDialog");
-function openCV(){ if (cvD.showModal && !cvD.open) cvD.showModal(); else cvD.setAttribute("open",""); }
+function openCV(){ track("cv"); if (cvD.showModal && !cvD.open) cvD.showModal(); else cvD.setAttribute("open",""); }
+document.addEventListener("click", e => { const o = e.target.closest("a[href^=\"https://\"]"); if (o) track("out/" + o.hostname + o.pathname.replace(/\/blob\/main/, "")); }, true);
 document.addEventListener("click", e => { const a = e.target.closest("[data-cv]"); if (!a) return; e.preventDefault(); openCV(); });
 document.getElementById("cvClose").addEventListener("click", () => cvD.close ? cvD.close() : cvD.removeAttribute("open"));
 cvD.addEventListener("click", e => { if (e.target === cvD) cvD.close(); });
@@ -911,5 +932,6 @@ document.getElementById("copyMail").addEventListener("click", () => {
 });
 </script>
 
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
