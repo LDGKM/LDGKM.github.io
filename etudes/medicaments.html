@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Médicaments remboursés · Deo Gratias Loutou</title>
+<meta name="description" content="160 milliards d&#x27;euros de médicaments remboursés de 2019 à 2025 : la dépense augmente de 43&nbsp;% à volume constant. Molécules suivies malgré les changements de codes, régions comparées à âge égal.">
+<link rel="canonical" href="https://deogratias-loutou.fr/etudes/medicaments.html">
+<meta property="og:title" content="Ce que rembourse la France : les médicaments, 2019-2025">
+<meta property="og:description" content="160 milliards d&#x27;euros de médicaments remboursés de 2019 à 2025 : la dépense augmente de 43&nbsp;% à volume constant. Molécules suivies malgré les changements de codes, régions comparées à âge égal.">
+<meta property="og:url" content="https://deogratias-loutou.fr/etudes/medicaments.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://deogratias-loutou.fr/img/etudes/med_01_spending_vs_volume.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="etudes.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+    <nav aria-label="Menu principal">
+      <a href="../classic-fr.html#notebook">Projets</a>
+      <a href="../classic-fr.html#contact">Contact</a>
+      <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+      <a href="../index.html">Version 3D</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <p class="kicker">Analyse de données · octobre 2026 · SQL (DuckDB), Python, pandas</p>
+  <h1>Ce que rembourse la France : les médicaments, 2019-2025</h1>
+  <p class="lede">Les dépenses de médicaments en pharmacie augmentent : de combien, pourquoi, et comment comparer les régions équitablement ?</p>
+  <ul class="stats" aria-label="Chiffres clés">
+    <li><b>27,4&nbsp;Md€</b><span>remboursés en 2025, contre 19,1&nbsp;Md€ en 2019</span></li>
+    <li><b>+43&nbsp;%</b><span>de dépense pour +1&nbsp;% de boîtes</span></li>
+    <li><b>9,77 → 13,51&nbsp;€</b><span>prix moyen d'une boîte</span></li>
+    <li><b>19&nbsp;%</b><span>de la dépense reliée malgré les changements de codes</span></li>
+  </ul>
+  <div class="links">
+    <a class="btn primary" href="https://github.com/LDGKM/medicine-spending-france">Code et notebook ↗</a>
+    <a class="btn" href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf">Rapport complet (PDF, en anglais) ↗</a>
+  </div>
+
+  <section>
+    <h2>La question</h2>
+    <p>À quelle vitesse augmentent les dépenses de médicaments remboursés, et pourquoi ? Quels médicaments et quels domaines expliquent la hausse ? Comment ont évolué quelques usages suivis en santé publique ? Et comment comparer les régions une fois l'âge pris en compte ?</p>
+  </section>
+  <section>
+    <h2>Les données</h2>
+    <p>Open Medic, publié par l'Assurance maladie à partir du Système national des données de santé (SNDS) : chaque boîte de médicament délivrée en pharmacie de ville et remboursée, de 2019 à 2025, avec le nombre de patients, par âge, sexe et région. Les médicaments hospitaliers ne sont pas inclus, et les montants excluent les honoraires des pharmaciens.</p>
+  </section>
+  <section>
+    <h2>La méthode</h2>
+    <p><b>Chargement.</b> Les nombres sont au format français (1.171,74) et les fichiers ne partagent pas le même encodage (Windows-1252 ou UTF-8) : tout est réécrit en UTF-8, puis chargé et converti en SQL dans DuckDB.</p>
+    <p><b>Validation.</b> Les totaux calculés à partir des trois niveaux de détail (molécule, classe, groupe) sont identiques chaque année, à l'euro près.</p>
+    <p><b>Suivre une molécule dans le temps.</b> Une molécule ne garde pas toujours le même code : l'OMS a déplacé les analogues du GLP-1 en 2020 et réorganisé les anticancéreux en 2021, et certains libellés sont mal orthographiés certaines années. J'ai relié les codes et libellés qui désignent la même molécule avec un algorithme <i>union-find</i> : cela concerne 19&nbsp;% de la dépense.</p>
+    <p><b>Comparer les régions à âge égal.</b> Standardisation directe : la dépense par habitant de chaque région, dans chaque classe d'âge, est pondérée par la structure d'âge nationale.</p>
+  </section>
+  <section>
+    <h2>Les résultats</h2>
+    <h3>La dépense monte, pas le volume</h3>
+    <p>L'Assurance maladie a remboursé 27,4 milliards d'euros de médicaments délivrés en pharmacie en 2025, contre 19,1 milliards en 2019 : <b>+43&nbsp;% en six ans</b>. Le nombre de boîtes, lui, n'a pas bougé (+1&nbsp;%). Le prix moyen d'une boîte est passé de 9,77&nbsp;€ à 13,51&nbsp;€ : la hausse vient de ce qui est délivré (des traitements nouveaux et chers), pas de la quantité.</p>
+    <figure><img src="../img/etudes/med_01_spending_vs_volume.webp" alt="Dépense et nombre de boîtes de 2019 à 2025, et prix moyen d&#x27;une boîte" loading="lazy"><figcaption>Dépense remboursée et nombre de boîtes (indice 2019), et prix moyen d'une boîte.</figcaption></figure>
+    <h3>Où sont allés les 8,3 milliards de plus</h3>
+    <p>Les médicaments du cancer et de l'immunologie expliquent 3,2 milliards de la hausse (38&nbsp;%). Une seule molécule, le tafamidis (maladie cardiaque rare), est passée de 45 millions à 1,07 milliard d'euros pour environ 16 000 patients. La dépense se concentre : 55 molécules sur environ 1 100 font la moitié du total, contre 70 en 2019.</p>
+    <figure><img src="../img/etudes/med_02_growth_by_group.webp" alt="Contribution de chaque groupe thérapeutique à la hausse de la dépense" loading="lazy"><figcaption>Contribution de chaque groupe thérapeutique à la hausse de la dépense entre 2019 et 2025.</figcaption></figure>
+    <h3>Trois évolutions d'usage</h3>
+    <ul>
+      <li><b>Analogues du GLP-1</b> (diabète) : de 415 000 patients en 2020 à 932 000 en 2025.</li>
+      <li><b>Antibiotiques</b> : effondrement pendant la pandémie (-17&nbsp;% de patients en 2020), retour au niveau de 2019 en 2024.</li>
+      <li><b>TDAH</b> : les adultes traités par méthylphénidate sont passés de 17 000 à 114 000 (×6,8).</li>
+    </ul>
+    <figure><img src="../img/etudes/med_04_three_stories.webp" alt="Patients sous analogues du GLP-1, sous antibiotiques et traités pour un TDAH" loading="lazy"><figcaption>Analogues du GLP-1 (patients), antibiotiques (indice 2019 = 100) et méthylphénidate (patients, par âge), de 2019 à 2025.</figcaption></figure>
+    <h3>Les régions à âge égal</h3>
+    <p>Les plus de 60 ans coûtent 852&nbsp;€ par habitant, contre 262&nbsp;€ pour les 20-59 ans et 110&nbsp;€ pour les moins de 20 ans. Les régions âgées paraissent donc chères. Après standardisation sur l'âge, l'Île-de-France, la région la plus jeune, passe de la 11<sup>e</sup> à la 3<sup>e</sup> place sur 12 ; la Nouvelle-Aquitaine recule de la 2<sup>e</sup> à la 7<sup>e</sup> ; le Grand Est est 4<sup>e</sup>.</p>
+    <figure><img src="../img/etudes/med_05_regions.webp" alt="Dépense par habitant des régions, brute et standardisée sur l&#x27;âge" loading="lazy"><figcaption>Dépense par habitant de chaque région, brute et à âge égal.</figcaption></figure>
+  </section>
+  <section>
+    <h2>Les limites</h2>
+    <ul>
+      <li>Pharmacies de ville uniquement : beaucoup de traitements coûteux du cancer sont délivrés à l'hôpital et n'apparaissent pas ici.</li>
+      <li>Prix catalogue, avant les remises confidentielles négociées avec l'État : la dépense nette est plus faible.</li>
+      <li>Trois classes d'âge seulement : la standardisation reste grossière.</li>
+    </ul>
+    <p class="note">Tout se relance avec <code>python run_all.py</code>.</p>
+  </section>
+
+  <nav class="pager" aria-label="Autres études"><a href="accidents-route.html">← Accidents de la route</a><span></span></nav>
+</main>
+<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

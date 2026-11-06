@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta property="og:title" content="Deo Gratias Loutou · Data &amp; R&amp;D internship">
-<meta property="og:description" content="Computer science master's student in Mulhouse, looking for a data analyst or R&amp;D internship. Three studies with public code and reports: surgery schedules under uncertainty, road accidents, reimbursed medicines.">
-<title>Deo Gratias Loutou · Data &amp; R&amp;D internship · Portfolio</title>
-<meta name="description" content="Portfolio of Deo Gratias Loutou, computer science master's student in Mulhouse looking for a data analyst or R&amp;D internship: conformal prediction and OR scheduling, open-data analyses in SQL and Python.">
+<meta property="og:title" content="Deo Gratias Loutou · Data &amp; R&amp;D work-study 2027">
+<meta property="og:description" content="Computer science master's student in Mulhouse, looking for a data or R&amp;D work-study position (alternance) for 2027–2028. Three studies with public code and reports: surgery schedules under uncertainty, road accidents, reimbursed medicines.">
+<title>Deo Gratias Loutou · Data &amp; R&amp;D work-study 2027 · Portfolio</title>
+<meta name="description" content="Portfolio of Deo Gratias Loutou, computer science master's student in Mulhouse looking for a data or R&amp;D work-study position (alternance) for 2027–2028: conformal prediction and OR scheduling, open-data analyses in SQL and Python.">
 <link rel="canonical" href="https://deogratias-loutou.fr/classic.html">
 <link rel="alternate" hreflang="en" href="https://deogratias-loutou.fr/classic.html">
 <link rel="alternate" hreflang="fr" href="https://deogratias-loutou.fr/classic-fr.html">
@@ -263,7 +263,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <p class="kicker mono">Mulhouse · M1 Computer Science, Université de Haute-Alsace</p>
     <h1 id="intro-title">Deo Gratias Loutou</h1>
-    <p class="lede">I turn open data into analyses you can check, and I study how uncertainty learned from data changes decisions. <strong>Looking for a data analyst or R&amp;D internship.</strong></p>
+    <p class="lede">I turn open data into analyses you can check, and I study how uncertainty learned from data changes decisions. <strong>Looking for a work-study position (alternance) in data or R&amp;D for 2027–2028, or an internship from May 2027 that could lead to it.</strong></p>
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a></div>
     <h2 class="sr">Featured projects</h2>
     <ol class="featured">
@@ -334,7 +334,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="wrap">
-    <div class="section-head"><h2 id="about-title">About</h2><p>Mulhouse, France. Looking for a data analyst or R&amp;D internship.</p></div>
+    <div class="section-head"><h2 id="about-title">About</h2><p>Mulhouse, France. Looking for a work-study position (alternance) in data or R&amp;D for 2027–2028, or an internship from May 2027 that could lead to it.</p></div>
     <div class="about">
       <div>
         <p>I studied information security in Benin for three years, then moved to Mulhouse to finish a bachelor's in computer science. This summer I worked on ConfoPE, a compliance platform for childcare facilities, at PetitAvis: a production database of more than fifty tables, a dashboard comparing facilities, and a large schema restructuring without losing data.</p>
@@ -743,7 +743,7 @@ const entryHtml = e => `
     <span class="tags">${e.tags.map(t => `<span>${t}</span>`).join("")}</span>
    </summary>
    <div class="body">
-    <div class="notes">${e.notes.map(([h,p]) => `<div><h4>${h}</h4><p>${p}</p></div>`).join("")}${e.links ? `<p class="cta">${e.links.map(([t,u]) => `<a class="btn" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("")}</p>` : ""}</div>
+    <div class="notes">${e.notes.map(([h,p]) => `<div><h4>${h}</h4><p>${p}</p></div>`).join("")}${e.links ? `<p class="cta">${e.links.map(([t,u]) => /^https?:/.test(u) ? `<a class="btn" href="${u}" target="_blank" rel="noopener">${t} ↗</a>` : `<a class="btn primary" href="${u}">${t}</a>`).join("")}</p>` : ""}</div>
     <div class="stage" id="stage-${e.id}">${(e.images||[]).map(([src,cap]) => `<figure><img src="img/${src}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("")}</div>
    </div>
   </details>

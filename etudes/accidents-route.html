@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accidents de la route · Deo Gratias Loutou</title>
+<meta name="description" content="Analyse de 309 756 accidents corporels et 18 356 tués en France de 2019 à 2024 : SQL, validation sur les chiffres officiels, régression logistique, biais d&#x27;enregistrement à Mulhouse.">
+<link rel="canonical" href="https://deogratias-loutou.fr/etudes/accidents-route.html">
+<meta property="og:title" content="Accidents de la route en France et dans le Haut-Rhin, 2019-2024">
+<meta property="og:description" content="Analyse de 309 756 accidents corporels et 18 356 tués en France de 2019 à 2024 : SQL, validation sur les chiffres officiels, régression logistique, biais d&#x27;enregistrement à Mulhouse.">
+<meta property="og:url" content="https://deogratias-loutou.fr/etudes/accidents-route.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://deogratias-loutou.fr/img/etudes/route_06_haut_rhin_map.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="etudes.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+    <nav aria-label="Menu principal">
+      <a href="../classic-fr.html#notebook">Projets</a>
+      <a href="../classic-fr.html#contact">Contact</a>
+      <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+      <a href="../index.html">Version 3D</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <p class="kicker">Analyse de données · octobre 2026 · SQL (DuckDB), Python, statsmodels</p>
+  <h1>Accidents de la route en France et dans le Haut-Rhin, 2019-2024</h1>
+  <p class="lede">Quand, où et à qui arrivent les morts sur la route, et qu'est-ce qui rend un accident corporel mortel ?</p>
+  <ul class="stats" aria-label="Chiffres clés">
+    <li><b>309 756</b><span>accidents corporels en métropole</span></li>
+    <li><b>18 356</b><span>tués de 2019 à 2024</span></li>
+    <li><b>68&nbsp;%</b><span>des tués hors agglomération, pour 36&nbsp;% des accidents</span></li>
+    <li><b>AUC 0,76</b><span>pour le modèle de gravité</span></li>
+  </ul>
+  <div class="links">
+    <a class="btn primary" href="https://github.com/LDGKM/road-accidents-france">Code et notebook ↗</a>
+    <a class="btn" href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf">Rapport complet (PDF, en anglais) ↗</a>
+  </div>
+
+  <section>
+    <h2>La question</h2>
+    <p>Quand, où et à qui arrivent les morts sur la route ? Comment le Haut-Rhin se situe-t-il par rapport au reste de la France ? Et quelles circonstances transforment un accident corporel en accident mortel ?</p>
+  </section>
+  <section>
+    <h2>Les données</h2>
+    <p>Le fichier national des accidents corporels (BAAC), publié par l'Observatoire national interministériel de la sécurité routière (ONISR) sur data.gouv.fr : un enregistrement par accident avec au moins un blessé constaté par la police ou la gendarmerie, en quatre tables par an (accidents, lieux, véhicules, usagers). L'étude couvre 2019 à 2024 en France métropolitaine (96 départements), avec les populations de l'Insee au 1<sup>er</sup> janvier 2023.</p>
+  </section>
+  <section>
+    <h2>La méthode</h2>
+    <p><b>Nettoyage en SQL (DuckDB).</b> Les 24 fichiers CSV changent de format d'une année à l'autre : identifiant renommé en 2022, valeurs manquantes codées « -1 », « (1) » ou « N/A », virgules décimales, départements écrits « 1 » au lieu de « 01 ». Une seule macro SQL convertit chaque champ codé en entier ou en valeur manquante. Les quelque 40 catégories de véhicules sont regroupées en 11 modes de déplacement, plus les piétons.</p>
+    <p><b>Validation.</b> Mes nombres de tués correspondent exactement aux chiffres officiels de l'ONISR pour 2019 à 2023 (3 244 ; 2 541 ; 2 944 ; 3 267 ; 3 167) : le nettoyage ne perd aucun accident.</p>
+    <p><b>Modèle.</b> Une régression logistique (statsmodels) sur 301 290 accidents, avec un effet par année, testée sur 25&nbsp;% des données mises de côté.</p>
+  </section>
+  <section>
+    <h2>Les résultats</h2>
+    <h3>Un plateau depuis 2019</h3>
+    <p>Environ 3 000 morts par an, sans amélioration depuis 2019. Après les confinements de 2020, les accidents enregistrés se sont stabilisés environ 9&nbsp;% sous leur niveau de 2019, tandis que les décès y sont revenus (3 193 en 2024).</p>
+    <figure><img src="../img/etudes/route_01_trend.webp" alt="Évolution des accidents et des tués de 2019 à 2024" loading="lazy"><figcaption>Accidents corporels et tués par an, France métropolitaine et Haut-Rhin.</figcaption></figure>
+    <h3>Quand : la nuit tue davantage</h3>
+    <p>Le créneau le plus chargé est le vendredi entre 17 h et 18 h. Mais entre 3 h et 6 h du matin, 11&nbsp;% des accidents sont mortels, deux fois plus qu'en journée. La nuit représente 26&nbsp;% des accidents et 35&nbsp;% des tués.</p>
+    <figure><img src="../img/etudes/route_02_when.webp" alt="Accidents par heure et par jour, et part d&#x27;accidents mortels selon l&#x27;heure" loading="lazy"><figcaption>Accidents selon l'heure et le jour, et part d'accidents mortels selon l'heure.</figcaption></figure>
+    <h3>Qui et où</h3>
+    <ul>
+      <li>78&nbsp;% des tués sont des hommes ; le taux de mortalité culmine entre 20 et 24 ans, puis remonte après 80 ans.</li>
+      <li>Les morts en trottinette électrique sont passés de 11 à 47 par an, les blessés de 677 à 2 746.</li>
+      <li>Hors agglomération : 36&nbsp;% des accidents, mais <b>68&nbsp;% des tués</b>.</li>
+    </ul>
+    <h3>Le Haut-Rhin, et un piège dans les données</h3>
+    <p>Avec 36 tués par million d'habitants et par an contre 46 au niveau national, le Haut-Rhin est le 11<sup>e</sup> département le plus sûr sur 96.</p>
+    <figure><img src="../img/etudes/route_06_haut_rhin_map.webp" alt="Carte des accidents corporels du Haut-Rhin, les accidents mortels en rouge" loading="lazy"><figcaption>Tous les accidents corporels du Haut-Rhin, 2019-2024 ; en rouge, les accidents mortels.</figcaption></figure>
+    <p>Mais Mulhouse enregistre moins d'accidents que Colmar, ville plus petite (17 par an contre 28), et quinze fois moins que Strasbourg (266), alors qu'elle compte autant de tués que Colmar (13 de 2019 à 2024). Les accidents légers y sont très probablement sous-enregistrés dans le fichier national. Conséquence : pour ce secteur, <b>seuls les indicateurs fondés sur les décès sont fiables</b>.</p>
+    <p>Le même décalage se voit à l'échelle du département : le Haut-Rhin enregistre 469 accidents par million d'habitants et par an, contre 785 au niveau national.</p>
+    <figure><img src="../img/etudes/route_07_recording_completeness.webp" alt="Accidents enregistrés et tués par million d&#x27;habitants, pour chaque département" loading="lazy"><figcaption>Accidents enregistrés (en abscisse, échelle logarithmique) et tués (en ordonnée) par million d'habitants et par an, pour chaque département.</figcaption></figure>
+    <h3>Ce qui rend un accident mortel</h3>
+    <p>À autres facteurs égaux, la présence d'un piéton ou d'un poids lourd multiplie environ par 3 la probabilité (en cote) qu'un accident soit mortel ; un obstacle fixe ou un choc frontal par 2,6 ; une route à 80-90 km/h par 2,1 par rapport à 50 km/h ; la nuit sans éclairage par 1,75. Deux résultats semblent contre-intuitifs et rappellent qu'il s'agit d'associations, pas de causes : le mauvais temps (0,84 : on ralentit, et la pluie ajoute beaucoup d'accidents légers) et la trottinette (0,75 : surtout des chutes urbaines à basse vitesse). Le modèle classe correctement les accidents (AUC 0,76 sur des données non vues) mais n'explique qu'une partie du résultat : la vitesse au choc, l'alcool et le port de la ceinture ne sont pas dans les données ouvertes.</p>
+    <figure><img src="../img/etudes/route_08_odds_ratios.webp" alt="Rapports de cotes de la régression logistique" loading="lazy"><figcaption>Ce qui augmente ou diminue le risque qu'un accident corporel soit mortel (rapports de cotes).</figcaption></figure>
+  </section>
+  <section>
+    <h2>Les limites</h2>
+    <ul>
+      <li>Données de police uniquement : les accidents sans intervention manquent, et pas de la même façon partout (voir Mulhouse).</li>
+      <li>Pas de données d'exposition (kilomètres parcourus par mode) : la hausse des morts en trottinette reflète peut-être en partie la hausse des trajets.</li>
+      <li>Petits nombres dans le Haut-Rhin : les chiffres annuels fluctuent au hasard.</li>
+    </ul>
+    <p class="note">Tout se relance avec <code>python run_all.py</code> (environ 2&nbsp;minutes).</p>
+  </section>
+
+  <nav class="pager" aria-label="Autres études"><a href="bloc-operatoire.html">← Plannings de bloc opératoire</a><a href="medicaments.html">Médicaments remboursés →</a></nav>
+</main>
+<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

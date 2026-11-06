@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pas à la carte · Chez Déo</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,600;1,400&family=Alegreya+Sans:wght@400;500;700&family=Alegreya+Sans+SC:wght@500&display=swap">
+<style>
+:root{--paper:#F4EBDA;--sheet:#FBF6EA;--ink:#2B1F17;--muted:#6A5546;--wine:#9C3029;--brass:#8A6420;--kelsch:#2E4C8C;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--paper:#1B1410;--sheet:#261C16;--ink:#F4EBDA;--muted:#C9B79C;--wine:#E07A6F;--brass:#E2B868;--kelsch:#8FA8DA;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--paper);color:var(--ink);font-family:"Alegreya Sans",system-ui,sans-serif;font-size:1.05rem;line-height:1.6}
+.card{width:100%;max-width:560px;background:var(--sheet);border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);border-radius:4px;overflow:hidden}
+.band{height:18px;background-color:var(--sheet);background-image:repeating-linear-gradient(90deg,color-mix(in srgb,var(--kelsch) 55%,transparent) 0 9px,transparent 9px 18px),repeating-linear-gradient(0deg,color-mix(in srgb,var(--kelsch) 55%,transparent) 0 9px,transparent 9px 18px)}
+.in{padding:28px 28px 24px}
+.k{font-family:"Alegreya Sans SC",sans-serif;font-weight:500;letter-spacing:.12em;color:var(--muted);margin:0 0 6px}
+h1{font-family:Alegreya,serif;font-weight:600;font-size:clamp(1.9rem,1.5rem + 2vw,2.6rem);line-height:1.1;margin:0 0 10px}
+p{margin:0 0 14px}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+a.btn{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:1.5px solid var(--ink);border-radius:3px;color:var(--ink);text-decoration:none;font-weight:500}
+a.btn.main{background:var(--wine);border-color:var(--wine);color:#FBF6EA}
+a.btn:hover{border-color:var(--wine)}
+a.btn:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.en{border-top:1px solid color-mix(in srgb,var(--ink) 15%,transparent);margin-top:22px;padding-top:16px;color:var(--muted);font-size:.95rem}
+.en a{color:var(--brass)}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="band" aria-hidden="true"></div>
+  <div class="in">
+    <p class="k">Chez Déo · erreur 404</p>
+    <h1>Ce plat n'est pas à la carte.</h1>
+    <p>La page que vous cherchez n'existe pas, ou elle a changé d'adresse. Le serveur vous propose plutôt :</p>
+    <nav class="links" aria-label="Pages du site">
+      <a class="btn main" href="/classic-fr.html#notebook">Voir les projets</a>
+      <a class="btn" href="/">La salle en 3D</a>
+      <a class="btn" href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+      <a class="btn" href="/classic-fr.html#contact">Me contacter</a>
+    </nav>
+    <p class="en" lang="en">This dish isn't on the menu: the page doesn't exist or has moved. See the <a href="/classic.html#notebook">projects</a>, the <a href="/">3D restaurant</a>, the <a href="/cv/Deo_Gratias_Loutou_CV.pdf">CV</a> or how to <a href="/classic.html#contact">get in touch</a>.</p>
+  </div>
+</main>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>

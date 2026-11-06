@@ -380,7 +380,7 @@ $("#cardFoot").addEventListener("click", e => {
 });
 function linksHtml(d){
   if (!d.links) return "";
-  return `<p class="links">${d.links.code ? `<a class="btn" href="${d.links.code}" target="_blank" rel="noopener">${esc(X().code)}</a>` : ""}`
+  return `<p class="links">${d.links.fr && lang === "fr" ? `<a class="btn" href="${d.links.fr}">Lire l'étude en français</a>` : ""}${d.links.code ? `<a class="btn" href="${d.links.code}" target="_blank" rel="noopener">${esc(X().code)}</a>` : ""}`
     + `${d.links.report ? `<a class="btn" href="${d.links.report}" target="_blank" rel="noopener">${esc(X().report)}</a>` : ""}</p>`;
 }
 
@@ -397,7 +397,7 @@ function openBill(){
   setView("bill"); current = null;
   $("#cardScroll").innerHTML = `<div class="recipe"><p class="sub">${esc(T().sections.bill)}</p><h3>${esc(T().billTitle)}</h3><p class="lede">${esc(T().billIntro)}</p>
     <dl class="facts">
-      <dt>${esc(T().lookingFor)}</dt><dd>${lang==="fr" ? "Un stage de data analyst" : "A data analyst internship"}</dd>
+      <dt>${esc(T().lookingFor)}</dt><dd>${lang==="fr" ? "Une alternance data ou R&D pour 2027-2028, ou un stage dès mai 2027" : "A data or R&D work-study position (alternance) for 2027–2028, or an internship from May 2027"}</dd>
       <dt>${esc(T().email)}</dt><dd class="copyline"><code id="mail">${esc(C.contact.email)}</code><button type="button" class="btn" data-copy>${esc(T().copy)}</button><span id="copyMsg" class="note" aria-live="polite"></span></dd>
       <dt>LinkedIn</dt><dd><a href="${C.contact.linkedin}" target="_blank" rel="noopener">deo-gratias-loutou ↗</a></dd>
       <dt>GitHub</dt><dd><a href="${C.contact.github}" target="_blank" rel="noopener">LDGKM ↗</a></dd>

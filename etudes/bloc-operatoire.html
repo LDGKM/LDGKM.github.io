@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plannings de bloc opératoire · Deo Gratias Loutou</title>
+<meta name="description" content="Apprendre l&#x27;incertitude des durées opératoires (prédiction conforme) et l&#x27;utiliser dans un modèle de planification en nombres entiers : dépassements réduits de 113 à 19&nbsp;minutes par salle et par jour.">
+<link rel="canonical" href="https://deogratias-loutou.fr/etudes/bloc-operatoire.html">
+<meta property="og:title" content="Des données aux plannings de bloc robustes">
+<meta property="og:description" content="Apprendre l&#x27;incertitude des durées opératoires (prédiction conforme) et l&#x27;utiliser dans un modèle de planification en nombres entiers : dépassements réduits de 113 à 19&nbsp;minutes par salle et par jour.">
+<meta property="og:url" content="https://deogratias-loutou.fr/etudes/bloc-operatoire.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://deogratias-loutou.fr/img/etudes/bloc_03_schedule_frontier.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="etudes.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+    <nav aria-label="Menu principal">
+      <a href="../classic-fr.html#notebook">Projets</a>
+      <a href="../classic-fr.html#contact">Contact</a>
+      <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+      <a href="../index.html">Version 3D</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <p class="kicker">Étude de recherche · octobre 2026 · Python, scikit-learn, HiGHS</p>
+  <h1>Des données aux plannings de bloc robustes</h1>
+  <p class="lede">À quel point la durée d'une opération est-elle incertaine, et qu'est-ce que le fait d'apprendre cette incertitude change dans un planning de bloc opératoire ?</p>
+  <ul class="stats" aria-label="Chiffres clés">
+    <li><b>6 385</b><span>opérations en données ouvertes (VitalDB)</span></li>
+    <li><b>80,1&nbsp;%</b><span>de couverture pour un intervalle visé à 80&nbsp;%, contre 76,5&nbsp;% avec l'historique</span></li>
+    <li><b>113 → 19&nbsp;min</b><span>de dépassement par salle et par jour</span></li>
+    <li><b>88,7&nbsp;%</b><span>d'occupation des salles</span></li>
+  </ul>
+  <div class="links">
+    <a class="btn primary" href="https://github.com/LDGKM/surgery-duration-uncertainty">Code et notebook ↗</a>
+    <a class="btn" href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf">Rapport complet (PDF, en anglais) ↗</a>
+  </div>
+
+  <section>
+    <h2>La question</h2>
+    <p>Les plannings de bloc opératoire reposent sur des durées prévues. Pourtant, l'incertitude autour de ces prévisions est le plus souvent ignorée, ou remplacée par une marge identique pour toutes les opérations. L'étude pose deux questions :</p>
+    <ul>
+      <li>Peut-on apprendre cette incertitude à partir des informations connues avant l'opération, et un intervalle annoncé « à 80&nbsp;% » contient-il vraiment 80&nbsp;% des cas, globalement et dans chaque contexte chirurgical ?</li>
+      <li>Utiliser cette incertitude apprise dans un modèle de planification donne-t-il de meilleurs plannings que les pratiques habituelles (moyennes historiques, marges fixes) ?</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Les données</h2>
+    <p><a href="https://vitaldb.net">VitalDB</a> (Lee et al., <i>Scientific Data</i>, 2022, licence CC BY 4.0) : 6 388 opérations non cardiaques réalisées à l'hôpital universitaire national de Séoul. La variable à prédire est le temps passé en salle, de l'entrée à la sortie du patient : c'est ce qu'un planning doit réserver. Après retrait de trois cas de plus de 16 heures, il reste 6 385 opérations pour 6 089 patients (médiane 165&nbsp;min, moyenne 189&nbsp;min).</p>
+    <p>Seules les informations disponibles au moment de planifier sont utilisées : âge, classe ASA, examens préopératoires, service, intervention prévue, voie d'abord, etc. Les mesures prises pendant l'opération sont exclues pour ne pas « tricher ». Les données sont découpées par patient : 60&nbsp;% pour l'apprentissage, 20&nbsp;% pour la calibration, 20&nbsp;% pour le test.</p>
+  </section>
+  <section>
+    <h2>La méthode</h2>
+    <h3>Prédire une durée</h3>
+    <p>Trois prédictions de la durée médiane sont comparées : la médiane globale, l'historique de la même intervention (la pratique courante), et un modèle de gradient boosting (scikit-learn).</p>
+    <h3>Construire des intervalles à 80&nbsp;%</h3>
+    <p>Cinq méthodes : les percentiles historiques de l'intervention, la régression quantile, la prédiction conforme, la <b>régression quantile conforme</b> (CQR, Romano et al., 2019) et une CQR calibrée séparément dans chaque service. Elles sont comparées par leur couverture, leur largeur et le score d'intervalle (Gneiting et Raftery, 2007), qui récompense les intervalles étroits et pénalise les cas qui en sortent. Toute l'évaluation est répétée sur 10 découpages aléatoires.</p>
+    <h3>Planifier sous incertitude</h3>
+    <p>200 journées simulées : 4 salles de 8 heures et une liste d'attente de 24 opérations programmées tirées du jeu de test. Un modèle exact en nombres entiers (<i>set packing</i>, résolu avec le solveur HiGHS) choisit quelles opérations mettre dans quelle salle. Chaque règle de planification produit son planning : médianes historiques, médiane prédite, marges fixes de 5 à 30&nbsp;%, quantiles appris de 60 à 90&nbsp;%, et modèle robuste « à budget » (Bertsimas et Sim, 2004). Chaque planning est ensuite <b>rejoué avec les vraies durées</b> pour mesurer les dépassements et l'occupation des salles.</p>
+  </section>
+  <section>
+    <h2>Les résultats</h2>
+    <h3>1. La prédiction seule ne suffit pas</h3>
+    <p>Le gradient boosting réduit l'erreur moyenne de 50,7 à 45,6&nbsp;minutes par rapport à l'historique de l'intervention (sur 10 découpages). Mais environ la moitié des opérations restent à plus de 30&nbsp;minutes de leur prédiction : il faut un intervalle, pas seulement un chiffre.</p>
+    <h3>2. Les intervalles habituels sont trop optimistes</h3>
+    <p>Les percentiles historiques ne couvrent que 76,5&nbsp;% des nouveaux cas, et la régression quantile brute 67,7&nbsp;%, au lieu des 80&nbsp;% annoncés. La CQR atteint 80,1&nbsp;%, avec le meilleur score d'intervalle : elle bat l'historique sur 10 découpages sur 10.</p>
+    <figure><img src="../img/etudes/bloc_01_intervals_examples.webp" alt="Quarante opérations du jeu de test avec leur prédiction, leur intervalle CQR et leur durée réelle" loading="lazy"><figcaption>Quarante opérations du jeu de test : prédiction médiane, intervalle CQR à 80&nbsp;% et durée réelle.</figcaption></figure>
+    <h3>3. La couverture n'est pas la même partout</h3>
+    <p>Derrière la moyenne, certains contextes sont mal couverts : 66&nbsp;% en chirurgie robotique (68 cas), 60&nbsp;% en urologie (30 cas). Calibrer par service fait passer le service le moins bien couvert de 74&nbsp;% à 76&nbsp;% en moyenne, mais ne corrige pas l'urologie, qui n'a qu'une vingtaine de cas de calibration.</p>
+    <figure><img src="../img/etudes/bloc_02_coverage.webp" alt="Couverture des intervalles par service, voie d&#x27;abord et longueur prédite" loading="lazy"><figcaption>Couverture des intervalles à 80&nbsp;% selon le service, la voie d'abord et la longueur prédite.</figcaption></figure>
+    <h3>4. De meilleurs plannings</h3>
+    <p>Planifier sur les médianes historiques donne <b>113&nbsp;minutes de dépassement par salle et par jour</b>, et 80&nbsp;% des salles finissent en retard : les durées sont asymétriques, chaque opération dépasse sa médiane de 10,4&nbsp;minutes en moyenne, et ces retards s'additionnent dans une salle.</p>
+    <p>Planifier chaque opération à son <b>80<sup>e</sup> percentile appris</b> ramène les dépassements à <b>19&nbsp;minutes</b>, avec 88,7&nbsp;% d'occupation des salles : 2,1 points de plus qu'une marge uniforme de 15&nbsp;% pour le même niveau de dépassement. La marge est mise là où est l'incertitude, au lieu de protéger autant les opérations courtes et prévisibles que les longues et incertaines.</p>
+    <figure><img src="../img/etudes/bloc_03_schedule_frontier.webp" alt="Occupation des salles en fonction des dépassements pour chaque règle de planification" loading="lazy"><figcaption>Occupation des salles et dépassements pour chaque règle de planification, 200 journées simulées. En haut à gauche, c'est mieux.</figcaption></figure>
+    <h3>5. Un résultat négatif</h3>
+    <p>Le modèle robuste à budget, construit sur les écarts appris, s'est montré trop prudent : à dépassement égal, il perd environ 10 points d'occupation face aux quantiles appris. Il protège chaque salle contre ses pires écarts survenant tous en même temps, ce qui arrive rarement.</p>
+  </section>
+  <section>
+    <h2>Les limites</h2>
+    <ul>
+      <li>Un seul hôpital, coréen, et sans dates : les résultats peuvent ne pas se transposer, et le découpage aléatoire ignore les évolutions dans le temps.</li>
+      <li>Pas de données de salle de réveil, pourtant déterminante en pratique.</li>
+      <li>Plannings simplifiés : salles identiques, pas de contraintes de chirurgien ou d'équipement, pas d'urgences.</li>
+      <li>Les garanties de la prédiction conforme sont valables en moyenne, pas dans chaque petit groupe.</li>
+    </ul>
+    <p class="note">Tout se relance avec <code>python run_all.py</code> (environ 10&nbsp;minutes) et redonne les mêmes chiffres.</p>
+  </section>
+
+  <nav class="pager" aria-label="Autres études"><span></span><a href="accidents-route.html">Accidents de la route →</a></nav>
+</main>
+<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
