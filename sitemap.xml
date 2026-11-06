@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url><loc>https://deogratias-loutou.fr/</loc><lastmod>2026-11-06</lastmod></url>
+  <url><loc>https://deogratias-loutou.fr/</loc><lastmod>2026-11-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://deogratias-loutou.fr/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deogratias-loutou.fr/en/"/></url>
+  <url><loc>https://deogratias-loutou.fr/en/</loc><lastmod>2026-11-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://deogratias-loutou.fr/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://deogratias-loutou.fr/en/"/></url>
   <url><loc>https://deogratias-loutou.fr/classic.html</loc><lastmod>2026-11-06</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://deogratias-loutou.fr/classic.html"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://deogratias-loutou.fr/classic-fr.html"/></url>
