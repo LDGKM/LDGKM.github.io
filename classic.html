@@ -26,6 +26,9 @@
  "knowsAbout":["Data analysis","SQL","Python","Conformal prediction","Mixed-integer programming","Operations research"],
  "sameAs":["https://github.com/LDGKM","https://www.linkedin.com/in/deo-gratias-loutou-545263278"]}
 </script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -228,7 +231,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 .featured h3{font-size:var(--step-1);text-transform:uppercase}
 .featured p{margin:0}
 .featured .res{color:var(--muted)}
-.featured .links{display:flex;gap:16px;padding:0 18px 16px;font-size:var(--step--1);font-weight:600}
+.featured .links{display:flex;flex-wrap:wrap;gap:4px 20px;padding:0 18px 12px;font-size:var(--step--1);font-weight:600}
+.featured .links a{display:inline-block;padding:8px 0;min-height:24px}
 .hero h2{font-size:var(--step-3);text-transform:uppercase;max-width:20ch}
 .more-title{margin:40px 0 0;font-size:var(--step-1);text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:8px}
 .entries.compact .entry>details>summary{padding:12px 4px}
@@ -261,7 +265,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <h1 id="intro-title">Deo Gratias Loutou</h1>
     <p class="lede">I turn open data into analyses you can check, and I study how uncertainty learned from data changes decisions. <strong>Looking for a data analyst or R&amp;D internship.</strong></p>
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a></div>
-    <ol class="featured" aria-label="Featured projects">
+    <h2 class="sr">Featured projects</h2>
+    <ol class="featured">
     <li><a class="card" href="#surgery"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     <li><a class="card" href="#roads"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     <li><a class="card" href="#medicines"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
@@ -364,9 +369,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6.0.4/dist/d3-delaunay.min.js"></script>
 <script>
 "use strict";
 const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
@@ -601,6 +604,7 @@ async function autoPlay(){
 
 let tPrev = performance.now();
 function loop(now){
+  if (!cityVisible || document.hidden){ tPrev = now; requestAnimationFrame(loop); return; }
   const dt = Math.min(0.05, (now - tPrev)/1000); tPrev = now;
   const ease = (a,b,k) => a + (b-a) * Math.min(1, dt*k);
   yearNow = Math.abs(yearTarget-yearNow) < 0.5 ? yearTarget : ease(yearNow, yearTarget, 9);
@@ -615,9 +619,21 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-fetch("data/district.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(initCity)
-  .catch(err => { document.getElementById("loading").textContent = "The 3D district could not load. The notebook below still works."; console.error(err); });
+const loadScript = src => new Promise((ok, ko) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = ko; document.head.append(sc); });
+let cityStarted = false, cityVisible = true;
+function startCity(){
+  if (cityStarted) return; cityStarted = true;
+  loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js")
+    .then(() => loadScript("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"))
+    .then(() => fetch("data/district.json")).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(initCity)
+    .catch(err => { document.getElementById("loading").textContent = "The 3D district could not load. The projects above still work."; console.error(err); });
+}
+// the district is below the projects: build it only when the visitor scrolls near it, and stop drawing it when it is off screen
+if ("IntersectionObserver" in window){
+  new IntersectionObserver((es, ob) => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); startCity(); } }, {rootMargin: "800px 0px"}).observe(canvas);
+  new IntersectionObserver(es => { cityVisible = es[es.length - 1].isIntersecting; }).observe(canvas);
+} else startCity();
 
 /* =====================================================================
    2. THE NOTEBOOK
@@ -932,6 +948,6 @@ document.getElementById("copyMail").addEventListener("click", () => {
 });
 </script>
 
-<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>

@@ -26,6 +26,9 @@
  "knowsAbout":["Data analysis","SQL","Python","Conformal prediction","Mixed-integer programming","Operations research"],
  "sameAs":["https://github.com/LDGKM","https://www.linkedin.com/in/deo-gratias-loutou-545263278"]}
 </script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -228,7 +231,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 .featured h3{font-size:var(--step-1);text-transform:uppercase}
 .featured p{margin:0}
 .featured .res{color:var(--muted)}
-.featured .links{display:flex;gap:16px;padding:0 18px 16px;font-size:var(--step--1);font-weight:600}
+.featured .links{display:flex;flex-wrap:wrap;gap:4px 20px;padding:0 18px 12px;font-size:var(--step--1);font-weight:600}
+.featured .links a{display:inline-block;padding:8px 0;min-height:24px}
 .hero h2{font-size:var(--step-3);text-transform:uppercase;max-width:20ch}
 .more-title{margin:40px 0 0;font-size:var(--step-1);text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:8px}
 .entries.compact .entry>details>summary{padding:12px 4px}
@@ -261,7 +265,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <h1 id="intro-title">Deo Gratias Loutou</h1>
     <p class="lede">Je transforme des données ouvertes en analyses vérifiables, et j'étudie comment l'incertitude apprise à partir des données change les décisions. <strong>Je cherche un stage de data analyst ou de R&amp;D.</strong></p>
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Lire mon CV</a><a class="btn" href="#contact">Me contacter</a></div>
-    <ol class="featured" aria-label="Projets phares">
+    <h2 class="sr">Projets phares</h2>
+    <ol class="featured">
     <li><a class="card" href="#surgery"><span class="k mono">Recherche · Python, HiGHS</span><h3>Des données aux plannings de bloc robustes</h3><p class="res">L'incertitude apprise réduit les dépassements au bloc opératoire de 113 à 19 minutes par salle et par jour.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
     <li><a class="card" href="#roads"><span class="k mono">Analyse de données · SQL, Python</span><h3>Accidents de la route en France</h3><p class="res">310 000 accidents nettoyés et validés sur les chiffres officiels, et ce qui rend un accident mortel.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
     <li><a class="card" href="#medicines"><span class="k mono">Analyse de données · SQL, Python</span><h3>Ce que rembourse la France</h3><p class="res">160 milliards d'euros de médicaments : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
@@ -364,9 +369,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6.0.4/dist/d3-delaunay.min.js"></script>
 <script>
 "use strict";
 const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
@@ -601,6 +604,7 @@ async function autoPlay(){
 
 let tPrev = performance.now();
 function loop(now){
+  if (!cityVisible || document.hidden){ tPrev = now; requestAnimationFrame(loop); return; }
   const dt = Math.min(0.05, (now - tPrev)/1000); tPrev = now;
   const ease = (a,b,k) => a + (b-a) * Math.min(1, dt*k);
   yearNow = Math.abs(yearTarget-yearNow) < 0.5 ? yearTarget : ease(yearNow, yearTarget, 9);
@@ -615,9 +619,21 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-fetch("data/district.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(initCity)
-  .catch(err => { document.getElementById("loading").textContent = "Le quartier en 3D n'a pas pu se charger. Le carnet ci-dessous fonctionne quand même."; console.error(err); });
+const loadScript = src => new Promise((ok, ko) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = ko; document.head.append(sc); });
+let cityStarted = false, cityVisible = true;
+function startCity(){
+  if (cityStarted) return; cityStarted = true;
+  loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js")
+    .then(() => loadScript("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"))
+    .then(() => fetch("data/district.json")).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(initCity)
+    .catch(err => { document.getElementById("loading").textContent = "Le quartier en 3D n'a pas pu se charger. Les projets ci-dessus restent disponibles."; console.error(err); });
+}
+// the district is below the projects: build it only when the visitor scrolls near it, and stop drawing it when it is off screen
+if ("IntersectionObserver" in window){
+  new IntersectionObserver((es, ob) => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); startCity(); } }, {rootMargin: "800px 0px"}).observe(canvas);
+  new IntersectionObserver(es => { cityVisible = es[es.length - 1].isIntersecting; }).observe(canvas);
+} else startCity();
 
 /* =====================================================================
    2. THE NOTEBOOK
@@ -932,6 +948,6 @@ document.getElementById("copyMail").addEventListener("click", () => {
 });
 </script>
 
-<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
