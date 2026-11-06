@@ -130,9 +130,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .tags{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
 .tags span{font-family:var(--font-mono);font-size:.72rem;border:1px solid var(--line);padding:1px 7px;border-radius:2px;color:var(--muted)}
 .mark{grid-column:3;grid-row:1;font-family:var(--font-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
-.mark::after{content:"+ open";}
-details[open] .mark::after{content:"− close";}
-.has-demo .mark::before{content:"● live demo  ";color:var(--accent-ink)}
+.mark::after{content:"+ ouvrir";}
+details[open] .mark::after{content:"− fermer";}
+.has-demo .mark::before{content:"● démo en direct  ";color:var(--accent-ink)}
 @media (max-width:560px){.brand{font-size:1.1rem}.top nav{gap:12px}.top .wrap{gap:6px 16px}}
 @media (max-width:700px){
   .entry>details>summary{grid-template-columns:minmax(0,1fr)}
@@ -195,6 +195,26 @@ dialog#cvDialog::backdrop{background:rgba(10,14,18,.6)}
 footer{margin-top:64px;border-top:1px solid var(--line);color:var(--muted);font-size:var(--step--1)}
 footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;padding-block:20px 28px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+[id]{scroll-margin-top:76px}
+.intro{padding-block:44px 8px}
+.intro .kicker{margin:0 0 10px;color:var(--muted)}
+.intro h1{font-size:var(--step-3);text-transform:uppercase}
+.intro .lede{margin:14px 0 18px}
+.featured{list-style:none;margin:30px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.featured li{border:1.5px solid var(--ink);border-radius:2px;background:var(--sheet);display:flex;flex-direction:column}
+.featured .card{display:grid;gap:8px;padding:18px 18px 10px;color:var(--ink);text-decoration:none;flex:1}
+.featured .card:hover h3{color:var(--accent-ink)}
+.featured .k{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.featured h3{font-size:var(--step-1);text-transform:uppercase}
+.featured p{margin:0}
+.featured .res{color:var(--muted)}
+.featured .links{display:flex;gap:16px;padding:0 18px 16px;font-size:var(--step--1);font-weight:600}
+.hero h2{font-size:var(--step-3);text-transform:uppercase;max-width:20ch}
+.more-title{margin:40px 0 0;font-size:var(--step-1);text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.entries.compact .entry>details>summary{padding:12px 4px}
+.entries.compact h3{font-size:var(--step-1)}
+.entries.compact .entry>details:not([open]) .one,.entries.compact .entry>details:not([open]) .tags{display:none}
 </style>
 </head>
 <body>
@@ -202,11 +222,12 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#city-section">Deo Gratias Loutou</a>
+    <a class="brand" href="#top">Deo Gratias Loutou</a>
     <nav aria-label="Menu principal">
+      <a href="#notebook">Projets</a>
       <a href="#city-section">La ville</a>
-      <a href="#notebook">Carnet</a>
       <a href="#about">À propos</a>
+      <a href="#contact">Contact</a>
       <a href="#cv" data-cv>CV</a>
       <a href="index.html">Version 3D</a>
       <a href="classic.html" lang="en" hreflang="en" data-lang="en">English</a>
@@ -215,16 +236,38 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 </header>
 
 <main>
+<section class="intro" id="top" aria-labelledby="intro-title">
+  <div class="wrap">
+    <p class="kicker mono">Mulhouse · M1 Informatique, Université de Haute-Alsace</p>
+    <h1 id="intro-title">Deo Gratias Loutou</h1>
+    <p class="lede">Je transforme des données ouvertes en analyses vérifiables, et j'étudie comment l'incertitude apprise à partir des données change les décisions. <strong>Je cherche un stage de data analyst ou de R&amp;D.</strong></p>
+    <div class="cta"><a class="btn primary" href="#cv" data-cv>Lire mon CV</a><a class="btn" href="#contact">Me contacter</a></div>
+    <ol class="featured" aria-label="Projets phares">
+    <li><a class="card" href="#surgery"><span class="k mono">Recherche · Python, HiGHS</span><h3>Des données aux plannings de bloc robustes</h3><p class="res">L'incertitude apprise réduit les dépassements au bloc opératoire de 113 à 19 minutes par salle et par jour.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    <li><a class="card" href="#roads"><span class="k mono">Analyse de données · SQL, Python</span><h3>Accidents de la route en France</h3><p class="res">310 000 accidents nettoyés et validés sur les chiffres officiels, et ce qui rend un accident mortel.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    <li><a class="card" href="#medicines"><span class="k mono">Analyse de données · SQL, Python</span><h3>Ce que rembourse la France</h3><p class="res">160 milliards d'euros de médicaments : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="notebook" aria-labelledby="nb-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="nb-title">Projets</h2>
+      <p>Trois études avec code public et rapport écrit, puis tous les autres projets de l'année. Les entrées marquées démo en direct s'exécutent dans votre navigateur.</p>
+    </div>
+    <ol class="entries" id="entries"></ol>
+    <h3 class="more-title" id="more-projects">Autres projets</h3>
+    <ol class="entries compact" id="more"></ol>
+  </div>
+</section>
+
 <section class="hero" id="city-section" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
    <div class="hero-text">
     <div class="coords mono"><span><b>47.7459° N · 7.3390° E</b></span><span>Mulhouse, place de la Réunion</span><span>rayon 420 m</span></div>
-    <h1 id="hero-title">Je construis à partir de données ouvertes</h1>
-    <p class="lede">Je suis Déo, étudiant en master d'informatique à l'Université de Haute-Alsace, et je me tourne vers l'analyse de données. Le quartier ci-dessous est réel : chaque contour, chaque hauteur et chaque année de construction vient de la base de données cartographique nationale de l'IGN. Faites glisser la frise pour voir Mulhouse se construire de 1450 à aujourd'hui, puis ouvrez mon carnet pour voir comment fonctionnent mes autres projets.</p>
-    <div class="cta">
-      <a class="btn primary" href="#notebook">Ouvrir le carnet</a>
-      <a class="btn" href="#cv" data-cv>Lire mon CV</a>
-    </div>
+    <h2 id="hero-title">Le quartier, reconstruit à partir de données ouvertes</h2>
+    <p class="lede">Le quartier ci-dessous est réel : chaque contour, chaque hauteur et chaque année de construction vient de la base de données cartographique nationale (IGN). Faites glisser la frise pour voir Mulhouse se construire de 1450 à aujourd'hui.</p>
    </div>
     <dl class="district" aria-label="Le quartier en chiffres">
       <dt>Bâtiments</dt><dd>1 678</dd>
@@ -265,26 +308,17 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </section>
 
-<section class="section" id="notebook" aria-labelledby="nb-title">
-  <div class="wrap">
-    <div class="section-head">
-      <h2 id="nb-title">Carnet de laboratoire</h2>
-      <p>Une entrée par projet de cette année, du plus récent au plus ancien. Les trois premiers ont un code public et un rapport écrit : une petite étude de recherche et deux analyses de données. Les entrées avec une démo s'exécutent dans votre navigateur.</p>
-    </div>
-    <ol class="entries" id="entries"></ol>
-  </div>
-</section>
-
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="wrap">
-    <div class="section-head"><h2 id="about-title">À propos</h2><p>Mulhouse, France. Je recherche un stage de data analyst ou de recherche.</p></div>
+    <div class="section-head"><h2 id="about-title">À propos</h2><p>Mulhouse, France. Je cherche un stage de data analyst ou de R&amp;D.</p></div>
     <div class="about">
       <div>
         <p>J'ai étudié la sécurité informatique au Bénin pendant trois ans, puis je suis venu à Mulhouse pour terminer une licence d'informatique. Cet été, j'ai travaillé chez PetitAvis sur ConfoPE, une plateforme de conformité pour les structures d'accueil de la petite enfance : une base de production de plus de cinquante tables, un tableau de bord qui compare les établissements, et une grande restructuration du schéma sans perte de données.</p>
         <p>Je suis maintenant en première année de master (parcours Informatique et Mobilité). Les projets du carnet sont ceux dont je suis le plus fier cette année. Leur point commun : ils partent de données ou de règles, et on peut regarder le résultat.</p>
         <p>Je me tourne vers l'analyse de données parce que ce que je préfère, c'est mesurer avec soin et expliquer ce que disent les chiffres.</p>
       </div>
-      <dl class="facts">
+      <dl class="facts" id="contact">
+        <dt>Expérience</dt><dd>Stagiaire développeur web et analyste, PetitAvis (juin – août 2026) · Stagiaire technicien informatique et réseaux, JASPE Technologies, Bénin (2024 – 2025)</dd>
         <dt>Données</dt><dd>Python (pandas, NumPy, statsmodels, scikit-learn, Matplotlib), SQL (DuckDB, MySQL, PostgreSQL), statistiques, régression logistique</dd>
         <dt>Développement</dt><dd>C++, C#, TypeScript, Java, Qt, Unity, three.js, Git, CI, tests automatisés</dd>
         <dt>Certificats</dt><dd>DataCamp Python Data Fundamentals (28 h), GitHub Foundations (9 h), MikroTik MTCNA</dd>
@@ -618,7 +652,7 @@ const ENTRIES = [
     ["Flow-Lenia","Une seconde scène fait tourner Flow-Lenia (Plantec et al.) dans un compute shader : la matière remonte une carte d'affinité et se déplace par reintegration tracking, si bien que la masse totale reste constante. Neuf préréglages et un carnet pour garder les créatures trouvées."],
     ["Ce que j'ai appris","La recherche des voisins domine le coût. Une grille uniforme garde mille boids fluides."]],
    images:[["lenia1.jpg","Flow-Lenia en relief 3D, Unity"],["boids.jpg","Mille boids dans la version Unity"]]},
- { id:"membrana", date:"Oct 2026", title:"Membrana", tags:["C++20","Qt 6","OpenMP","expériences CSV"],
+ { id:"membrana", date:"oct. 2026", title:"Membrana", tags:["C++20","Qt 6","OpenMP","expériences CSV"],
    one:"Un monde de vie artificielle où les cellules sont des membranes remplies de matière Flow-Lenia, et où l'endosymbiose peut émerger sans règle qui l'impose.",
    notes:[
     ["Ce que ça fait","Chaque individu est une courbe de Fourier fermée qui enferme son propre milieu. Les collisions sont le seul événement génétique : fusion, inclusion ou contact. Une cellule avalée par une autre peut être digérée, ou survivre et être transmise aux descendants de son hôte."],
@@ -662,7 +696,7 @@ const ENTRIES = [
 ];
 
 const list = document.getElementById("entries");
-list.innerHTML = ENTRIES.map(e => `
+const entryHtml = e => `
  <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}">
   <details data-id="${e.id}">
    <summary>
@@ -677,18 +711,23 @@ list.innerHTML = ENTRIES.map(e => `
     <div class="stage" id="stage-${e.id}">${(e.images||[]).map(([src,cap]) => `<figure><img src="img/${src}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("")}</div>
    </div>
   </details>
- </li>`).join("");
+ </li>`;
+list.innerHTML = ENTRIES.slice(0, 3).map(entryHtml).join("");
+const moreList = document.getElementById("more");
+moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
 
 const started = new Set();
-list.addEventListener("toggle", e => {
+const onToggle = e => {
   const d = e.target; if (!d.open) return;
   const ent = ENTRIES.find(x => x.id === d.dataset.id);
   if (ent && ent.demo && !started.has(ent.id)){ started.add(ent.id); DEMOS[ent.demo](document.getElementById("stage-"+ent.id)); }
-}, true);
+};
+list.addEventListener("toggle", onToggle, true); moreList.addEventListener("toggle", onToggle, true);
 // open the entry named in the link (#voronoi etc.)
 const h = location.hash.slice(1);
 const target = h && document.querySelector(`details[data-id="${h}"]`);
 if (target) target.open = true;
+addEventListener("hashchange", () => { const d = document.querySelector(`details[data-id="${location.hash.slice(1)}"]`); if (d){ d.open = true; d.scrollIntoView({block:"start"}); } });
 
 /* helpers for 2D demos */
 function makeCanvas(host, w=640, h=480){

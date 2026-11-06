@@ -6,7 +6,7 @@ window.CONTENT = {
 
 ui: {
   en: {
-    tagline: "Winstub & data · Mulhouse",
+    tagline: "Deo Gratias Loutou · data & R&D internship · Mulhouse",
     textMenu: "Text menu", cv: "CV", lang: "Français", langCode: "fr",
     hello: "Good evening, welcome to Chez Déo. I'm Deo, a computer science master's student in Mulhouse, and tonight I'm your waiter. What brings you here?",
     choices: [["data","I'm hiring a data analyst"],["research","I'm looking for a research intern"],["dev","I'm looking for a developer"],["curious","I'm just curious"]],
@@ -25,7 +25,7 @@ ui: {
     textMenuIntro: "Everything on one page, no 3D. Each dish says what the project is and what I did myself.",
   },
   fr: {
-    tagline: "Winstub & data · Mulhouse",
+    tagline: "Deo Gratias Loutou · stage data & R&D · Mulhouse",
     textMenu: "Carte en texte", cv: "CV", lang: "English", langCode: "en",
     hello: "Bonsoir, bienvenue Chez Déo. Je suis Déo, étudiant en master d'informatique à Mulhouse, et ce soir je suis votre serveur. Qu'est-ce qui vous amène ?",
     choices: [["data","Je recrute un data analyst"],["research","Je cherche un stagiaire en recherche"],["dev","Je cherche un développeur"],["curious","Je suis simplement curieux"]],

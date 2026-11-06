@@ -203,8 +203,8 @@ const T = () => C.ui[lang];
 const L = d => d[lang];
 const ALL = [C.starter, ...C.dishes];
 const XS = {
-  fr:{ narr:"Chez Déo · rue des Données", street:"Un soir d'octobre à Mulhouse. La winstub est éclairée et il reste une table. Cliquez sur la porte pour entrer.",
-       enter:"Entrer", skipTable:"M'installer directement à table", classic:"Version classique, sans 3D", classicChip:"Version classique",
+  fr:{ narr:"Chez Déo · rue des Données", street:"Un soir d'octobre à Mulhouse. La winstub est éclairée et une table vous attend. Mettez-vous à table, ou faites d'abord le tour de la maison.",
+       enter:"Faire le tour du restaurant", skipTable:"Me mettre à table", mobile:"Sur téléphone, la version sans 3D est plus rapide et plus lisible.", mobileStay:"Rester en 3D", classic:"Version classique, sans 3D", classicChip:"Version classique",
        inside:"Il fait bon à l'intérieur. L'accueil est juste à votre gauche, on vous attend.", toDesk:"Aller à l'accueil",
        follow:"Parfait. Suivez-moi, je vous installe.", coming:"Très bon choix. Je vous apporte ça tout de suite.",
        seated:"Installez-vous. Avant de vous apporter la carte : qu'est-ce qui vous amène ce soir ?", waiter:"Déo · votre serveur",
@@ -214,8 +214,8 @@ const XS = {
        slow:"La 3D a du mal sur cet appareil. Vous pouvez passer à la version classique, plus légère.", stay:"Rester ici",
        book:"Livre d'or", signBook:"Signer le livre d'or", bookIntro:"Un mot sur votre visite, une remarque, une offre ? Votre message m'arrive par e-mail ; je publie ici ceux que vous m'autorisez à afficher.",
        bookName:"Votre nom (et entreprise)", bookMsg:"Votre message", bookSend:"Envoyer par e-mail", bookEmpty:"Le livre attend sa première page.", bookAllow:"J'accepte que ce message soit affiché sur le site." },
-  en:{ narr:"Chez Déo · Data Street", street:"An October evening in Mulhouse. The winstub's lights are on and there's one table left. Click the door to go in.",
-       enter:"Go in", skipTable:"Take me straight to a table", classic:"Classic version, no 3D", classicChip:"Classic version",
+  en:{ narr:"Chez Déo · Data Street", street:"An October evening in Mulhouse. The winstub's lights are on and a table is waiting for you. Take your seat, or look around the place first.",
+       enter:"Look around the restaurant", skipTable:"Take me to a table", mobile:"On a phone, the version without 3D is faster and easier to read.", mobileStay:"Stay in 3D", classic:"Classic version, no 3D", classicChip:"Classic version",
        inside:"It's warm inside. The front desk is just to your left, they're expecting you.", toDesk:"Go to the front desk",
        follow:"Perfect. Follow me, I'll show you to your table.", coming:"Good choice. I'll bring it right out.",
        seated:"Have a seat. Before I bring the menu: what brings you here tonight?", waiter:"Deo · your waiter",
@@ -253,7 +253,7 @@ const classicLink = () => `<a class="link" href="${classicHref()}">${esc(X().cla
 function street(){
   setView("street"); hideCard(); Scene.toStreet(); Scene.setHot(["door"]);
   say(() => X().street);
-  $("#choices").innerHTML = `<button type="button" data-act="enter">${esc(X().enter)}</button><button type="button" data-act="sit">${esc(X().skipTable)}</button>` + classicLink();
+  $("#choices").innerHTML = `<button type="button" data-act="sit">${esc(X().skipTable)}</button><button type="button" class="link" data-act="enter">${esc(X().enter)}</button>` + classicLink();
 }
 function enterResto(){
   if (view !== "street") return;
@@ -271,6 +271,7 @@ function goDesk(){
   Scene.toDesk(welcome);
 }
 function welcome(){
+  store.set("chezdeo-seen", "1");
   setView("welcome"); hideCard(); Scene.setHot([]);
   say(() => Scene.seated ? X().seated : T().hello);
   $("#choices").innerHTML = T().choices.map(([k,l]) => `<button type="button" data-profile="${k}">${esc(l)}</button>`).join("")
@@ -498,7 +499,7 @@ const Sound = (() => {
 $("#bSound").onclick = () => { Sound.toggle(); $("#bSound").setAttribute("aria-pressed", String(Sound.on)); chrome(); };
 
 function toast(html){ const t = $("#toast"); t.innerHTML = html; t.hidden = false; setTimeout(() => { t.hidden = true; }, 15000); }
-$("#toast").addEventListener("click", e => { if (e.target.closest("[data-stay]")) $("#toast").hidden = true; });
+$("#toast").addEventListener("click", e => { if (e.target.closest("[data-phone-ok]")) store.set("chezdeo-phone-ok", "1"); if (e.target.closest("[data-stay]")) $("#toast").hidden = true; });
 
 /* ================================================================ 3D ROOM */
 const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet(){},enter(cb){cb&&cb()},toDesk(cb){cb&&cb()},lead(cb){cb&&cb()},sitNow(){},setHot(){},relabel(){},needsTrip(){return false},quake(){return false},quaked:false,seated:true,ok:false} : (() => {
@@ -1167,7 +1168,13 @@ Scene.onReveal = kind => { Sound.ding(); if (waitLine && waitLine.kind === kind)
 const live3D = has3D && Scene.start(); if (!live3D) $("#room").hidden = true;
 const h0 = location.hash.slice(1);
 if (h0 && ALL.some(d => d.id === h0)) { profile = store.get("chezdeo-profile"); Scene.sitNow(); openDish(h0); }
-else if (live3D) { street(); if (h0 === "cv") openCV(); }
+else if (live3D) {
+  if (store.get("chezdeo-seen")) sitDown(); else street();      // returning visitors go straight to their table
+  if (h0 === "cv") openCV();
+  const phone = matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+  if (phone && !store.get("chezdeo-phone-ok"))                    // on phones, offer the light version first
+    toast(`<p>${esc(X().mobile)}</p><div class="row"><a class="btn" href="${classicHref()}">${esc(X().classic)}</a><button type="button" class="btn" data-stay data-phone-ok>${esc(X().mobileStay)}</button></div>`);
+}
 else { welcome(); say(() => T().noGL); if (h0 === "cv") openCV(); }
 </script>
 

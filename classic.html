@@ -195,6 +195,26 @@ dialog#cvDialog::backdrop{background:rgba(10,14,18,.6)}
 footer{margin-top:64px;border-top:1px solid var(--line);color:var(--muted);font-size:var(--step--1)}
 footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;padding-block:20px 28px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+[id]{scroll-margin-top:76px}
+.intro{padding-block:44px 8px}
+.intro .kicker{margin:0 0 10px;color:var(--muted)}
+.intro h1{font-size:var(--step-3);text-transform:uppercase}
+.intro .lede{margin:14px 0 18px}
+.featured{list-style:none;margin:30px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.featured li{border:1.5px solid var(--ink);border-radius:2px;background:var(--sheet);display:flex;flex-direction:column}
+.featured .card{display:grid;gap:8px;padding:18px 18px 10px;color:var(--ink);text-decoration:none;flex:1}
+.featured .card:hover h3{color:var(--accent-ink)}
+.featured .k{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.featured h3{font-size:var(--step-1);text-transform:uppercase}
+.featured p{margin:0}
+.featured .res{color:var(--muted)}
+.featured .links{display:flex;gap:16px;padding:0 18px 16px;font-size:var(--step--1);font-weight:600}
+.hero h2{font-size:var(--step-3);text-transform:uppercase;max-width:20ch}
+.more-title{margin:40px 0 0;font-size:var(--step-1);text-transform:uppercase;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.entries.compact .entry>details>summary{padding:12px 4px}
+.entries.compact h3{font-size:var(--step-1)}
+.entries.compact .entry>details:not([open]) .one,.entries.compact .entry>details:not([open]) .tags{display:none}
 </style>
 </head>
 <body>
@@ -202,11 +222,12 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#city-section">Deo Gratias Loutou</a>
+    <a class="brand" href="#top">Deo Gratias Loutou</a>
     <nav aria-label="Main">
+      <a href="#notebook">Projects</a>
       <a href="#city-section">The city</a>
-      <a href="#notebook">Notebook</a>
       <a href="#about">About</a>
+      <a href="#contact">Contact</a>
       <a href="#cv" data-cv>CV</a>
       <a href="index.html">3D version</a>
       <a href="classic-fr.html" lang="fr" hreflang="fr" data-lang="fr">Français</a>
@@ -215,16 +236,38 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 </header>
 
 <main>
+<section class="intro" id="top" aria-labelledby="intro-title">
+  <div class="wrap">
+    <p class="kicker mono">Mulhouse · M1 Computer Science, Université de Haute-Alsace</p>
+    <h1 id="intro-title">Deo Gratias Loutou</h1>
+    <p class="lede">I turn open data into analyses you can check, and I study how uncertainty learned from data changes decisions. <strong>Looking for a data analyst or R&amp;D internship.</strong></p>
+    <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a></div>
+    <ol class="featured" aria-label="Featured projects">
+    <li><a class="card" href="#surgery"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#roads"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#medicines"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="notebook" aria-labelledby="nb-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="nb-title">Projects</h2>
+      <p>Three studies with public code and a written report, then everything else from this year. Entries marked live demo run in your browser.</p>
+    </div>
+    <ol class="entries" id="entries"></ol>
+    <h3 class="more-title" id="more-projects">Other projects</h3>
+    <ol class="entries compact" id="more"></ol>
+  </div>
+</section>
+
 <section class="hero" id="city-section" aria-labelledby="hero-title">
   <div class="wrap hero-grid">
    <div class="hero-text">
     <div class="coords mono"><span><b>47.7459° N · 7.3390° E</b></span><span>Mulhouse, place de la Réunion</span><span>radius 420 m</span></div>
-    <h1 id="hero-title">I build things from open data</h1>
-    <p class="lede">I'm Deo, a computer science master's student at Université de Haute-Alsace, moving into data analysis. The district below is real: every outline, height and construction year comes from the French national map database. Drag the timeline to watch Mulhouse go up from 1450 to today, then open my notebook to see how my other projects work.</p>
-    <div class="cta">
-      <a class="btn primary" href="#notebook">Open the notebook</a>
-      <a class="btn" href="#cv" data-cv>Read my CV</a>
-    </div>
+    <h2 id="hero-title">The district, rebuilt from open data</h2>
+    <p class="lede">The district below is real: every outline, height and construction year comes from the French national map database (IGN). Drag the timeline to watch Mulhouse go up from 1450 to today.</p>
    </div>
     <dl class="district" aria-label="The district in numbers">
       <dt>Buildings</dt><dd>1,678</dd>
@@ -265,26 +308,17 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </section>
 
-<section class="section" id="notebook" aria-labelledby="nb-title">
-  <div class="wrap">
-    <div class="section-head">
-      <h2 id="nb-title">Lab notebook</h2>
-      <p>One entry per project from this year, newest first. The first three come with public code and a written report: a small research study and two data analyses. Entries marked live demo run in your browser.</p>
-    </div>
-    <ol class="entries" id="entries"></ol>
-  </div>
-</section>
-
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="wrap">
-    <div class="section-head"><h2 id="about-title">About</h2><p>Mulhouse, France. Looking for a data analyst internship.</p></div>
+    <div class="section-head"><h2 id="about-title">About</h2><p>Mulhouse, France. Looking for a data analyst or R&amp;D internship.</p></div>
     <div class="about">
       <div>
         <p>I studied information security in Benin for three years, then moved to Mulhouse to finish a bachelor's in computer science. This summer I worked on ConfoPE, a compliance platform for childcare facilities, at PetitAvis: a production database of more than fifty tables, a dashboard comparing facilities, and a large schema restructuring without losing data.</p>
         <p>I'm now in the first year of a master's (Computing &amp; Mobility track). The projects in the notebook are what I'm proudest of from that year. What they have in common is that they start from data or rules and let you look at the result.</p>
         <p>I'm moving towards data analysis because the part I enjoy most is measuring things carefully and explaining what the numbers mean.</p>
       </div>
-      <dl class="facts">
+      <dl class="facts" id="contact">
+        <dt>Experience</dt><dd>Web developer &amp; analyst intern, PetitAvis (Jun – Aug 2026) · IT &amp; network technician intern, JASPE Technologies, Benin (2024 – 2025)</dd>
         <dt>Data</dt><dd>Python (pandas, NumPy, statsmodels, scikit-learn, Matplotlib), SQL (DuckDB, MySQL, PostgreSQL), statistics, logistic regression</dd>
         <dt>Engineering</dt><dd>C++, C#, TypeScript, Java, Qt, Unity, three.js, Git, CI, automated tests</dd>
         <dt>Certificates</dt><dd>DataCamp Python Data Fundamentals (28 h), GitHub Foundations (9 h), MikroTik MTCNA</dd>
@@ -662,7 +696,7 @@ const ENTRIES = [
 ];
 
 const list = document.getElementById("entries");
-list.innerHTML = ENTRIES.map(e => `
+const entryHtml = e => `
  <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}">
   <details data-id="${e.id}">
    <summary>
@@ -677,18 +711,23 @@ list.innerHTML = ENTRIES.map(e => `
     <div class="stage" id="stage-${e.id}">${(e.images||[]).map(([src,cap]) => `<figure><img src="img/${src}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("")}</div>
    </div>
   </details>
- </li>`).join("");
+ </li>`;
+list.innerHTML = ENTRIES.slice(0, 3).map(entryHtml).join("");
+const moreList = document.getElementById("more");
+moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
 
 const started = new Set();
-list.addEventListener("toggle", e => {
+const onToggle = e => {
   const d = e.target; if (!d.open) return;
   const ent = ENTRIES.find(x => x.id === d.dataset.id);
   if (ent && ent.demo && !started.has(ent.id)){ started.add(ent.id); DEMOS[ent.demo](document.getElementById("stage-"+ent.id)); }
-}, true);
+};
+list.addEventListener("toggle", onToggle, true); moreList.addEventListener("toggle", onToggle, true);
 // open the entry named in the link (#voronoi etc.)
 const h = location.hash.slice(1);
 const target = h && document.querySelector(`details[data-id="${h}"]`);
 if (target) target.open = true;
+addEventListener("hashchange", () => { const d = document.querySelector(`details[data-id="${location.hash.slice(1)}"]`); if (d){ d.open = true; d.scrollIntoView({block:"start"}); } });
 
 /* helpers for 2D demos */
 function makeCanvas(host, w=640, h=480){
