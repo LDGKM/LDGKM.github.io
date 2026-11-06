@@ -1,6 +1,6 @@
-# ldgkm.github.io
+# deogratias-loutou.fr (ldgkm.github.io)
 
-Portfolio de Deo Gratias Loutou — https://ldgkm.github.io
+Portfolio de Deo Gratias Loutou — https://deogratias-loutou.fr
 
 - `index.html` : page unique (three.js et d3 chargés depuis un CDN).
 - `data/district.json` : 1 678 bâtiments, 533 arbres et 342 tronçons de rue autour de la place de la Réunion à Mulhouse,
