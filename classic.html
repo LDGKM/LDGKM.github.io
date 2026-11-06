@@ -267,9 +267,9 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a></div>
     <h2 class="sr">Featured projects</h2>
     <ol class="featured">
-    <li><a class="card" href="#surgery"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
-    <li><a class="card" href="#roads"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
-    <li><a class="card" href="#medicines"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#surgery"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#roads"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#medicines"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     </ol>
   </div>
 </section>
@@ -641,7 +641,7 @@ if ("IntersectionObserver" in window){
 const ENTRIES = [
  { id:"surgery", date:"Oct 2026", title:"From data to robust surgery schedules", tags:["Python","scikit-learn","conformal prediction","HiGHS (MILP)","research"],
    one:"How uncertain is the length of an operation, and what does learning that uncertainty change in an operating-room schedule? A small research study on 6,385 open surgeries.",
-   links:[["Code and notebook","https://github.com/LDGKM/surgery-duration-uncertainty"],["Paper-style report (PDF)","https://github.com/LDGKM/surgery-duration-uncertainty/blob/main/report/report.pdf"]],
+   links:[["Code and notebook","https://github.com/LDGKM/surgery-duration-uncertainty"],["Paper-style report (PDF)","https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"]],
    notes:[
     ["Question","Operating-room schedules rely on predicted durations, but the uncertainty around them is usually replaced by a fixed margin. Can it be learned from data, and does it make better schedules?"],
     ["Uncertainty","Gradient boosting predicts the time in the operating room (46 min mean error against 51 for the procedure's history). Historical 10th-90th percentiles cover only 76.5% of new cases; conformalized quantile regression covers 80.1% and has the best interval score in 10 of 10 random splits. Coverage still drops in small contexts such as robotic surgery."],
@@ -650,7 +650,7 @@ const ENTRIES = [
    images:[["surgery_frontier.jpg","Utilisation vs overtime for each planning rule, 200 simulated days"],["surgery_coverage.jpg","Does the 80% interval hold in every surgical context?"]]},
  { id:"roads", date:"Oct 2026", title:"Road accidents in France and Haut-Rhin", tags:["Python","SQL (DuckDB)","pandas","statsmodels","open data"],
    one:"310,000 injury accidents and 18,356 deaths, 2019 to 2024: when, where and to whom road deaths happen, and what turns a crash into a death.",
-   links:[["Code and notebook","https://github.com/LDGKM/road-accidents-france"],["Report (PDF)","https://github.com/LDGKM/road-accidents-france/blob/main/report/report.pdf"]],
+   links:[["Code and notebook","https://github.com/LDGKM/road-accidents-france"],["Report (PDF)","https://deogratias-loutou.fr/rapports/accidents-route.pdf"]],
    notes:[
     ["What I did","Loaded 24 yearly files from the national police accident file (ONISR) whose format changes from year to year, and cleaned them into four tables with SQL in DuckDB. My death counts match the official figures exactly for 2019 to 2023."],
     ["Findings","About 3,000 deaths a year, flat since 2019. Two thirds of them happen outside towns, which hold only a third of accidents. E-scooter deaths rose from 11 to 47 a year. Haut-Rhin is the 11th safest of 96 departments (36 deaths per million inhabitants against 46 nationally)."],
@@ -659,7 +659,7 @@ const ENTRIES = [
    images:[["roads_map.jpg","Every injury accident in Haut-Rhin, 2019-2024; red = fatal"],["roads_odds.jpg","What makes an injury accident fatal (odds ratios)"]]},
  { id:"medicines", date:"Oct 2026", title:"What France reimburses", tags:["Python","SQL (DuckDB)","pandas","open health data"],
    one:"EUR 160 billion of medicines dispensed in pharmacies, 2019 to 2025: spending rose 43% while the number of boxes stayed flat.",
-   links:[["Code and notebook","https://github.com/LDGKM/medicine-spending-france"],["Report (PDF)","https://github.com/LDGKM/medicine-spending-france/blob/main/report/report.pdf"]],
+   links:[["Code and notebook","https://github.com/LDGKM/medicine-spending-france"],["Report (PDF)","https://deogratias-loutou.fr/rapports/medicaments.pdf"]],
    notes:[
     ["What I did","Loaded Open Medic (national health insurance) files with French number formats and mixed encodings into DuckDB, and checked that totals match to the euro across three levels of detail. Linked molecules that changed ATC code or spelling with a union-find algorithm (19% of spending)."],
     ["Findings","Reimbursements went from EUR 19.1 bn to 27.4 bn with the same number of boxes: new, expensive treatments drive the growth, with cancer and immunology drugs explaining EUR 3.2 bn. Patients on GLP-1 analogues more than doubled; adults treated for ADHD with methylphenidate rose from 17,000 to 114,000."],
