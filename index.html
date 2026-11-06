@@ -232,6 +232,7 @@ const X = () => XS[lang];
 function chrome(){
   document.documentElement.lang = lang;
   $("#tag").textContent = T().tagline;
+  $("#bClassic").href = classicHref();
   $("#bClassic").innerHTML = `<span class="long">${esc(X().classicChip)}</span><span class="short">${lang === "fr" ? "Sans 3D" : "No 3D"}</span>`;
   $("#bCV").textContent = T().cv;
   $("#bLang").textContent = T().lang; $("#bLang").setAttribute("lang", T().langCode);
@@ -247,7 +248,8 @@ function say(fn){ lastSay = fn; $("#say").textContent = fn(); $("#waiter").hidde
 
 function hideCard(){ document.body.classList.remove("card-open"); $("#card").hidden = true; }
 function setView(v){ view = v; chrome(); }
-const classicLink = () => `<a class="link" href="classic.html">${esc(X().classic)}</a>`;
+const classicHref = () => lang === "fr" ? "classic-fr.html" : "classic.html";
+const classicLink = () => `<a class="link" href="${classicHref()}">${esc(X().classic)}</a>`;
 function street(){
   setView("street"); hideCard(); Scene.toStreet(); Scene.setHot(["door"]);
   say(() => X().street);
@@ -416,8 +418,9 @@ function openText(){
   show($("#dlgText"));
 }
 function openCV(){ const r = profile === "research";   // research visitors get the research CV
-  $("#cvImg").src = r ? "img/cv-research-1.jpg" : "img/cv-1.jpg";
-  $("#cvDl").href = r ? "cv/Deo_Gratias_Loutou_CV_Research.pdf" : C.contact.cvPdf;
+  const fr = lang === "fr" ? "-fr" : "", FR = lang === "fr" ? "_FR" : "";
+  $("#cvImg").src = r ? `img/cv-research${fr}-1.jpg` : `img/cv${fr}-1.jpg`;
+  $("#cvDl").href = r ? `cv/Deo_Gratias_Loutou_CV_Research${FR}.pdf` : `cv/Deo_Gratias_Loutou_CV${FR}.pdf`;
   show($("#dlgCV")); }
 function show(d){ if (d.showModal){ if (!d.open) d.showModal(); } else d.setAttribute("open",""); }
 document.querySelectorAll("dialog").forEach(d => {
@@ -1076,7 +1079,7 @@ const Scene = !window.THREE ? {start(){return false},go(){},serve(){},toStreet()
     if (fps >= 22){ perf.stage = 2; return; }
     if (perf.stage === 0){ perf.stage = 1; R.setPixelRatio(1); resize(); return; }
     perf.stage = 2;
-    toast(`<p>${esc(X().slow)}</p><div class="row"><a class="btn" href="classic.html">${esc(X().classic)}</a><button type="button" class="btn" data-stay>${esc(X().stay)}</button></div>`);
+    toast(`<p>${esc(X().slow)}</p><div class="row"><a class="btn" href="${classicHref()}">${esc(X().classic)}</a><button type="button" class="btn" data-stay>${esc(X().stay)}</button></div>`);
   }
   let prev = performance.now();
   function frame(now){

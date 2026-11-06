@@ -209,6 +209,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
       <a href="#about">About</a>
       <a href="#cv" data-cv>CV</a>
       <a href="index.html">3D version</a>
+      <a href="classic-fr.html" lang="fr" hreflang="fr" data-lang="fr">Français</a>
     </nav>
   </div>
 </header>
@@ -315,6 +316,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 "use strict";
+try { localStorage.setItem("chezdeo-lang", "en"); } catch (e) {}
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const fmt = n => n.toLocaleString("en-GB");
