@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Études · Deo Gratias Loutou</title>
+<meta name="description" content="Trois études de Deo Gratias Loutou avec code public et rapport : plannings de bloc opératoire sous incertitude, accidents de la route en France, médicaments remboursés.">
+<link rel="canonical" href="https://deogratias-loutou.fr/etudes/">
+<meta property="og:title" content="Études · Deo Gratias Loutou">
+<meta property="og:description" content="Trois études avec code public et rapport : plannings de bloc opératoire sous incertitude, accidents de la route, médicaments remboursés.">
+<meta property="og:url" content="https://deogratias-loutou.fr/etudes/">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://deogratias-loutou.fr/img/og-classic-fr.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="etudes.css">
+<style>
+.list{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:16px}
+.list li{background:var(--sheet);border:1.5px solid var(--ink);border-radius:2px}
+.list a.card{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:18px 20px;color:var(--ink);text-decoration:none}
+@media (min-width:700px){.list a.card{grid-template-columns:220px minmax(0,1fr);gap:20px;align-items:center}}
+.list img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:top;background:#fff;border:1px solid var(--line);border-radius:2px}
+.list .k{font-family:var(--font-mono);font-size:var(--step--1);color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em}
+.list h2{border:0;padding:0;margin:4px 0 6px;font-size:var(--step-1)}
+.list p{margin:0;color:var(--muted)}
+.list a.card:hover h2{color:var(--accent-ink)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+    <nav aria-label="Menu principal">
+      <a href="../classic-fr.html#notebook">Projets</a>
+      <a href="./" aria-current="page">Études</a>
+      <a href="../classic-fr.html#contact">Contact</a>
+      <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+      <a href="../index.html">Version 3D</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <p class="kicker">Code public · rapport écrit · résultats reproductibles</p>
+  <h1>Études</h1>
+  <p class="lede">Trois études menées de bout en bout : une question, des données ouvertes, une méthode vérifiée et des limites dites clairement. Chacune se relance avec une seule commande et redonne les mêmes chiffres.</p>
+  <ul class="list">
+    <li><a class="card" href="bloc-operatoire.html"><img src="../img/etudes/bloc_03_schedule_frontier.webp" alt="" loading="lazy"><div><span class="k">Recherche · Python, HiGHS</span><h2>Des données aux plannings de bloc robustes</h2><p>Apprendre l'incertitude des durées opératoires sur 6&nbsp;385 opérations, puis l'utiliser pour planifier : dépassements réduits de 113 à 19&nbsp;minutes par salle et par jour.</p></div></a></li>
+    <li><a class="card" href="accidents-route.html"><img src="../img/etudes/route_01_trend.webp" alt="" loading="lazy"><div><span class="k">Analyse de données · SQL, Python</span><h2>Accidents de la route en France et dans le Haut-Rhin</h2><p>309&nbsp;756 accidents et 18&nbsp;356 tués de 2019 à 2024 : quand, où et à qui, ce qui rend un accident mortel, et un biais d'enregistrement à Mulhouse.</p></div></a></li>
+    <li><a class="card" href="medicaments.html"><img src="../img/etudes/med_01_spending_vs_volume.webp" alt="" loading="lazy"><div><span class="k">Analyse de données · SQL, Python</span><h2>Ce que rembourse la France : les médicaments</h2><p>27,4&nbsp;Md€ remboursés en 2025 : +43&nbsp;% de dépense en six ans pour le même nombre de boîtes. Ce qui explique la hausse, et les régions comparées à âge égal.</p></div></a></li>
+  </ul>
+</main>
+<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a></div></footer>
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
