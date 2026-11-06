@@ -255,6 +255,28 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   .entry .th,.entries.compact .th{width:88px;height:55px;grid-row:1 / span 4}
   .entry .date,.entry h3,.entry .one,.tags,.mark{grid-column:2;grid-row:auto}
 }
+
+/* other projects: a grid of thumbnail cards; an opened card takes the full row below its row */
+#more{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;grid-auto-flow:dense;margin-top:16px}
+#more .entry{border:1px solid var(--line);border-radius:2px;background:var(--sheet);min-width:0}
+#more .entry.open{grid-column:1 / -1}
+#more .entry:not(.open)>details>summary{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:4px;padding:0 0 12px;height:100%}
+#more .entry:not(.open) .th{width:100%;height:auto;aspect-ratio:16/10;border:0;border-bottom:1px solid var(--line);border-radius:0;margin-bottom:6px}
+#more .entry:not(.open) .date,#more .entry:not(.open) h3,#more .entry:not(.open) .mark{padding-inline:12px}
+#more .entry:not(.open) .date{font-size:.72rem}
+#more .entry:not(.open) h3{font-size:var(--step-1);line-height:1.05}
+#more .entry:not(.open) .mark{white-space:normal;font-size:.72rem;margin-top:auto;padding-top:4px}
+#more .entry:not(.open)>details>summary:hover .th{filter:brightness(1.05)}
+#more .entry.open>details>summary{padding:12px}
+#more .entry.open>details>.body{padding-inline:12px}
+@media (max-width:1000px){#more{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){
+  #more{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #more .entry:not(.open)>details>summary{display:flex}
+  #more .entry:not(.open) .th{width:100%;height:auto;grid-row:auto}
+  #more .entry:not(.open) h3{font-size:1rem}
+  #more .entry:not(.open) .date,#more .entry:not(.open) h3,#more .entry:not(.open) .mark{padding-inline:10px}
+}
 </style>
 </head>
 <body>
@@ -777,6 +799,9 @@ const onToggle = e => {
   if (ent && ent.demo && !started.has(ent.id)){ started.add(ent.id); DEMOS[ent.demo](document.getElementById("stage-"+ent.id)); }
 };
 list.addEventListener("toggle", onToggle, true); moreList.addEventListener("toggle", onToggle, true);
+moreList.addEventListener("toggle", e => { const li = e.target.closest && e.target.closest(".entry"); if (!li || e.target.tagName !== "DETAILS") return;
+  li.classList.toggle("open", e.target.open);
+  if (e.target.open && !reduced) li.scrollIntoView({block:"nearest", behavior:"smooth"}); }, true);
 // open the entry named in the link (#voronoi etc.)
 const h = location.hash.slice(1);
 const target = h && document.querySelector(`details[data-id="${h}"]`);
