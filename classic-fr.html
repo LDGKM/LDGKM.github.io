@@ -238,6 +238,23 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 .entries.compact .entry>details>summary{padding:12px 4px}
 .entries.compact h3{font-size:var(--step-1)}
 .entries.compact .entry>details:not([open]) .one,.entries.compact .entry>details:not([open]) .tags{display:none}
+
+/* project thumbnails */
+.featured .card .th{display:block;max-width:none;width:calc(100% + 36px);margin:-18px -18px 6px;height:auto;aspect-ratio:16/10;object-fit:cover;border-bottom:1.5px solid var(--ink);background:#fff}
+.entry>details>summary{grid-template-columns:120px 8.5rem minmax(0,1fr) auto}
+.entry .th{grid-column:1;grid-row:1 / span 3;width:120px;height:75px;object-fit:cover;border:1px solid var(--line);border-radius:2px;background:#fff;align-self:start}
+.entry .date{grid-column:2;grid-row:1}
+.entry h3{grid-column:3;grid-row:1}
+.mark{grid-column:4}
+.entry .one,.tags{grid-column:3}
+.entries.compact .entry>details>summary{align-items:center}
+.entries.compact .th{width:96px;height:60px}
+.entries.compact .entry>details>summary{grid-template-columns:96px 8.5rem minmax(0,1fr) auto}
+@media (max-width:700px){
+  .entry>details>summary,.entries.compact .entry>details>summary{grid-template-columns:88px minmax(0,1fr);gap:4px 14px}
+  .entry .th,.entries.compact .th{width:88px;height:55px;grid-row:1 / span 4}
+  .entry .date,.entry h3,.entry .one,.tags,.mark{grid-column:2;grid-row:auto}
+}
 </style>
 </head>
 <body>
@@ -268,9 +285,9 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Lire mon CV</a><a class="btn" href="#contact">Me contacter</a></div>
     <h2 class="sr">Projets phares</h2>
     <ol class="featured">
-    <li><a class="card" href="etudes/bloc-operatoire.html"><span class="k mono">Recherche · Python, HiGHS</span><h3>Des données aux plannings de bloc robustes</h3><p class="res">L'incertitude apprise réduit les dépassements au bloc opératoire de 113 à 19 minutes par salle et par jour.</p></a><p class="links"><a href="etudes/bloc-operatoire.html">Lire l'étude →</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
-    <li><a class="card" href="etudes/accidents-route.html"><span class="k mono">Analyse de données · SQL, Python</span><h3>Accidents de la route en France</h3><p class="res">310 000 accidents nettoyés et validés sur les chiffres officiels, et ce qui rend un accident mortel.</p></a><p class="links"><a href="etudes/accidents-route.html">Lire l'étude →</a><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
-    <li><a class="card" href="etudes/medicaments.html"><span class="k mono">Analyse de données · SQL, Python</span><h3>Ce que rembourse la France</h3><p class="res">160 milliards d'euros de médicaments : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.</p></a><p class="links"><a href="etudes/medicaments.html">Lire l'étude →</a><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    <li><a class="card" href="etudes/bloc-operatoire.html"><img class="th" src="img/thumbs/surgery.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Recherche · Python, HiGHS</span><h3>Des données aux plannings de bloc robustes</h3><p class="res">L'incertitude apprise réduit les dépassements au bloc opératoire de 113 à 19 minutes par salle et par jour.</p></a><p class="links"><a href="etudes/bloc-operatoire.html">Lire l'étude →</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    <li><a class="card" href="etudes/accidents-route.html"><img class="th" src="img/thumbs/roads.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Analyse de données · SQL, Python</span><h3>Accidents de la route en France</h3><p class="res">310 000 accidents nettoyés et validés sur les chiffres officiels, et ce qui rend un accident mortel.</p></a><p class="links"><a href="etudes/accidents-route.html">Lire l'étude →</a><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
+    <li><a class="card" href="etudes/medicaments.html"><img class="th" src="img/thumbs/medicines.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Analyse de données · SQL, Python</span><h3>Ce que rembourse la France</h3><p class="res">160 milliards d'euros de médicaments : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.</p></a><p class="links"><a href="etudes/medicaments.html">Lire l'étude →</a><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
     </ol>
   </div>
 </section>
@@ -642,7 +659,7 @@ if ("IntersectionObserver" in window){
 const ENTRIES = [
  { id:"surgery", date:"oct. 2026", title:"Des données aux plannings de bloc robustes", tags:["Python","scikit-learn","prédiction conforme","HiGHS (PLNE)","recherche"],
    one:"À quel point la durée d'une opération est-elle incertaine, et qu'est-ce que le fait d'apprendre cette incertitude change dans un planning de bloc opératoire ? Une petite étude de recherche sur 6 385 opérations en données ouvertes.",
-   links:[["Lire l'étude en français","etudes/bloc-operatoire.html"],["Code et notebook","https://github.com/LDGKM/surgery-duration-uncertainty"],["Rapport style article (PDF, en anglais)","https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"]],
+   links:[["Lire l'étude en français","etudes/bloc-operatoire.html"],["Code","https://github.com/LDGKM/surgery-duration-uncertainty"],["Notebook","https://deogratias-loutou.fr/notebooks/plannings-bloc-operatoire.html"],["Rapport style article (PDF, en anglais)","https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"]],
    notes:[
     ["La question","Les plannings de bloc reposent sur des durées prédites, mais l'incertitude autour est en général remplacée par une marge fixe. Peut-on l'apprendre à partir des données, et donne-t-elle de meilleurs plannings ?"],
     ["L'incertitude","Le gradient boosting prédit le temps passé au bloc (46 min d'erreur moyenne contre 51 avec l'historique de l'opération). Les percentiles historiques 10-90 ne couvrent que 76,5 % des nouveaux cas ; la régression quantile conforme (CQR) en couvre 80,1 % et obtient le meilleur score d'intervalle sur 10 découpages aléatoires sur 10. La couverture baisse encore dans les petits contextes comme la chirurgie robotique."],
@@ -651,7 +668,7 @@ const ENTRIES = [
    images:[["surgery_frontier.jpg","Occupation et dépassements pour chaque règle de planification, 200 journées simulées"],["surgery_coverage.jpg","L'intervalle à 80 % tient-il dans chaque contexte chirurgical ?"]]},
  { id:"roads", date:"oct. 2026", title:"Accidents de la route en France et dans le Haut-Rhin", tags:["Python","SQL (DuckDB)","pandas","statsmodels","open data"],
    one:"310 000 accidents corporels et 18 356 tués, de 2019 à 2024 : quand, où et à qui arrivent les morts sur la route, et ce qui rend un accident mortel.",
-   links:[["Lire l'étude en français","etudes/accidents-route.html"],["Code et notebook","https://github.com/LDGKM/road-accidents-france"],["Rapport (PDF, en anglais)","https://deogratias-loutou.fr/rapports/accidents-route.pdf"]],
+   links:[["Lire l'étude en français","etudes/accidents-route.html"],["Code","https://github.com/LDGKM/road-accidents-france"],["Notebook","https://deogratias-loutou.fr/notebooks/accidents-route.html"],["Rapport (PDF, en anglais)","https://deogratias-loutou.fr/rapports/accidents-route.pdf"]],
    notes:[
     ["Ce que j'ai fait","J'ai chargé 24 fichiers annuels du fichier national des accidents (ONISR), dont le format change d'une année à l'autre, et je les ai nettoyés en quatre tables avec SQL dans DuckDB. Mes nombres de tués correspondent exactement aux chiffres officiels de 2019 à 2023."],
     ["Résultats","Environ 3 000 tués par an, stable depuis 2019. Les deux tiers meurent hors agglomération, où n'ont lieu qu'un tiers des accidents. Les morts en trottinette électrique sont passés de 11 à 47 par an. Le Haut-Rhin est le 11e département le plus sûr sur 96 (36 tués par million d'habitants contre 46 au niveau national)."],
@@ -660,7 +677,7 @@ const ENTRIES = [
    images:[["roads_map.jpg","Tous les accidents corporels du Haut-Rhin, 2019-2024 ; rouge = mortel"],["roads_odds.jpg","Ce qui rend un accident corporel mortel (odds ratios)"]]},
  { id:"medicines", date:"oct. 2026", title:"Ce que rembourse la France", tags:["Python","SQL (DuckDB)","pandas","données de santé ouvertes"],
    one:"160 milliards d'euros de médicaments délivrés en pharmacie, de 2019 à 2025 : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.",
-   links:[["Lire l'étude en français","etudes/medicaments.html"],["Code et notebook","https://github.com/LDGKM/medicine-spending-france"],["Rapport (PDF, en anglais)","https://deogratias-loutou.fr/rapports/medicaments.pdf"]],
+   links:[["Lire l'étude en français","etudes/medicaments.html"],["Code","https://github.com/LDGKM/medicine-spending-france"],["Notebook","https://deogratias-loutou.fr/notebooks/medicaments.html"],["Rapport (PDF, en anglais)","https://deogratias-loutou.fr/rapports/medicaments.pdf"]],
    notes:[
     ["Ce que j'ai fait","J'ai chargé dans DuckDB les fichiers Open Medic de l'Assurance maladie, avec leurs nombres au format français et leurs encodages mélangés, et vérifié que les totaux concordent à l'euro près sur trois niveaux de détail. J'ai relié les molécules qui ont changé de code ATC ou d'orthographe avec un algorithme union-find (19 % de la dépense)."],
     ["Résultats","Les remboursements sont passés de 19,1 à 27,4 Md€ pour le même nombre de boîtes : la hausse vient de traitements nouveaux et chers, les médicaments du cancer et de l'immunologie expliquant 3,2 Md€. Les patients sous analogues du GLP-1 ont plus que doublé ; les adultes traités pour un TDAH par méthylphénidate sont passés de 17 000 à 114 000."],
@@ -737,6 +754,7 @@ const entryHtml = e => `
  <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}">
   <details data-id="${e.id}">
    <summary>
+    <img class="th" src="img/thumbs/${e.id}.webp" alt="" width="480" height="300" loading="lazy">
     <span class="date mono">${e.date}</span>
     <h3>${e.title}</h3>
     <span class="mark" aria-hidden="true"></span>

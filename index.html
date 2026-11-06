@@ -381,6 +381,7 @@ $("#cardFoot").addEventListener("click", e => {
 function linksHtml(d){
   if (!d.links) return "";
   return `<p class="links">${d.links.fr && lang === "fr" ? `<a class="btn" href="${d.links.fr}">Lire l'étude en français</a>` : ""}${d.links.code ? `<a class="btn" href="${d.links.code}" target="_blank" rel="noopener">${esc(X().code)}</a>` : ""}`
+    + `${d.links.nb ? `<a class="btn" href="${d.links.nb}" target="_blank" rel="noopener">Notebook ↗</a>` : ""}`
     + `${d.links.report ? `<a class="btn" href="${d.links.report}" target="_blank" rel="noopener">${esc(X().report)}</a>` : ""}</p>`;
 }
 
