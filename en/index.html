@@ -36,7 +36,7 @@
 <style>
 /* A night map: the 3D scene is fixed behind, the story scrolls over it. */
 :root{
-  --night:#0B1117;--panel:rgba(14,21,28,.88);--ink:#E8ECE9;--muted:#A3AFB6;--line:#2A3742;
+  --night:#0F151B;--panel:rgba(21,29,37,.9);--ink:#E4E9E5;--muted:#9AA6AE;--line:#26323C;
   --ochre:#E3AE2A;--blue:#60A5FA;--red:#EF4444;--teal:#5FB3A8;
   --font-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -49,7 +49,7 @@ body{margin:0;background:var(--night);color:var(--ink);font-family:var(--font-bo
 a{color:var(--ochre);text-underline-offset:.18em}
 :focus-visible{outline:2px solid var(--ochre);outline-offset:3px;border-radius:2px}
 #scene{position:fixed;inset:0;width:100vw;height:100vh;height:100lvh;display:block;pointer-events:none}
-.top{position:fixed;top:0;left:0;right:0;z-index:5;padding:8px max(16px,env(safe-area-inset-left)) 0;background:linear-gradient(rgba(11,17,23,.95) 70%,rgba(11,17,23,0))}
+.top{position:fixed;top:0;left:0;right:0;z-index:5;padding:8px max(16px,env(safe-area-inset-left)) 0;background:linear-gradient(rgba(15,21,27,.95) 70%,rgba(15,21,27,0))}
 .row{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap}
 .brand{font-family:var(--font-display);font-weight:800;font-size:1.25rem;text-transform:uppercase;color:var(--ink);text-decoration:none;letter-spacing:.02em}
 .top nav.links{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
@@ -122,6 +122,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   <div class="row">
     <a class="brand" href="#c0">Deo Gratias Loutou</a>
     <nav class="links" aria-label="Main menu">
+      <a class="hide-s" href="/classic.html#notebook">Projects</a>
       <a class="hide-s" href="/classic.html#notebook">Reports</a>
       <a href="/cv/Deo_Gratias_Loutou_CV.pdf">CV</a>
       <a class="hide-s" href="#c7">Contact</a>
@@ -325,7 +326,7 @@ else start();
 function start(){
   const renderer = new THREE.WebGLRenderer({canvas, antialias:true, logarithmicDepthBuffer:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, matchMedia("(max-width:760px)").matches ? 1.5 : 2));
-  renderer.setClearColor(0x0B1117);
+  renderer.setClearColor(0x0F151B);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 1, 900000);
   scene.add(new THREE.HemisphereLight(0xdfe7ff, 0x1a2128, 0.75));

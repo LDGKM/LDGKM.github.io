@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Deo Gratias Loutou · Data &amp; R&amp;D work-study 2027">
 <meta property="og:description" content="Computer science master's student in Mulhouse, looking for a data or R&amp;D work-study position (alternance) for 2027–2028. Three studies with public code and reports: surgery schedules under uncertainty, road accidents, reimbursed medicines.">
@@ -32,6 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
 :root{padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
 img{max-width:100%}
@@ -282,22 +284,26 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 <body>
 
 
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="#top">Deo Gratias Loutou</a>
-    <nav aria-label="Main">
-      <a href="#notebook">Projects</a>
-      <a href="#city-section">The city</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#cv" data-cv>CV</a>
-      <a href="en/">3D version</a>
-      <a href="classic-fr.html" lang="fr" hreflang="fr" data-lang="fr">Français</a>
+<!--site:header-->
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-top">
+  <div class="site-wrap">
+    <a class="site-brand" href="/classic.html">Deo Gratias Loutou</a>
+    <button class="site-menu" type="button" aria-expanded="false" aria-controls="site-nav">Menu ☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main menu">
+      <a href="/en/">3D story</a>
+      <a href="/classic.html#notebook" aria-current="page">Projects</a>
+      <a href="/classic.html#about">About</a>
+      <a href="/classic.html#contact">Contact</a>
+      <a class="site-cv" href="/cv/Deo_Gratias_Loutou_CV.pdf" data-cv>CV</a>
+      <a href="/classic-fr.html" lang="fr" hreflang="fr" data-setlang="fr">Français</a>
+      <button class="site-theme" type="button" aria-pressed="false"></button>
     </nav>
   </div>
 </header>
+<!--/site:header-->
 
-<main>
+<main id="main">
 <section class="intro" id="top" aria-labelledby="intro-title">
   <div class="wrap">
     <p class="kicker mono">Mulhouse · M1 Computer Science, Université de Haute-Alsace</p>
@@ -401,12 +407,20 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </dialog>
 
-<footer>
-  <div class="wrap">
-    <span>© 2026 Deo Gratias Loutou</span>
-    <span>Map data © IGN, Licence Ouverte 2.0 · 3D with three.js · charts with d3</span>
+<!--site:footer-->
+<footer class="site-foot">
+  <div class="site-wrap">
+    <div><strong>Deo Gratias Loutou</strong><br>Data or R&amp;D work-study 2027-2028, or an internship from May 2027 · Mulhouse, France</div>
+    <nav aria-label="Get in touch">
+      <a href="mailto:loutoudeogratias@gmail.com">loutoudeogratias@gmail.com</a>
+      <a href="https://www.linkedin.com/in/deo-gratias-loutou-545263278">LinkedIn</a>
+      <a href="https://github.com/LDGKM">GitHub</a>
+      <a href="/cv/Deo_Gratias_Loutou_CV.pdf">CV (PDF)</a>
+    </nav>
+    <p class="note">© 2026 Deo Gratias Loutou · Map data © IGN, Licence Ouverte 2.0 · 3D with three.js. No cookies; anonymous visit counts (GoatCounter).</p>
   </div>
 </footer>
+<!--/site:footer-->
 
 <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6.0.4/dist/d3-delaunay.min.js"></script>
 <script>
@@ -992,5 +1006,6 @@ document.getElementById("copyMail").addEventListener("click", () => {
 </script>
 
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script src="/assets/site.js" defer></script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Deo Gratias Loutou · Alternance data &amp; R&amp;D 2027">
 <meta property="og:description" content="Étudiant en master d'informatique à Mulhouse, je cherche une alternance data ou R&amp;D pour 2027-2028. Trois études avec code public et rapport : plannings de bloc sous incertitude, accidents de la route, médicaments remboursés.">
@@ -32,6 +33,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
 :root{padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
 img{max-width:100%}
@@ -282,23 +284,27 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 <body>
 
 
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="#top">Deo Gratias Loutou</a>
-    <nav aria-label="Menu principal">
-      <a href="#notebook">Projets</a>
-      <a href="etudes/">Études</a>
-      <a href="#city-section">La ville</a>
-      <a href="#about">À propos</a>
-      <a href="#contact">Contact</a>
-      <a href="#cv" data-cv>CV</a>
-      <a href="index.html">Version 3D</a>
-      <a href="classic.html" lang="en" hreflang="en" data-lang="en">English</a>
+<!--site:header-->
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="site-top">
+  <div class="site-wrap">
+    <a class="site-brand" href="/classic-fr.html">Deo Gratias Loutou</a>
+    <button class="site-menu" type="button" aria-expanded="false" aria-controls="site-nav">Menu ☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="Menu principal">
+      <a href="/">Récit 3D</a>
+      <a href="/classic-fr.html#notebook" aria-current="page">Projets</a>
+      <a href="/etudes/">Études</a>
+      <a href="/classic-fr.html#about">À propos</a>
+      <a href="/classic-fr.html#contact">Contact</a>
+      <a class="site-cv" href="/cv/Deo_Gratias_Loutou_CV_FR.pdf" data-cv>CV</a>
+      <a href="/classic.html" lang="en" hreflang="en" data-setlang="en">English</a>
+      <button class="site-theme" type="button" aria-pressed="false"></button>
     </nav>
   </div>
 </header>
+<!--/site:header-->
 
-<main>
+<main id="main">
 <section class="intro" id="top" aria-labelledby="intro-title">
   <div class="wrap">
     <p class="kicker mono">Mulhouse · M1 Informatique, Université de Haute-Alsace</p>
@@ -402,12 +408,20 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </dialog>
 
-<footer>
-  <div class="wrap">
-    <span>© 2026 Deo Gratias Loutou</span>
-    <span>Données cartographiques © IGN, Licence Ouverte 2.0 · 3D avec three.js · graphiques avec d3</span>
+<!--site:footer-->
+<footer class="site-foot">
+  <div class="site-wrap">
+    <div><strong>Deo Gratias Loutou</strong><br>Alternance data ou R&amp;D 2027-2028, ou stage dès mai 2027 · Mulhouse</div>
+    <nav aria-label="Me joindre">
+      <a href="mailto:loutoudeogratias@gmail.com">loutoudeogratias@gmail.com</a>
+      <a href="https://www.linkedin.com/in/deo-gratias-loutou-545263278">LinkedIn</a>
+      <a href="https://github.com/LDGKM">GitHub</a>
+      <a href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+    </nav>
+    <p class="note">© 2026 Deo Gratias Loutou · Données cartographiques © IGN, Licence Ouverte 2.0 · 3D avec three.js. Sans cookies ; mesure d'audience anonyme (GoatCounter).</p>
   </div>
 </footer>
+<!--/site:footer-->
 
 <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6.0.4/dist/d3-delaunay.min.js"></script>
 <script>
@@ -993,5 +1007,6 @@ document.getElementById("copyMail").addEventListener("click", () => {
 </script>
 
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script src="/assets/site.js" defer></script>
 </body>
 </html>

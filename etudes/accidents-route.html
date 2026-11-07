@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Accidents de la route · Deo Gratias Loutou</title>
 <meta name="description" content="Analyse de 309 756 accidents corporels et 18 356 tués en France de 2019 à 2024 : SQL, validation sur les chiffres officiels, régression logistique, biais d&#x27;enregistrement à Mulhouse.">
@@ -19,22 +20,31 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
 <link rel="stylesheet" href="etudes.css">
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
-    <nav aria-label="Menu principal">
-      <a href="../classic-fr.html#notebook">Projets</a>
-      <a href="./">Études</a>
-      <a href="../classic-fr.html#contact">Contact</a>
-      <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
-      <a href="../index.html">Version 3D</a>
+<!--site:header-->
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="site-top">
+  <div class="site-wrap">
+    <a class="site-brand" href="/classic-fr.html">Deo Gratias Loutou</a>
+    <button class="site-menu" type="button" aria-expanded="false" aria-controls="site-nav">Menu ☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="Menu principal">
+      <a href="/">Récit 3D</a>
+      <a href="/classic-fr.html#notebook">Projets</a>
+      <a href="/etudes/" aria-current="page">Études</a>
+      <a href="/classic-fr.html#about">À propos</a>
+      <a href="/classic-fr.html#contact">Contact</a>
+      <a class="site-cv" href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV</a>
+      <a href="/classic.html" lang="en" hreflang="en" data-setlang="en">English</a>
+      <button class="site-theme" type="button" aria-pressed="false"></button>
     </nav>
   </div>
 </header>
-<main class="wrap">
+<!--/site:header-->
+<main id="main" class="wrap">
+  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/classic-fr.html">Accueil</a> › <a href="/etudes/">Études</a> › <span aria-current="page">Accidents de la route</span></nav>
   <p class="kicker">Analyse de données · octobre 2026 · SQL (DuckDB), Python, statsmodels</p>
   <h1>Accidents de la route en France et dans le Haut-Rhin, 2019-2024</h1>
   <p class="lede">Quand, où et à qui arrivent les morts sur la route, et qu'est-ce qui rend un accident corporel mortel ?</p>
@@ -100,7 +110,21 @@
 
   <nav class="pager" aria-label="Autres études"><a href="bloc-operatoire.html">← Plannings de bloc opératoire</a><a href="medicaments.html">Médicaments remboursés →</a></nav>
 </main>
-<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
+<!--site:footer-->
+<footer class="site-foot">
+  <div class="site-wrap">
+    <div><strong>Deo Gratias Loutou</strong><br>Alternance data ou R&amp;D 2027-2028, ou stage dès mai 2027 · Mulhouse</div>
+    <nav aria-label="Me joindre">
+      <a href="mailto:loutoudeogratias@gmail.com">loutoudeogratias@gmail.com</a>
+      <a href="https://www.linkedin.com/in/deo-gratias-loutou-545263278">LinkedIn</a>
+      <a href="https://github.com/LDGKM">GitHub</a>
+      <a href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+    </nav>
+    <p class="note">© 2026 Deo Gratias Loutou · Données : ONISR, fichier BAAC (Licence Ouverte 2.0). Les graphiques fixes sont ceux du rapport, avec leurs légendes en anglais. Sans cookies ; mesure d'audience anonyme (GoatCounter).</p>
+  </div>
+</footer>
+<!--/site:footer-->
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script src="/assets/site.js" defer></script>
 </body>
 </html>
