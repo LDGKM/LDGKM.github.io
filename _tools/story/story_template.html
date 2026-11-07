@@ -490,7 +490,7 @@ function start(){
     if (w < 760) camera.setViewOffset(w, h, 0, h * 0.24, w, h); else camera.setViewOffset(w, h, -w * 0.16, 0, w, h);
     camera.updateProjectionMatrix(); U.uPx.value = renderer.getPixelRatio();
   }
-  addEventListener("resize", resize); resize();
+  addEventListener("resize", () => { resize(); dirty = true; }); resize();
 
   const v = new THREE.Vector3();
   function placeLabel(el, x, y, z, on){
@@ -500,26 +500,30 @@ function start(){
     if (vis){ el.style.left = ((v.x + 1) / 2 * innerWidth) + "px"; el.style.top = ((1 - v.y) / 2 * innerHeight) + "px"; }
   }
 
-  let pSmooth = 0, tPrev = performance.now(), statShown = "";
+  let pSmooth = storyPos(), dirty = true, tPrev = performance.now(), statShown = "";
   function frame(now){
     const dt = Math.min(0.05, (now - tPrev) / 1000); tPrev = now;
     const target = storyPos();
+    // draw only while the story moves: an idle page costs nothing (battery, phones)
+    if (!dirty && Math.abs(target - pSmooth) < 0.0004){ requestAnimationFrame(frame); return; }
+    dirty = false;
     pSmooth += (target - pSmooth) * (reduced ? 1 : Math.min(1, dt * 6));
+    if (Math.abs(target - pSmooth) < 0.0004) pSmooth = target;
     const p = pSmooth, phone = innerWidth < 760;
 
     const i = Math.min(KEYS.length - 2, Math.floor(p)), f = smooth(clamp(p - i, 0, 1)), A = KEYS[i], B = KEYS[i + 1];
     const tx = lerp(A.t[0], B.t[0], f), tz = lerp(A.t[1], B.t[1], f);
     const d = Math.exp(lerp(Math.log(A.d * (phone ? A.m : 1)), Math.log(B.d * (phone ? B.m : 1)), f)), e = lerp(A.e, B.e, f);
-    const a = lerp(A.a, B.a, f) + (reduced ? 0 : 0.05 * Math.sin(now / 9000));
+    const a = lerp(A.a, B.a, f);
     camera.position.set(tx + d * Math.cos(e) * Math.sin(a), d * Math.sin(e), tz + d * Math.cos(e) * Math.cos(a));
     camera.lookAt(tx, 0, tz);
 
     // 1: the city (shown complete on arrival, rewinds, then rebuilds); 2-4: accidents; 5-6: operating rooms
     const year = p < 0.5 ? lerp(2041, 1440, ramp(p, 0.3, 0.5)) : lerp(1440, 2041, ramp(p, 0.55, 1.0));
     U.uYear.value = year; U.uTrees.value = p < 0.5 ? 1 - ramp(p, 0.3, 0.45) : ramp(p, 0.95, 1.25);
-    const dept = ramp(p, 1.3, 1.75);
+    const dept = ramp(p, 1.25, 1.6);
     deptFill.material.opacity = 0.9 * dept; deptLine.material.opacity = dept;
-    U.uAcc.value = p > 1.6 ? 1 : 0; U.uShow.value = lerp(2018.4, 2024.2, clamp((p - 1.65) / 0.55, 0, 1));
+    U.uAcc.value = p > 1.5 ? 1 : 0; U.uShow.value = lerp(2018.4, 2024.2, clamp((p - 1.55) / 0.4, 0, 1));
     U.uFatal.value = ramp(p, 2.5, 2.95) * (1 - ramp(p, 3.45, 3.9));
     const ring = ramp(p, 3.5, 3.95) * (1 - ramp(p, 4.5, 4.9)); rings.forEach(r => r.material.opacity = 0.9 * ring);
     const bA = ramp(p, 4.35, 4.75), bB = ramp(p, 5.35, 5.75);
@@ -531,7 +535,7 @@ function start(){
     $("#year").style.opacity = y1; $("#legEras").style.opacity = y1;
     if (y1){ $("#yearN").textContent = Math.min(2026, Math.round(year));
       $("#yearS").textContent = L.standing + " : " + fmt(bYears.filter(v => v <= year - 4).length); }
-    const accOn = p > 1.6 && p < 4.55 && !(phone && p > 3.4) ? 1 : 0; $("#legAcc").style.opacity = accOn;
+    const accOn = p > 1.5 && p < 4.55 && !(phone && p > 3.4) ? 1 : 0; $("#legAcc").style.opacity = accOn;
     if (accOn && accCum.length){ const yi = clamp(Math.floor(U.uShow.value - 2018.4), 0, 5);
       const n = U.uShow.value < 2018.9 ? 0 : accCum[yi]; $("#accCount").textContent = fmt(n) + " " + L.accUnit + " · 2019–" + (2019 + yi); }
     const cityOn = dept * (1 - ramp(p, 4.4, 4.7));
