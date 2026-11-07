@@ -13,12 +13,12 @@ L = {
             studies="Études", about="À propos", contact="Contact", cv_pdf="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
             home="/classic-fr.html", other_label="English", other_lang="en",
             seek="Alternance data ou R&amp;D 2027-2028, ou stage dès mai 2027 · Mulhouse",
-            privacy="Sans cookies ; mesure d'audience anonyme (GoatCounter).", links_aria="Me joindre"),
+            privacy="Sans cookies ; mesure d'audience anonyme (GoatCounter).", links_aria="Me joindre", ask="Une question ?", ask_aria="Poser une question sur mon parcours"),
  "en": dict(skip="Skip to content", menu="Menu", nav_aria="Main menu", story="3D story", projects="Projects",
             studies=None, about="About", contact="Contact", cv_pdf="/cv/Deo_Gratias_Loutou_CV.pdf",
             home="/classic.html", other_label="Français", other_lang="fr",
             seek="Data or R&amp;D work-study 2027-2028, or an internship from May 2027 · Mulhouse, France",
-            privacy="No cookies; anonymous visit counts (GoatCounter).", links_aria="Get in touch"),
+            privacy="No cookies; anonymous visit counts (GoatCounter).", links_aria="Get in touch", ask="Ask", ask_aria="Ask a question about my background"),
 }
 
 PAGES = {
@@ -57,6 +57,7 @@ def header(p):
     <button class="site-menu" type="button" aria-expanded="false" aria-controls="site-nav">{t["menu"]} ☰</button>
     <nav class="site-nav" id="site-nav" aria-label="{t["nav_aria"]}">
 {links}
+      <button class="site-ask" type="button" data-ask aria-label="{t["ask_aria"]}" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>{t["ask"]}</button>
 {cv}
       <a href="{p["other"]}" lang="{t["other_lang"]}" hreflang="{t["other_lang"]}" data-setlang="{t["other_lang"]}">{t["other_label"]}</a>
       <button class="site-theme" type="button" aria-pressed="false"></button>

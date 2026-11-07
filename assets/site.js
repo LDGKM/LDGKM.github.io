@@ -49,6 +49,15 @@
     if (path) try { goatcounter.count({path: path, event: true}); } catch(err){}
   }, true);
 
+  // "Une question ?": the assistant (assets/ask.js) and its index load only on first use
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest("[data-ask]"); if (!b) return;
+    e.preventDefault();
+    if (window.siteAsk) return window.siteAsk();
+    var s = document.createElement("script"); s.src = "/assets/ask.js"; s.onload = function(){ window.siteAsk(); }; document.head.appendChild(s);
+  });
+  if (/[?&]ask\b/.test(location.search)) addEventListener("load", function(){ var b = document.querySelector("[data-ask]"); if (b) b.click(); });
+
   // back to top
   var top = document.createElement("button");
   top.type = "button"; top.className = "to-top"; top.textContent = "↑";
