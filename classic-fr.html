@@ -326,6 +326,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
       <h2 id="nb-title">Projets</h2>
       <p>Trois études avec code public et rapport écrit (<a href="etudes/">à lire en français</a>), puis tous les autres projets de l'année. Les entrées marquées démo en direct s'exécutent dans votre navigateur.</p>
     </div>
+    <div class="chips" id="filters" role="group" aria-label="Filtrer les projets"></div>
+    <p class="sr" id="filterMsg" aria-live="polite"></p>
     <ol class="entries" id="entries"></ol>
     <h3 class="more-title" id="more-projects">Autres projets</h3>
     <ol class="entries compact" id="more"></ol>
@@ -786,8 +788,9 @@ const ENTRIES = [
 ];
 
 const list = document.getElementById("entries");
+const CATS = {"surgery": ["research", "data"], "roads": ["data"], "medicines": ["data"], "drone": ["sim"], "voronoi": ["algo"], "boids": ["sim"], "membrana": ["research", "sim"], "plagiarism": ["algo"], "kmeans": ["algo", "data"], "nsga": ["research", "algo"], "v2v": ["algo", "sim"], "geo": ["algo"], "confope": ["dev"]};
 const entryHtml = e => `
- <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}">
+ <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}" data-cats="${(CATS[e.id] || []).join(" ")}${e.demo ? " demo" : ""}">
   <details data-id="${e.id}">
    <summary>
     <img class="th" src="img/thumbs/${e.id}.webp" alt="" width="480" height="300" loading="lazy">
@@ -806,6 +809,20 @@ const entryHtml = e => `
 list.innerHTML = ENTRIES.slice(0, 3).map(entryHtml).join("");
 const moreList = document.getElementById("more");
 moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
+// filters: one chip per category, with counts; "all" shows everything
+(() => {
+  const FILTERS = [["all", "Tous"], ["data", "Data"], ["research", "Recherche"], ["sim", "Simulation & 3D"], ["algo", "Algorithmes"], ["dev", "Développement web"], ["demo", "Avec démo en direct"]], box = document.getElementById("filters"), lis = () => [...document.querySelectorAll("#entries > li, #more > li")];
+  const count = k => k === "all" ? lis().length : lis().filter(li => li.dataset.cats.split(" ").includes(k)).length;
+  box.innerHTML = FILTERS.map(([k, l], i) => `<button type="button" class="chip" data-f="${k}" aria-pressed="${i === 0}">${l}<span class="n">${count(k)}</span></button>`).join("");
+  box.addEventListener("click", e => {
+    const b = e.target.closest("[data-f]"); if (!b) return; const k = b.dataset.f;
+    box.querySelectorAll("[data-f]").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+    let n = 0; lis().forEach(li => { const on = k === "all" || li.dataset.cats.split(" ").includes(k); li.hidden = !on; if (on) n++; });
+    document.getElementById("more-projects").hidden = ![...document.querySelectorAll("#more > li")].some(li => !li.hidden);
+    document.getElementById("filterMsg").textContent = n + " " + (n > 1 ? "projets affichés" : "projet affiché");
+    track("filtre/" + k);
+  });
+})();
 
 const started = new Set();
 const onToggle = e => {
