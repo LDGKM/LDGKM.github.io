@@ -177,6 +177,38 @@
     });
   }
 
-  var MAP = {"bloc-rules":blocRules, "acc-map":accMap, "regions":regions, "trends":trends};
+
+  /* 5. Coverage of the 80% intervals in each surgical context, method by method ---------------- */
+  function coverage(fig){
+    load("/data/etudes/bloc_coverage.json").then(function(d){
+      var W = width(fig), small = W < 520, row = small ? 28 : 30, m = {l:small ? 150 : 210, r:small ? 46 : 60, t:22}, H = m.t + d.groups.length * row + 26;
+      var state = {meth:"CQR"};
+      var ctr = h("div", {class:"controls"}); fig.insertBefore(ctr, fig.querySelector(".tip"));
+      var order = ["CQR", "Percentiles historiques", "Régression quantile", "Conforme (log)", "CQR par service"];
+      chips(ctr, order.map(function(k){ return {label:k, k:k}; }), function(it){ state.meth = it.k; draw(); }, "Méthode");
+      var svg = el("svg", {viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Couverture des intervalles à 80 % selon le contexte chirurgical"});
+      fig.insertBefore(svg, fig.querySelector(".tip"));
+      var x = scale(0.4, 1.0, m.l, W - m.r);
+      function draw(){
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        axisX(svg, x, small ? [0.4, 0.6, 0.8, 1.0] : [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], H - 22, function(t){ return fmt(t * 100) + " %"; });
+        var bad = 0;
+        d.groups.forEach(function(g, i){
+          var v = g.cov[state.meth], yy = m.t + i * row, low = v < 0.75;
+          if (low) bad++;
+          var t = el("text", {x:m.l - 8, y:yy + row / 2 + 4, "text-anchor":"end"}, svg); t.textContent = small ? g.g.replace("Service · ", "").replace("chirurgie", "chir.").replace("Voie · ", "voie ").replace("Durée prédite · ", "durée ") : g.g;
+          var n = el("text", {x:m.l - 8, y:yy + row / 2 + 15, "text-anchor":"end", style:"font-size:9px;opacity:.7"}, svg); if (!small) n.textContent = g.n + " cas";
+          el("rect", {x:m.l, y:yy + 6, width:Math.max(2, x(v) - m.l).toFixed(1), height:row - 12, rx:2, fill:low ? css("--d-red") : css("--d-blue"), opacity:low ? .9 : .6}, svg);
+          var vt = el("text", {x:(x(v) + 6).toFixed(1), y:yy + row / 2 + 4}, svg); vt.textContent = fmt(v * 100) + " %";
+        });
+        el("line", {x1:x(0.8), x2:x(0.8), y1:m.t - 6, y2:H - 22, stroke:css("--accent"), "stroke-width":2.5, "stroke-dasharray":"5 4"}, svg);
+        var tg = el("text", {x:x(0.8) + 4, y:m.t - 8, style:"fill:" + css("--accent-ink")}, svg); tg.textContent = "objectif 80 %";
+        fig.querySelector(".tip").innerHTML = "<b>" + state.meth + "</b> : " + (bad ? "<b>" + bad + "</b> contexte" + (bad > 1 ? "s" : "") + " sous 75 % de couverture (en rouge)." : "aucun contexte sous 75 %.") + " Les petits groupes (moins de 70 cas) sont bruités.";
+      }
+      draw(); onTheme(draw);
+    });
+  }
+
+  var MAP = {"bloc-rules":blocRules, "acc-map":accMap, "regions":regions, "trends":trends, "coverage":coverage};
   document.querySelectorAll("figure.chart[data-chart]").forEach(function(f){ var fn = MAP[f.dataset.chart]; if (fn) fn(f); });
 })();

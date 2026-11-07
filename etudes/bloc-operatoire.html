@@ -14,6 +14,7 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:image" content="https://deogratias-loutou.fr/img/etudes/bloc_03_schedule_frontier.webp">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Des données aux plannings de bloc robustes", "inLanguage": "fr", "datePublished": "2026-10-27", "dateModified": "2026-11-07", "description": "Apprendre l&#x27;incertitude des durées opératoires (prédiction conforme) et l&#x27;utiliser dans un modèle de planification en nombres entiers : dépassements réduits de 113 à 19&nbsp;minutes par salle et par jour.", "url": "https://deogratias-loutou.fr/etudes/bloc-operatoire.html", "image": "https://deogratias-loutou.fr/img/etudes/bloc_03_schedule_frontier.webp", "author": {"@type": "Person", "name": "Deo Gratias Loutou", "url": "https://deogratias-loutou.fr/"}, "isBasedOn": "https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"}</script>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -91,7 +92,12 @@
     <figure><img src="../img/etudes/bloc_01_intervals_examples.webp" alt="Quarante opérations du jeu de test avec leur prédiction, leur intervalle CQR et leur durée réelle" loading="lazy"><figcaption>Quarante opérations du jeu de test : prédiction médiane, intervalle CQR à 80&nbsp;% et durée réelle.</figcaption></figure>
     <h3>3. La couverture n'est pas la même partout</h3>
     <p>Derrière la moyenne, certains contextes sont mal couverts : 66&nbsp;% en chirurgie robotique (68 cas), 60&nbsp;% en urologie (30 cas). Calibrer par service fait passer le service le moins bien couvert de 74&nbsp;% à 76&nbsp;% en moyenne, mais ne corrige pas l'urologie, qui n'a qu'une vingtaine de cas de calibration.</p>
-    <figure><img src="../img/etudes/bloc_02_coverage.webp" alt="Couverture des intervalles par service, voie d&#x27;abord et longueur prédite" loading="lazy"><figcaption>Couverture des intervalles à 80&nbsp;% selon le service, la voie d'abord et la longueur prédite.</figcaption></figure>
+    <figure class="chart" data-chart="coverage">
+      <h3>L'intervalle à 80 % tient-il partout ?</h3>
+      <p class="hint">Choisissez une méthode : chaque barre est la part des opérations du jeu de test (un découpage) dont la durée réelle tombe dans l'intervalle. Objectif : 80 %.</p>
+      <p class="tip" aria-live="polite"></p>
+      <noscript><figure><img src="../img/etudes/bloc_02_coverage.webp" alt="Couverture des intervalles par service, voie d&#x27;abord et longueur prédite" loading="lazy"><figcaption>Couverture des intervalles à 80&nbsp;% selon le service, la voie d'abord et la longueur prédite.</figcaption></figure></noscript>
+    </figure>
     <h3>4. De meilleurs plannings</h3>
     <p>Planifier sur les médianes historiques donne <b>113&nbsp;minutes de dépassement par salle et par jour</b>, et 80&nbsp;% des salles finissent en retard : les durées sont asymétriques, chaque opération dépasse sa médiane de 10,4&nbsp;minutes en moyenne, et ces retards s'additionnent dans une salle.</p>
     <p>Planifier chaque opération à son <b>80<sup>e</sup> percentile appris</b> ramène les dépassements à <b>19&nbsp;minutes</b>, avec 88,7&nbsp;% d'occupation des salles : 2,1 points de plus qu'une marge uniforme de 15&nbsp;% pour le même niveau de dépassement. La marge est mise là où est l'incertitude, au lieu de protéger autant les opérations courtes et prévisibles que les longues et incertaines.</p>
