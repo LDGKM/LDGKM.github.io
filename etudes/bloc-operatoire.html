@@ -95,7 +95,12 @@
     <h3>4. De meilleurs plannings</h3>
     <p>Planifier sur les médianes historiques donne <b>113&nbsp;minutes de dépassement par salle et par jour</b>, et 80&nbsp;% des salles finissent en retard : les durées sont asymétriques, chaque opération dépasse sa médiane de 10,4&nbsp;minutes en moyenne, et ces retards s'additionnent dans une salle.</p>
     <p>Planifier chaque opération à son <b>80<sup>e</sup> percentile appris</b> ramène les dépassements à <b>19&nbsp;minutes</b>, avec 88,7&nbsp;% d'occupation des salles : 2,1 points de plus qu'une marge uniforme de 15&nbsp;% pour le même niveau de dépassement. La marge est mise là où est l'incertitude, au lieu de protéger autant les opérations courtes et prévisibles que les longues et incertaines.</p>
-    <figure><img src="../img/etudes/bloc_03_schedule_frontier.webp" alt="Occupation des salles en fonction des dépassements pour chaque règle de planification" loading="lazy"><figcaption>Occupation des salles et dépassements pour chaque règle de planification, 200 journées simulées. En haut à gauche, c'est mieux.</figcaption></figure>
+    <figure class="chart" data-chart="bloc-rules">
+      <h3>À vous de planifier</h3>
+      <p class="hint">Choisissez une règle de planification et son réglage : le point montre le résultat moyen sur 200 journées simulées, rejouées avec les vraies durées.</p>
+      <p class="tip" aria-live="polite"></p>
+      <noscript><figure><img src="../img/etudes/bloc_03_schedule_frontier.webp" alt="Occupation des salles en fonction des dépassements pour chaque règle de planification" loading="lazy"><figcaption>Occupation des salles et dépassements pour chaque règle de planification, 200 journées simulées. En haut à gauche, c'est mieux.</figcaption></figure></noscript>
+    </figure>
     <h3>5. Un résultat négatif</h3>
     <p>Le modèle robuste à budget, construit sur les écarts appris, s'est montré trop prudent : à dépassement égal, il perd environ 10 points d'occupation face aux quantiles appris. Il protège chaque salle contre ses pires écarts survenant tous en même temps, ce qui arrive rarement.</p>
   </section>
@@ -128,5 +133,6 @@
 <!--/site:footer-->
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <script src="/assets/site.js" defer></script>
+<script src="/assets/charts.js" defer></script>
 </body>
 </html>

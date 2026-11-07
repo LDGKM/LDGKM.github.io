@@ -90,7 +90,12 @@
     </ul>
     <h3>Le Haut-Rhin, et un piège dans les données</h3>
     <p>Avec 36 tués par million d'habitants et par an contre 46 au niveau national, le Haut-Rhin est le 11<sup>e</sup> département le plus sûr sur 96.</p>
-    <figure><img src="../img/etudes/route_06_haut_rhin_map.webp" alt="Carte des accidents corporels du Haut-Rhin, les accidents mortels en rouge" loading="lazy"><figcaption>Tous les accidents corporels du Haut-Rhin, 2019-2024 ; en rouge, les accidents mortels.</figcaption></figure>
+    <figure class="chart" data-chart="acc-map">
+      <h3>Les accidents du Haut-Rhin, année par année</h3>
+      <p class="hint">Filtrez par année, ou n'affichez que les accidents mortels. Chaque point est un accident corporel à sa position GPS.</p>
+      <p class="tip" aria-live="polite"></p>
+      <noscript><figure><img src="../img/etudes/route_06_haut_rhin_map.webp" alt="Carte des accidents corporels du Haut-Rhin, les accidents mortels en rouge" loading="lazy"><figcaption>Tous les accidents corporels du Haut-Rhin, 2019-2024 ; en rouge, les accidents mortels.</figcaption></figure></noscript>
+    </figure>
     <p>Mais Mulhouse enregistre moins d'accidents que Colmar, ville plus petite (17 par an contre 28), et quinze fois moins que Strasbourg (266), alors qu'elle compte autant de tués que Colmar (13 de 2019 à 2024). Les accidents légers y sont très probablement sous-enregistrés dans le fichier national. Conséquence : pour ce secteur, <b>seuls les indicateurs fondés sur les décès sont fiables</b>.</p>
     <p>Le même décalage se voit à l'échelle du département : le Haut-Rhin enregistre 469 accidents par million d'habitants et par an, contre 785 au niveau national.</p>
     <figure><img src="../img/etudes/route_07_recording_completeness.webp" alt="Accidents enregistrés et tués par million d&#x27;habitants, pour chaque département" loading="lazy"><figcaption>Accidents enregistrés (en abscisse, échelle logarithmique) et tués (en ordonnée) par million d'habitants et par an, pour chaque département.</figcaption></figure>
@@ -126,5 +131,6 @@
 <!--/site:footer-->
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <script src="/assets/site.js" defer></script>
+<script src="/assets/charts.js" defer></script>
 </body>
 </html>
