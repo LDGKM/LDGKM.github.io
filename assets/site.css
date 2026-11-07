@@ -104,3 +104,14 @@ a{color:var(--accent-ink);text-underline-offset:.18em}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* print: a clean, ink-friendly page (recruiters print CVs and studies) */
+@media print{
+  :root{--paper:#fff;--sheet:#fff;--ink:#000;--muted:#333;--line:#bbb}
+  .site-top,.site-menu,.site-theme,.to-top,.skip,.chips,.chart .controls,#filters{display:none!important}
+  body{background:#fff!important;color:#000}
+  a{color:#000;text-decoration:underline}
+  main a[href^="http"]::after{content:" (" attr(href) ")";font-size:.8em;word-break:break-all}
+  .chart,.stats li,figure img{break-inside:avoid}
+  .site-foot{background:#fff;margin-top:24px}
+}

@@ -315,6 +315,16 @@ function updateChapters(p){
   if (i > seen){ seen = i; track("recit/" + document.documentElement.lang + "/etape/" + i); }
 }
 addEventListener("scroll", () => updateChapters(storyPos()), {passive:true}); updateChapters(storyPos());
+// keyboard: arrows / Page keys / j k jump from chapter to chapter (not while typing or with modifiers)
+addEventListener("keydown", e => {
+  if (e.altKey || e.ctrlKey || e.metaKey || /input|textarea|select/i.test(document.activeElement.tagName)) return;
+  const next = ["ArrowDown", "ArrowRight", "PageDown", "j", " "].includes(e.key), prev = ["ArrowUp", "ArrowLeft", "PageUp", "k"].includes(e.key);
+  if (!next && !prev) return;
+  if (e.key === " " && (e.shiftKey || ["A", "BUTTON"].includes(document.activeElement.tagName))) return;
+  e.preventDefault();
+  const i = clamp(Math.round(storyPos()) + (next ? 1 : -1), 0, steps.length - 1);
+  steps[i].scrollIntoView({behavior: reduced ? "auto" : "smooth", block: "start"});
+});
 
 /* ------------------------------------------------------------------ 3D */
 const canvas = $("#scene");
