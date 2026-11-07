@@ -39,6 +39,16 @@
   // remember the language a visitor picks (the 3D story reads it)
   document.querySelectorAll("[data-setlang]").forEach(function(a){ a.addEventListener("click", function(){ store.set("chezdeo-lang", a.dataset.setlang); }); });
 
+  // count downloads and outbound links (GoatCounter, no cookies)
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest("a[href]"); if (!a || !window.goatcounter || !goatcounter.count) return;
+    var u = a.getAttribute("href"), path = null;
+    if (/\.pdf($|#)/.test(u)) path = "pdf/" + u.split("/").pop();
+    else if (/^mailto:/.test(u)) path = "contact/email";
+    else if (a.hostname && a.hostname !== location.hostname) path = "out/" + a.hostname + a.pathname;
+    if (path) try { goatcounter.count({path: path, event: true}); } catch(err){}
+  }, true);
+
   // back to top
   var top = document.createElement("button");
   top.type = "button"; top.className = "to-top"; top.textContent = "↑";

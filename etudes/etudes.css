@@ -30,3 +30,6 @@ figcaption{font-size:var(--step--1);color:var(--muted);margin-top:6px}
 code{font-family:var(--font-mono);font-size:.9em;background:var(--sheet);border:1px solid var(--line);padding:1px 6px;border-radius:2px}
 .pager{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line)}
 .pager a{font-weight:600;padding-block:8px}
+.cta-box{margin-top:44px;padding:20px 22px;background:var(--sheet);border:1.5px solid var(--ink);border-left:6px solid var(--accent);border-radius:3px}
+.cta-box .kick{font-family:var(--font-mono);font-size:.78rem;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}
+.cta-box p{margin:0 0 10px}

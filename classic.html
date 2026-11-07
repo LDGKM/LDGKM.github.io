@@ -1006,7 +1006,6 @@ new MutationObserver(rerunTheme).observe(document.documentElement, {attributes:t
 /* CV viewer */
 const cvD = document.getElementById("cvDialog");
 function openCV(){ track("cv"); if (cvD.showModal && !cvD.open) cvD.showModal(); else cvD.setAttribute("open",""); }
-document.addEventListener("click", e => { const o = e.target.closest("a[href^=\"https://\"]"); if (o) track("out/" + o.hostname + o.pathname.replace(/\/blob\/main/, "")); }, true);
 document.addEventListener("click", e => { const a = e.target.closest("[data-cv]"); if (!a) return; e.preventDefault(); openCV(); });
 document.getElementById("cvClose").addEventListener("click", () => cvD.close ? cvD.close() : cvD.removeAttribute("open"));
 cvD.addEventListener("click", e => { if (e.target === cvD) cvD.close(); });
