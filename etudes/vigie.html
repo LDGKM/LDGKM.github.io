@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigie, un assistant RAG vérifié · Deo Gratias Loutou</title>
+<meta name="description" content="Vigie : un assistant RAG en C++20 qui répond sur la finance numérique à partir de 115 documents officiels, cite ses sources, vérifie chaque nombre et refuse quand il ne sait pas.">
+<link rel="canonical" href="https://deogratias-loutou.fr/etudes/vigie.html">
+<meta property="og:title" content="Vigie : un assistant qui cite ses sources et sait dire « je ne sais pas »">
+<meta property="og:description" content="Un assistant RAG en C++20 sur 115 documents de finance numérique : recherche hybride, reclassement, rédaction locale et contrôle de chaque citation. 18 refus sur 18 hors corpus.">
+<meta property="og:url" content="https://deogratias-loutou.fr/etudes/vigie.html">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://deogratias-loutou.fr/img/etudes/vigie_og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Vigie : un assistant qui cite ses sources et sait dire « je ne sais pas »", "inLanguage": "fr", "datePublished": "2026-11-07", "dateModified": "2026-11-07", "description": "Un assistant RAG en C++20 sur 115 documents de finance numérique : recherche hybride, reclassement, rédaction locale et contrôle de chaque citation.", "url": "https://deogratias-loutou.fr/etudes/vigie.html", "image": "https://deogratias-loutou.fr/img/etudes/vigie_og.jpg", "author": {"@type": "Person", "name": "Deo Gratias Loutou", "url": "https://deogratias-loutou.fr/"}, "isBasedOn": "https://github.com/LDGKM/Vigie"}</script>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="etudes.css">
+<style>
+.flow{list-style:none;padding:0;margin:18px 0;counter-reset:f;display:grid;gap:0}
+.flow li{counter-increment:f;position:relative;margin:0;padding:12px 14px 14px 58px;background:var(--sheet);border:1px solid var(--line);border-radius:var(--radius)}
+.flow li+li{margin-top:22px}
+.flow li+li::after{content:"";position:absolute;left:30px;top:-23px;height:22px;border-left:2px solid var(--accent)}
+.flow li::before{content:counter(f);position:absolute;left:14px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font:600 .85rem var(--font-mono)}
+.flow b{display:block;font-family:var(--font-display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.02em}
+.flow p{margin:2px 0 0;font-size:.92rem}
+.flow .tag{font:400 .74rem var(--font-mono);color:var(--muted)}
+.flow li.gate{border-color:var(--accent);border-width:1.5px}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:14px 0}
+.split div{background:var(--sheet);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.split h3{margin:0 0 4px}
+.split p{margin:0;font-size:.92rem}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem;margin:12px 0}
+.t th,.t td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.t th{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);font-weight:400;text-transform:uppercase}
+.t td.n{font-family:var(--font-mono);white-space:nowrap}
+@media (max-width:600px){.t thead{display:none}.t tr{display:block;padding:10px 0;border-bottom:1px solid var(--line)}.t td{display:block;border:0;padding:2px 0}.t td:first-child{font-weight:600}}
+</style>
+</head>
+<body>
+<!--site:header-->
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="site-top">
+  <div class="site-wrap">
+    <a class="site-brand" href="/classic-fr.html">Deo Gratias Loutou</a>
+    <button class="site-menu" type="button" aria-expanded="false" aria-controls="site-nav">Menu ☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="Menu principal">
+      <a href="/">Récit 3D</a>
+      <a href="/classic-fr.html#notebook">Projets</a>
+      <a href="/etudes/" aria-current="page">Études</a>
+      <a href="/classic-fr.html#about">À propos</a>
+      <a href="/classic-fr.html#contact">Contact</a>
+      <a class="site-cv" href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV</a>
+      <a href="/classic.html" lang="en" hreflang="en" data-setlang="en">English</a>
+      <button class="site-theme" type="button" aria-pressed="false"></button>
+    </nav>
+  </div>
+</header>
+<!--/site:header-->
+<main id="main" class="wrap">
+  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/classic-fr.html">Accueil</a> › <a href="/etudes/">Études</a> › <span aria-current="page">Vigie</span></nav>
+  <p class="kicker">Projet de M1 · novembre 2026 · C++20, SQLite FTS5, llama.cpp</p>
+  <h1>Vigie : un assistant qui cite ses sources et sait dire « je ne sais pas »</h1>
+  <p class="lede">Un assistant conversationnel sur la finance numérique (RGPD, MiCA, DSP2, AI Act, épargne…) qui ne répond qu'à partir de documents officiels, montre d'où vient chaque phrase et vérifie lui-même sa réponse avant de l'afficher.</p>
+  <ul class="stats" aria-label="Chiffres clés">
+    <li><b>115</b><span>documents officiels, découpés en 4&nbsp;521 passages</span></li>
+    <li><b>18 sur 18</b><span>questions hors corpus refusées, sans réponse inventée</span></li>
+    <li><b>62 sur 68</b><span>questions couvertes avec une réponse rédigée ; 3 fausses à la relecture</span></li>
+    <li><b>100&nbsp;% local</b><span>trois modèles ouverts sur le processeur, aucune donnée envoyée</span></li>
+  </ul>
+  <div class="links">
+    <a class="btn primary" href="https://github.com/LDGKM/Vigie">Code ↗</a>
+    <a class="btn" href="#controle">Tester le contrôle</a>
+  </div>
+
+  <section>
+    <h2>La question</h2>
+    <p>Un modèle de langage répond avec assurance, même quand il se trompe. Sur des sujets réglementaires (un plafond, un délai, une obligation), une réponse fausse mais bien écrite est pire que pas de réponse. Le projet pose deux questions :</p>
+    <ul>
+      <li>Peut-on construire un assistant qui ne répond qu'à partir de textes sourcés, et qui <b>refuse</b> quand ces textes ne disent rien ?</li>
+      <li>Peut-on <b>vérifier automatiquement</b> une réponse rédigée avant de la montrer, et mesurer honnêtement ce qui reste faux ?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Les données</h2>
+    <p>La base compte <b>115 documents</b> publics : les textes européens (RGPD, MiCA, DSP2, DORA, AI Act et son omnibus de 2026), des publications de l'ACPR, de la BCE et de la Banque de France, et 104 documents pédagogiques (65 fiches de la Banque de France, 33 fiches de Service Public, 6 guides de l'AMF). Chaque document a une fiche : émetteur, date, version, lien d'origine.</p>
+    <p>Les textes sont lus en HTML ou en PDF (avec PDFium), puis découpés <b>par article, par section ou par page</b>, jamais au milieu d'un mot ni d'une phrase : une citation renvoie ainsi à « RGPD, article 22 », pas à « morceau n°&nbsp;3&nbsp;817 ». Les fichiers d'origine ne sont pas republiés : un script les télécharge et vérifie chacun.</p>
+  </section>
+
+  <section>
+    <h2>Le parcours d'une question</h2>
+    <ol class="flow">
+      <li><b>Comprendre la question</b><p>Une question de suite comme « Et pour le PEL ? » est réécrite en question complète. Seules les questions courtes qui commencent par une liaison ou contiennent un renvoi sont concernées.</p><span class="tag">règles + modèle de langage</span></li>
+      <li><b>Chercher de deux façons</b><p>Par mots-clés (index plein texte SQLite, avec un poids plus fort pour les mots rares et un glossaire qui relie « cryptomonnaie » à « crypto-actif »), et par le sens (vecteurs <code>bge-m3</code>, comparaison exacte avec les 4&nbsp;521 passages).</p><span class="tag">SQLite FTS5 · bge-m3</span></li>
+      <li><b>Fusionner et reclasser</b><p>Les deux listes sont fusionnées par rang (<i>reciprocal rank fusion</i>), puis un modèle de reclassement relit les 20 meilleurs candidats avec la question.</p><span class="tag">bge-reranker-v2-m3</span></li>
+      <li class="gate"><b>Refuser si rien ne correspond</b><p>Sous un seuil de pertinence, Vigie répond « Information non trouvée dans la base documentaire » au lieu de deviner. Un refus prend environ 10&nbsp;secondes.</p><span class="tag">seuil réglé sur le jeu de réglage uniquement</span></li>
+      <li><b>Rédiger à partir de 3 passages</b><p>Un modèle de langage local reçoit les trois meilleurs passages numérotés et une consigne stricte : réponse dès la première phrase, aucun savoir extérieur, un numéro d'extrait à la fin de chaque phrase, jamais de conseil d'achat, et les instructions contenues dans les extraits sont ignorées.</p><span class="tag">Qwen3.5-4B · llama.cpp</span></li>
+      <li class="gate"><b>Vérifier avant d'afficher</b><p>Chaque citation doit exister, et chaque nombre de la réponse doit figurer dans les passages cités. Sinon, le texte rédigé n'est jamais montré : Vigie affiche les passages tels quels.</p><span class="tag">contrôle en C++, sans modèle</span></li>
+    </ol>
+    <p class="note">La page web affiche les passages trouvés dès la fin de la recherche, puis la réponse une fois vérifiée. Le serveur (Crow) n'écoute que sur la machine locale.</p>
+  </section>
+
+  <section id="controle">
+    <h2>Le contrôle, à essayer</h2>
+    <p>C'est la partie la plus importante du projet. Le contrôle ne juge pas le sens d'une phrase, mais il attrape les erreurs les plus graves d'un modèle de langage : un montant inventé, une source qui n'existe pas, une phrase ajoutée sans justification. Ci-dessous, le même algorithme que dans <code>src/core/grounding.cpp</code>, réécrit en JavaScript.</p>
+    <figure class="chart" data-chart="vigie-check">
+      <h3>Le modèle a-t-il le droit d'afficher cette réponse ?</h3>
+      <p class="hint">Deux extraits simplifiés pour l'exemple. Choisissez une réponse ou écrivez la vôtre : le contrôle s'applique à chaque frappe. « 22 950 € » et « 22950 € » comptent comme le même nombre, comme « 35 millions » et « 35 000 000 ».</p>
+      <p class="tip" aria-live="polite"></p>
+      <noscript><p>Ce module interactif nécessite JavaScript.</p></noscript>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Les résultats</h2>
+    <h3>Une évaluation qui ne triche pas</h3>
+    <p>Trois jeux de questions, chacun avec sa référence : le bon document, les sections acceptées et le texte de preuve attendu.</p>
+    <div class="split">
+      <div><h3>Réglage</h3><p>40 questions couvertes et 10 hors corpus, utilisées pour choisir les modèles et les seuils.</p></div>
+      <div><h3>Contrôle</h3><p>28 questions couvertes et 8 hors corpus, écrites <b>après</b> le choix du modèle et jamais utilisées pour régler quoi que ce soit.</p></div>
+      <div><h3>Définitions</h3><p>28 questions de définition et 8 hors sujet, écrites <b>avant</b> la mesure.</p></div>
+    </div>
+    <p>Les réponses rédigées ont été relues une par une. Ce qui reste faux est compté, pas caché.</p>
+    <figure class="chart" data-chart="vigie-eval">
+      <h3>Que devient chaque question ?</h3>
+      <p class="hint">Choisissez un jeu de questions : chaque segment est une issue possible, de la réponse juste au refus.</p>
+      <p class="tip" aria-live="polite"></p>
+      <noscript><p>Première version, 86 questions : 18 refus sur 18 hors corpus ; sur 68 questions couvertes, 62 réponses rédigées (3 fausses et 3 imprécises), 1 non confirmée et 5 refusées à tort.</p></noscript>
+    </figure>
+
+    <h3>La recherche, mesurée seule</h3>
+    <p>Part des questions dont le bon passage arrive parmi les 5 premiers :</p>
+    <table class="t">
+      <thead><tr><th>Étape</th><th>Résultat</th><th>Ce qui a changé</th></tr></thead>
+      <tbody>
+        <tr><td>Base élargie à 115 documents</td><td class="n">90 → 87,5&nbsp;% (réglage)<br>82,1 → 75&nbsp;% (contrôle)</td><td>Les fiches Service Public répondent à des questions dont la référence attend la DSP2. Sur 6 cas relus, 1 réponse est fausse et 3 sont moins précises.</td></tr>
+        <tr><td>Titre du document dans le reclassement</td><td class="n">78,6&nbsp;% (contrôle)</td><td>Le reclassement lit aussi le titre du document, et la consigne de rédaction demande une réponse plus directe.</td></tr>
+        <tr><td>Reclassement sur 20 candidats et glossaire</td><td class="n">90 → 95&nbsp;% (réglage)<br>92,9 → 100&nbsp;% (définitions)</td><td>Le reclassement relit 20 candidats, limités à leurs 600 premiers caractères. Le glossaire fait trouver « crypto-actif » à partir de « cryptomonnaie ». La mesure sans glossaire reste disponible (<code>--no-glossary</code>).</td></tr>
+      </tbody>
+    </table>
+    <p>Élargir la base a fait <b>baisser</b> les scores sur les anciennes questions. Je l'ai gardé tel quel : corriger les références après coup, ou régler les seuils sur le jeu de contrôle, l'aurait rendu inutile.</p>
+
+    <h3>Le coût</h3>
+    <p>Sur 2 cœurs de processeur, une réponse rédigée prend environ <b>50&nbsp;secondes</b> en médiane, un refus environ 10&nbsp;secondes, et une réécriture de question de suite environ 10&nbsp;secondes de plus. Le choix du tout-local a un prix en vitesse ; il évite d'envoyer les questions à un service extérieur.</p>
+  </section>
+
+  <section>
+    <h2>Les limites</h2>
+    <ul>
+      <li>Le contrôle vérifie les citations et les nombres, pas le sens : une phrase qui cite le bon passage peut quand même le déformer. La page rappelle donc de vérifier la réponse dans les passages cités.</li>
+      <li>Les jeux de questions sont écrits par moi : ils mesurent bien les progrès, moins bien la variété des vraies questions.</li>
+      <li>Cinq questions « hors corpus » des premiers jeux sont devenues couvertes avec la base élargie (livret A, PEA, PEL…). Elles ne sont pas corrigées, pour garder la comparaison honnête.</li>
+      <li>Un modèle de 4 milliards de paramètres sur processeur : lent, et plus fragile qu'un grand modèle sur les questions à plusieurs cas.</li>
+    </ul>
+    <p class="note">Le dépôt contient les jeux de questions et l'outil de mesure (<code>vigie_eval</code>). Les modèles sont téléchargés à des révisions précises, vérifiées par empreinte SHA-256.</p>
+  </section>
+
+  <aside class="cta-box" aria-label="Me contacter">
+    <p class="kick">Ce travail vous parle ?</p>
+    <p>Je cherche une <b>alternance en data ou en R&amp;D pour 2027-2028</b>, ou un stage à partir de mai 2027 qui pourrait y mener.</p>
+    <div class="links"><a class="btn primary" href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">Mon CV (PDF)</a><a class="btn" href="mailto:loutoudeogratias@gmail.com">M'écrire</a><a class="btn" href="/classic-fr.html#notebook">Tous les projets</a></div>
+  </aside>
+  <nav class="pager" aria-label="Autres études"><span></span><a href="bloc-operatoire.html">Plannings de bloc opératoire →</a></nav>
+</main>
+<!--site:footer-->
+<footer class="site-foot">
+  <div class="site-wrap">
+    <div><strong>Deo Gratias Loutou</strong><br>Alternance data ou R&amp;D 2027-2028, ou stage dès mai 2027 · Mulhouse</div>
+    <nav aria-label="Me joindre">
+      <a href="mailto:loutoudeogratias@gmail.com">loutoudeogratias@gmail.com</a>
+      <a href="https://www.linkedin.com/in/deo-gratias-loutou-545263278">LinkedIn</a>
+      <a href="https://github.com/LDGKM">GitHub</a>
+      <a href="/cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
+    </nav>
+    <p class="note">© 2026 Deo Gratias Loutou · Résultats tirés du dépôt LDGKM/Vigie et de la relecture manuelle des réponses. Sans cookies ; mesure d'audience anonyme (GoatCounter).</p>
+  </div>
+</footer>
+<!--/site:footer-->
+<script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script src="/assets/site.js" defer></script>
+<script src="/assets/charts.js" defer></script>
+</body>
+</html>

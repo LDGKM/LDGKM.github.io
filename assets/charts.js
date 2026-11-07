@@ -209,6 +209,119 @@
     });
   }
 
-  var MAP = {"bloc-rules":blocRules, "acc-map":accMap, "regions":regions, "trends":trends, "coverage":coverage};
+  /* 6. Vigie: what happened to each evaluation question ---------------------------------------- */
+  function vigieEval(fig){
+    load("/data/etudes/vigie_eval.json").then(function(d){
+      var W = width(fig), small = W < 520, H = small ? 92 : 84, m = {l:2, r:2}, state = {i:0};
+      var ctr = h("div", {class:"controls"}); fig.insertBefore(ctr, fig.querySelector(".tip"));
+      chips(ctr, d.sets.map(function(s, i){ return {label:s.label, i:i}; }), function(it){ state.i = it.i; draw(); }, "Jeu de questions");
+      var svg = el("svg", {viewBox:"0 0 " + W + " " + H, role:"img"}); fig.insertBefore(svg, fig.querySelector(".tip"));
+      var leg = h("ul", {class:"legend vleg"}); fig.insertBefore(leg, fig.querySelector(".tip"));
+      var note = h("p", {class:"hint", style:"margin-top:10px"}); fig.insertBefore(note, fig.querySelector(".tip"));
+      function say(c, v, n){ fig.querySelector(".tip").innerHTML = "<b>" + v + " sur " + n + "</b> : " + c.label.toLowerCase() + " (" + fmt(v / n * 100) + " %)."; }
+      function draw(){
+        while (svg.firstChild) svg.removeChild(svg.firstChild); leg.innerHTML = "";
+        var s = d.sets[state.i], x = m.l, span = W - m.l - m.r, y0 = 10, bh = small ? 46 : 40;
+        svg.setAttribute("aria-label", s.label + " : " + d.cats.filter(function(c){ return s.v[c.k]; }).map(function(c){ return s.v[c.k] + " " + c.label.toLowerCase(); }).join(", "));
+        d.cats.forEach(function(c){
+          var v = s.v[c.k]; if (!v) return;
+          var w = v / s.n * span, col = css(c.color);
+          var r = el("rect", {x:x.toFixed(1), y:y0, width:Math.max(1, w - 2).toFixed(1), height:bh, rx:2, fill:col, opacity:c.k === "ok" ? .75 : .9, tabindex:0, style:"cursor:pointer"}, svg);
+          r.addEventListener("mouseenter", function(){ say(c, v, s.n); }); r.addEventListener("focus", function(){ say(c, v, s.n); }); r.addEventListener("click", function(){ say(c, v, s.n); });
+          if (w > 26){ var t = el("text", {x:(x + w / 2 - 1).toFixed(1), y:y0 + bh / 2 + 5, "text-anchor":"middle", style:"font-size:13px;font-weight:600;fill:" + (c.k === "refused" ? css("--paper") : "#fff")}, svg); t.textContent = v; t.style.pointerEvents = "none"; }
+          var li = h("li", null, '<i style="background:' + col + '"></i>' + c.label + " · <b>" + v + "</b>"); leg.appendChild(li);
+          x += w;
+        });
+        var ax = el("text", {x:m.l, y:y0 + bh + 22}, svg); ax.textContent = "0";
+        var ax2 = el("text", {x:W - m.r, y:y0 + bh + 22, "text-anchor":"end"}, svg); ax2.textContent = s.n + " questions";
+        note.textContent = s.note;
+        var ok = s.v.ok, cov = s.n - s.v.refused;
+        fig.querySelector(".tip").innerHTML = "<b>" + ok + " sur " + cov + "</b> questions couvertes reçoivent une réponse juste" + (s.v.refused ? ", et <b>" + s.v.refused + " sur " + s.v.refused + "</b> questions hors corpus sont refusées." : ".") + " Survolez ou touchez une barre.";
+      }
+      draw(); onTheme(draw);
+    });
+  }
+
+  /* 7. Vigie: the citation and number check, ported from src/core/grounding.cpp ------------------ */
+  function vigieCheck(fig){
+    var passages = [
+      {t:"Livret A — Plafond", x:"Le plafond des versements sur un livret A est de 22 950 € pour une personne physique."},
+      {t:"Livret A — Intérêts", x:"Les intérêts du livret A sont calculés par quinzaine."}
+    ];
+    var examples = [
+      {label:"Réponse correcte", a:"Le plafond des versements sur un livret A est de 22 950 € pour une personne physique [1]."},
+      {label:"Nombre inventé", a:"Le plafond d'un livret A est de 23 000 € [1]."},
+      {label:"Mauvais extrait cité", a:"Les intérêts sont calculés par quinzaine, dans la limite de 22 950 € [2]."},
+      {label:"Citation inexistante", a:"Le plafond est de 22 950 € [3]."},
+      {label:"Sans citation", a:"Le plafond est de 22 950 €."},
+      {label:"Phrase finale non citée", a:"Le plafond est de 22 950 € [1]. Il rapporte 3 % par an."}
+    ];
+    function isDigit(c){ return c >= "0" && c <= "9"; }
+    function sep(s, p){ var c = s.charAt(p); return (c === " " || c === "." || c === " " || c === " ") ? 1 : 0; }
+    function thousands(s, p){ return p + 2 < s.length && isDigit(s[p]) && isDigit(s[p + 1]) && isDigit(s[p + 2]) && (p + 3 === s.length || !isDigit(s[p + 3])); }
+    function scaleAfter(s, p){ var r = s.slice(p + sep(s, p)); return r.indexOf("million") === 0 ? "000000" : r.indexOf("milliard") === 0 ? "000000000" : ""; }
+    function numbers(s){
+      var out = {}, p = 0;
+      while (p < s.length){
+        if (!isDigit(s[p])){ p++; continue; }
+        var n = "";
+        while (p < s.length){
+          if (isDigit(s[p])){ n += s[p++]; continue; }
+          var k = sep(s, p); if (!k || !thousands(s, p + k)) break; p += k;
+        }
+        out[n + scaleAfter(s, p)] = true;
+      }
+      return Object.keys(out);
+    }
+    function cites(a){
+      var r = {nums:[], text:"", end:0}, p = 0;
+      while (p < a.length){
+        var o = a.indexOf("[", p); if (o < 0) break;
+        r.text += a.slice(p, o);
+        var c = a.indexOf("]", o), body = c < 0 ? "" : a.slice(o + 1, c);
+        if (!/^[0-9][0-9, ]{0,23}$/.test(body)){ r.text += "["; p = o + 1; continue; }
+        numbers(body).forEach(function(n){ var v = n.length > 3 ? 0 : +n; if (r.nums.indexOf(v) < 0) r.nums.push(v); });
+        p = c + 1; r.end = p;
+      }
+      if (p < a.length) r.text += a.slice(p);
+      return r;
+    }
+    function check(a){
+      var steps = [];
+      if (a.indexOf("INFORMATION NON TROUV") >= 0) return {v:"refus", steps:["Le modèle dit que les extraits ne répondent pas : Vigie affiche « Information non trouvée »."]};
+      var f = cites(a);
+      if (!f.nums.length) return {v:"no", steps:["Aucune citation [n] : rien ne relie le texte aux extraits."]};
+      var kept = a.slice(0, f.end) + (a.charAt(f.end) === "." ? "." : "");
+      if (kept.length < a.trim().length) steps.push("Ce qui suit la dernière citation n'est justifié par rien : coupé. Reste « " + kept + " »");
+      var c = cites(kept), known = [];
+      for (var i = 0; i < c.nums.length; i++){
+        var n = c.nums[i];
+        if (n < 1 || n > passages.length) return {v:"no", steps:steps.concat(["La citation [" + n + "] ne correspond à aucun extrait fourni (il y en a " + passages.length + ")."])};
+        known = known.concat(numbers(passages[n - 1].t + " " + passages[n - 1].x));
+      }
+      steps.push(c.nums.length > 1 ? "Les citations " + c.nums.map(function(n){ return "[" + n + "]"; }).join(", ") + " existent." : "La citation [" + c.nums[0] + "] existe.");
+      var said = numbers(c.text), miss = said.filter(function(n){ return known.indexOf(n) < 0; });
+      if (miss.length) return {v:"no", steps:steps.concat([(miss.length > 1 ? "Nombres absents" : "Nombre absent") + " des extraits cités : " + miss.map(function(n){ return (+n).toLocaleString("fr-FR"); }).join(", ") + "."])};
+      var fr = said.map(function(n){ return (+n).toLocaleString("fr-FR"); }).join(", ");
+      steps.push(!said.length ? "Aucun nombre à vérifier." : said.length > 1 ? "Les nombres " + fr + " figurent dans les extraits cités." : "Le nombre " + fr + " figure dans l'extrait cité.");
+      return {v:"ok", steps:steps, text:kept};
+    }
+    var box = h("div", {class:"vcheck"});
+    box.innerHTML = '<ol class="vpass">' + passages.map(function(p, i){ return "<li><b>[" + (i + 1) + "] " + p.t + "</b><br>" + p.x + "</li>"; }).join("") + "</ol>";
+    var ctr = h("div", {class:"controls"}); box.appendChild(ctr);
+    var lab = h("label", {for:"vcheck-a", class:"hint", style:"display:block;margin:0 0 6px"}, "Réponse du modèle (modifiable) :"); box.appendChild(lab);
+    var ta = h("textarea", {id:"vcheck-a", rows:"3", spellcheck:"false"}); box.appendChild(ta);
+    var out = h("div", {class:"vout", "aria-live":"polite"}); box.appendChild(out);
+    fig.insertBefore(box, fig.querySelector(".tip"));
+    function run(){
+      var r = check(ta.value);
+      var head = r.v === "ok" ? '<p class="vv ok">✓ Réponse affichée</p>' : r.v === "refus" ? '<p class="vv">Refus</p>' : '<p class="vv no">✗ Réponse rejetée : Vigie affiche les extraits tels quels</p>';
+      out.innerHTML = head + "<ul>" + r.steps.map(function(s){ return "<li>" + s.replace(/</g, "&lt;") + "</li>"; }).join("") + "</ul>";
+    }
+    chips(ctr, examples, function(it){ ta.value = it.a; run(); }, "Exemples de réponses");
+    ta.value = examples[0].a; ta.addEventListener("input", run); run();
+  }
+
+  var MAP = {"bloc-rules":blocRules, "acc-map":accMap, "regions":regions, "trends":trends, "coverage":coverage, "vigie-eval":vigieEval, "vigie-check":vigieCheck};
   document.querySelectorAll("figure.chart[data-chart]").forEach(function(f){ var fn = MAP[f.dataset.chart]; if (fn) fn(f); });
 })();

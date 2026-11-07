@@ -5,10 +5,10 @@
 <script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Études · Deo Gratias Loutou</title>
-<meta name="description" content="Trois études de Deo Gratias Loutou avec code public et rapport : plannings de bloc opératoire sous incertitude, accidents de la route en France, médicaments remboursés.">
+<meta name="description" content="Quatre études de Deo Gratias Loutou avec code public : un assistant RAG vérifié, plannings de bloc opératoire sous incertitude, accidents de la route en France, médicaments remboursés.">
 <link rel="canonical" href="https://deogratias-loutou.fr/etudes/">
 <meta property="og:title" content="Études · Deo Gratias Loutou">
-<meta property="og:description" content="Trois études avec code public et rapport : plannings de bloc opératoire sous incertitude, accidents de la route, médicaments remboursés.">
+<meta property="og:description" content="Quatre études avec code public : un assistant RAG vérifié, plannings de bloc opératoire sous incertitude, accidents de la route, médicaments remboursés.">
 <meta property="og:url" content="https://deogratias-loutou.fr/etudes/">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:image" content="https://deogratias-loutou.fr/img/og-classic-fr.jpg">
@@ -56,8 +56,9 @@
 <main id="main" class="wrap">
   <p class="kicker">Code public · rapport écrit · résultats reproductibles</p>
   <h1>Études</h1>
-  <p class="lede">Trois études menées de bout en bout : une question, des données ouvertes, une méthode vérifiée et des limites dites clairement. Chacune se relance avec une seule commande et redonne les mêmes chiffres.</p>
+  <p class="lede">Quatre études menées de bout en bout : une question, des données ouvertes, une méthode vérifiée et des limites dites clairement. Chacune a son code public et sa méthode d'évaluation.</p>
   <ul class="list">
+    <li><a class="card" href="vigie.html"><img src="../img/etudes/vigie_card.webp" alt="" loading="lazy"><div><span class="k">IA · C++20, RAG local</span><h2>Vigie, un assistant qui cite ses sources</h2><p>Un assistant RAG sur 115 documents officiels de finance numérique, qui vérifie chaque citation et chaque nombre avant d'afficher sa réponse, et refuse quand il ne sait pas.</p></div></a></li>
     <li><a class="card" href="bloc-operatoire.html"><img src="../img/etudes/bloc_03_schedule_frontier.webp" alt="" loading="lazy"><div><span class="k">Recherche · Python, HiGHS</span><h2>Des données aux plannings de bloc robustes</h2><p>Apprendre l'incertitude des durées opératoires sur 6&nbsp;385 opérations, puis l'utiliser pour planifier : dépassements réduits de 113 à 19&nbsp;minutes par salle et par jour.</p></div></a></li>
     <li><a class="card" href="accidents-route.html"><img src="../img/etudes/route_01_trend.webp" alt="" loading="lazy"><div><span class="k">Analyse de données · SQL, Python</span><h2>Accidents de la route en France et dans le Haut-Rhin</h2><p>309&nbsp;756 accidents et 18&nbsp;356 tués de 2019 à 2024 : quand, où et à qui, ce qui rend un accident mortel, et un biais d'enregistrement à Mulhouse.</p></div></a></li>
     <li><a class="card" href="medicaments.html"><img src="../img/etudes/med_01_spending_vs_volume.webp" alt="" loading="lazy"><div><span class="k">Analyse de données · SQL, Python</span><h2>Ce que rembourse la France : les médicaments</h2><p>27,4&nbsp;Md€ remboursés en 2025 : +43&nbsp;% de dépense en six ans pour le même nombre de boîtes. Ce qui explique la hausse, et les régions comparées à âge égal.</p></div></a></li>

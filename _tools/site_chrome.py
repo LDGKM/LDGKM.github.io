@@ -33,6 +33,8 @@ PAGES = {
                                        note="Données : ONISR, fichier BAAC (Licence Ouverte 2.0). Les graphiques fixes sont ceux du rapport, avec leurs légendes en anglais."),
  "etudes/medicaments.html":       dict(lang="fr", current="studies", other="/classic.html", crumb="Médicaments remboursés",
                                        note="Données : Assurance maladie, Open Medic. Les graphiques fixes sont ceux du rapport, avec leurs légendes en anglais."),
+ "etudes/vigie.html":            dict(lang="fr", current="studies", other="/classic.html", crumb="Vigie",
+                                       note="Résultats tirés du dépôt LDGKM/Vigie et de la relecture manuelle des réponses."),
  "404.html":                      dict(lang="fr", current=None, other="/classic.html", note=""),
 }
 

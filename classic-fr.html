@@ -5,7 +5,7 @@
 <script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Deo Gratias Loutou · Alternance data &amp; R&amp;D 2027">
-<meta property="og:description" content="Étudiant en master d'informatique à Mulhouse, je cherche une alternance data ou R&amp;D pour 2027-2028. Trois études avec code public et rapport : plannings de bloc sous incertitude, accidents de la route, médicaments remboursés.">
+<meta property="og:description" content="Étudiant en master d'informatique à Mulhouse, je cherche une alternance data ou R&amp;D pour 2027-2028. Quatre études avec code public : un assistant RAG vérifié, plannings de bloc sous incertitude, accidents de la route, médicaments remboursés.">
 <title>Deo Gratias Loutou · Alternance data &amp; R&amp;D 2027 · Portfolio</title>
 <meta name="description" content="Portfolio de Deo Gratias Loutou, étudiant en master d'informatique à Mulhouse, à la recherche d'une alternance data ou R&amp;D pour 2027-2028 : prédiction conforme et planification, analyses de données ouvertes en SQL et Python.">
 <link rel="canonical" href="https://deogratias-loutou.fr/classic-fr.html">
@@ -313,6 +313,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Lire mon CV</a><a class="btn" href="#contact">Me contacter</a></div>
     <h2 class="sr">Projets phares</h2>
     <ol class="featured">
+    <li><a class="card" href="etudes/vigie.html"><img class="th" src="img/thumbs/vigie.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">IA · C++20, RAG local</span><h3>Vigie, un assistant qui cite ses sources</h3><p class="res">Un assistant RAG sur 115 documents de finance numérique qui vérifie chaque citation et chaque nombre : 18 refus sur 18 hors corpus.</p></a><p class="links"><a href="etudes/vigie.html">Lire l'étude →</a><a href="https://github.com/LDGKM/Vigie" target="_blank" rel="noopener">Code ↗</a></p></li>
     <li><a class="card" href="etudes/bloc-operatoire.html"><img class="th" src="img/thumbs/surgery.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Recherche · Python, HiGHS</span><h3>Des données aux plannings de bloc robustes</h3><p class="res">L'incertitude apprise réduit les dépassements au bloc opératoire de 113 à 19 minutes par salle et par jour.</p></a><p class="links"><a href="etudes/bloc-operatoire.html">Lire l'étude →</a><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
     <li><a class="card" href="etudes/accidents-route.html"><img class="th" src="img/thumbs/roads.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Analyse de données · SQL, Python</span><h3>Accidents de la route en France</h3><p class="res">310 000 accidents nettoyés et validés sur les chiffres officiels, et ce qui rend un accident mortel.</p></a><p class="links"><a href="etudes/accidents-route.html">Lire l'étude →</a><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
     <li><a class="card" href="etudes/medicaments.html"><img class="th" src="img/thumbs/medicines.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Analyse de données · SQL, Python</span><h3>Ce que rembourse la France</h3><p class="res">160 milliards d'euros de médicaments : la dépense a augmenté de 43 % alors que le nombre de boîtes est resté stable.</p></a><p class="links"><a href="etudes/medicaments.html">Lire l'étude →</a><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Rapport (PDF, en anglais) ↗</a></p></li>
@@ -324,7 +325,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <div class="section-head">
       <h2 id="nb-title">Projets</h2>
-      <p>Trois études avec code public et rapport écrit (<a href="etudes/">à lire en français</a>), puis tous les autres projets de l'année. Les entrées marquées démo en direct s'exécutent dans votre navigateur.</p>
+      <p>Quatre études avec code public et rapport écrit (<a href="etudes/">à lire en français</a>), puis tous les autres projets de l'année. Les entrées marquées démo en direct s'exécutent dans votre navigateur.</p>
     </div>
     <div class="chips" id="filters" role="group" aria-label="Filtrer les projets"></div>
     <p class="sr" id="filterMsg" aria-live="polite"></p>
@@ -695,6 +696,13 @@ if ("IntersectionObserver" in window){
    2. THE NOTEBOOK
    ===================================================================== */
 const ENTRIES = [
+ { id:"vigie", date:"nov. 2026", title:"Vigie, un assistant RAG vérifié", tags:["C++20","RAG","SQLite FTS5","llama.cpp","évaluation"],
+   one:"Un assistant sur la finance numérique (RGPD, MiCA, DSP2, AI Act, épargne) qui répond uniquement à partir de 115 documents officiels, cite ses sources et refuse quand il ne sait pas. Tout tourne en local.",
+   links:[["Lire l'étude en français","etudes/vigie.html"],["Code","https://github.com/LDGKM/Vigie"]],
+   notes:[
+    ["La chaîne","Recherche par mots-clés (SQLite FTS5) et par le sens (bge-m3), fusion par rang, reclassement (bge-reranker-v2-m3), puis rédaction par Qwen3.5-4B à partir de 3 passages numérotés. Sous un seuil de pertinence, Vigie répond « information non trouvée »."],
+    ["Le contrôle","Avant d'afficher une réponse, Vigie vérifie que chaque citation existe et que chaque nombre figure dans les passages cités. Sinon, il montre les passages tels quels."],
+    ["L'évaluation","86 questions, dont un jeu de contrôle écrit après le choix du modèle et jamais utilisé pour le réglage : 18 refus sur 18 hors corpus, 62 réponses rédigées sur 68 questions couvertes, dont 3 fausses à la relecture."]]},
  { id:"surgery", date:"oct. 2026", title:"Des données aux plannings de bloc robustes", tags:["Python","scikit-learn","prédiction conforme","HiGHS (PLNE)","recherche"],
    one:"À quel point la durée d'une opération est-elle incertaine, et qu'est-ce que le fait d'apprendre cette incertitude change dans un planning de bloc opératoire ? Une petite étude de recherche sur 6 385 opérations en données ouvertes.",
    links:[["Lire l'étude en français","etudes/bloc-operatoire.html"],["Code","https://github.com/LDGKM/surgery-duration-uncertainty"],["Notebook","https://deogratias-loutou.fr/notebooks/plannings-bloc-operatoire.html"],["Rapport style article (PDF, en anglais)","https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"]],
@@ -788,7 +796,7 @@ const ENTRIES = [
 ];
 
 const list = document.getElementById("entries");
-const CATS = {"surgery": ["research", "data"], "roads": ["data"], "medicines": ["data"], "drone": ["sim"], "voronoi": ["algo"], "boids": ["sim"], "membrana": ["research", "sim"], "plagiarism": ["algo"], "kmeans": ["algo", "data"], "nsga": ["research", "algo"], "v2v": ["algo", "sim"], "geo": ["algo"], "confope": ["dev"]};
+const CATS = {"vigie": ["research", "dev"], "surgery": ["research", "data"], "roads": ["data"], "medicines": ["data"], "drone": ["sim"], "voronoi": ["algo"], "boids": ["sim"], "membrana": ["research", "sim"], "plagiarism": ["algo"], "kmeans": ["algo", "data"], "nsga": ["research", "algo"], "v2v": ["algo", "sim"], "geo": ["algo"], "confope": ["dev"]};
 const entryHtml = e => `
  <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}" data-cats="${(CATS[e.id] || []).join(" ")}${e.demo ? " demo" : ""}">
   <details data-id="${e.id}">
@@ -806,9 +814,9 @@ const entryHtml = e => `
    </div>
   </details>
  </li>`;
-list.innerHTML = ENTRIES.slice(0, 3).map(entryHtml).join("");
+list.innerHTML = ENTRIES.slice(0, 4).map(entryHtml).join("");
 const moreList = document.getElementById("more");
-moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
+moreList.innerHTML = ENTRIES.slice(4).map(entryHtml).join("");
 // filters: one chip per category, with counts; "all" shows everything
 (() => {
   const FILTERS = [["all", "Tous"], ["data", "Data"], ["research", "Recherche"], ["sim", "Simulation & 3D"], ["algo", "Algorithmes"], ["dev", "Développement web"], ["demo", "Avec démo en direct"]], box = document.getElementById("filters"), lis = () => [...document.querySelectorAll("#entries > li, #more > li")];

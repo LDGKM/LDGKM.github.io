@@ -5,7 +5,7 @@
 <script>try{var t=localStorage.getItem("site-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Deo Gratias Loutou · Data &amp; R&amp;D work-study 2027">
-<meta property="og:description" content="Computer science master's student in Mulhouse, looking for a data or R&amp;D work-study position (alternance) for 2027–2028. Three studies with public code and reports: surgery schedules under uncertainty, road accidents, reimbursed medicines.">
+<meta property="og:description" content="Computer science master's student in Mulhouse, looking for a data or R&amp;D work-study position (alternance) for 2027–2028. Four projects with public code: a verified RAG assistant, surgery schedules under uncertainty, road accidents, reimbursed medicines.">
 <title>Deo Gratias Loutou · Data &amp; R&amp;D work-study 2027 · Portfolio</title>
 <meta name="description" content="Portfolio of Deo Gratias Loutou, computer science master's student in Mulhouse looking for a data or R&amp;D work-study position (alternance) for 2027–2028: conformal prediction and OR scheduling, open-data analyses in SQL and Python.">
 <link rel="canonical" href="https://deogratias-loutou.fr/classic.html">
@@ -312,6 +312,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a></div>
     <h2 class="sr">Featured projects</h2>
     <ol class="featured">
+    <li><a class="card" href="#vigie"><img class="th" src="img/thumbs/vigie.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">AI · C++20, local RAG</span><h3>Vigie, an assistant that cites its sources</h3><p class="res">A RAG assistant over 115 digital-finance documents that checks every citation and every number: 18 of 18 out-of-scope questions refused.</p></a><p class="links"><a href="https://github.com/LDGKM/Vigie" target="_blank" rel="noopener">Code ↗</a><a href="etudes/vigie.html" hreflang="fr">Write-up (French) →</a></p></li>
     <li><a class="card" href="#surgery"><img class="th" src="img/thumbs/surgery.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     <li><a class="card" href="#roads"><img class="th" src="img/thumbs/roads.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     <li><a class="card" href="#medicines"><img class="th" src="img/thumbs/medicines.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
@@ -323,7 +324,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <div class="section-head">
       <h2 id="nb-title">Projects</h2>
-      <p>Three studies with public code and a written report, then everything else from this year. Entries marked live demo run in your browser.</p>
+      <p>Four projects with public code and a written report, then everything else from this year. Entries marked live demo run in your browser.</p>
     </div>
     <div class="chips" id="filters" role="group" aria-label="Filter projects"></div>
     <p class="sr" id="filterMsg" aria-live="polite"></p>
@@ -694,6 +695,13 @@ if ("IntersectionObserver" in window){
    2. THE NOTEBOOK
    ===================================================================== */
 const ENTRIES = [
+ { id:"vigie", date:"Nov 2026", title:"Vigie, a verified RAG assistant", tags:["C++20","RAG","SQLite FTS5","llama.cpp","evaluation"],
+   one:"An assistant on digital finance (GDPR, MiCA, PSD2, AI Act, savings) that answers only from 115 official documents, cites its sources and refuses when it doesn't know. Everything runs locally.",
+   links:[["Code","https://github.com/LDGKM/Vigie"],["Write-up (in French)","etudes/vigie.html"]],
+   notes:[
+    ["The pipeline","Keyword search (SQLite FTS5) and semantic search (bge-m3), rank fusion, reranking (bge-reranker-v2-m3), then an answer drafted by Qwen3.5-4B from 3 numbered passages. Below a relevance threshold, Vigie says the information isn't in its sources."],
+    ["The check","Before showing an answer, Vigie checks that every citation exists and that every number appears in the cited passages. Otherwise it shows the passages as they are."],
+    ["Evaluation","86 questions, including a hold-out set written after the model was chosen and never used for tuning: 18 of 18 out-of-scope questions refused, 62 drafted answers for 68 in-scope questions, 3 of them wrong on manual review."]]},
  { id:"surgery", date:"Oct 2026", title:"From data to robust surgery schedules", tags:["Python","scikit-learn","conformal prediction","HiGHS (MILP)","research"],
    one:"How uncertain is the length of an operation, and what does learning that uncertainty change in an operating-room schedule? A small research study on 6,385 open surgeries.",
    links:[["Code","https://github.com/LDGKM/surgery-duration-uncertainty"],["Notebook","https://deogratias-loutou.fr/notebooks/plannings-bloc-operatoire.html"],["Paper-style report (PDF)","https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf"]],
@@ -787,7 +795,7 @@ const ENTRIES = [
 ];
 
 const list = document.getElementById("entries");
-const CATS = {"surgery": ["research", "data"], "roads": ["data"], "medicines": ["data"], "drone": ["sim"], "voronoi": ["algo"], "boids": ["sim"], "membrana": ["research", "sim"], "plagiarism": ["algo"], "kmeans": ["algo", "data"], "nsga": ["research", "algo"], "v2v": ["algo", "sim"], "geo": ["algo"], "confope": ["dev"]};
+const CATS = {"vigie": ["research", "dev"], "surgery": ["research", "data"], "roads": ["data"], "medicines": ["data"], "drone": ["sim"], "voronoi": ["algo"], "boids": ["sim"], "membrana": ["research", "sim"], "plagiarism": ["algo"], "kmeans": ["algo", "data"], "nsga": ["research", "algo"], "v2v": ["algo", "sim"], "geo": ["algo"], "confope": ["dev"]};
 const entryHtml = e => `
  <li class="entry${e.demo ? " has-demo" : ""}" id="${e.id}" data-cats="${(CATS[e.id] || []).join(" ")}${e.demo ? " demo" : ""}">
   <details data-id="${e.id}">
@@ -805,9 +813,9 @@ const entryHtml = e => `
    </div>
   </details>
  </li>`;
-list.innerHTML = ENTRIES.slice(0, 3).map(entryHtml).join("");
+list.innerHTML = ENTRIES.slice(0, 4).map(entryHtml).join("");
 const moreList = document.getElementById("more");
-moreList.innerHTML = ENTRIES.slice(3).map(entryHtml).join("");
+moreList.innerHTML = ENTRIES.slice(4).map(entryHtml).join("");
 // filters: one chip per category, with counts; "all" shows everything
 (() => {
   const FILTERS = [["all", "All"], ["data", "Data"], ["research", "Research"], ["sim", "Simulation & 3D"], ["algo", "Algorithms"], ["dev", "Web development"], ["demo", "With a live demo"]], box = document.getElementById("filters"), lis = () => [...document.querySelectorAll("#entries > li, #more > li")];

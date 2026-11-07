@@ -1,0 +1,22 @@
+{
+  "source": "README de LDGKM/Vigie, sections « Réponses rédigées », « Base élargie » et « Réponses plus directes ». Relecture manuelle des réponses par l'auteur.",
+  "cats": [
+    {"k": "ok", "label": "Réponse juste", "color": "--d-teal"},
+    {"k": "weak", "label": "Imprécise ou faible", "color": "--accent"},
+    {"k": "wrong", "label": "Fausse", "color": "--d-red"},
+    {"k": "shown", "label": "Non confirmée : passages affichés", "color": "--d-blue"},
+    {"k": "missed", "label": "Refusée à tort", "color": "--d-grey"},
+    {"k": "refused", "label": "Hors corpus, bien refusée", "color": "--ink"}
+  ],
+  "sets": [
+    {"label": "Première version · 86 questions", "n": 86,
+     "note": "Les 68 questions couvertes et les 18 hors corpus des deux jeux, posées à la chaîne complète. 18 refus sur 18 hors corpus.",
+     "v": {"ok": 56, "weak": 3, "wrong": 3, "shown": 1, "missed": 5, "refused": 18}},
+    {"label": "Jeu de contrôle · version actuelle · 28", "n": 28,
+     "note": "28 questions écrites après le choix du modèle et jamais utilisées pour le réglage.",
+     "v": {"ok": 23, "weak": 1, "wrong": 2, "shown": 1, "missed": 1, "refused": 0}},
+    {"label": "Définitions · 28", "n": 28,
+     "note": "28 questions de définition écrites avant la mesure. « Faible » regroupe les 2 réponses jugées faibles.",
+     "v": {"ok": 25, "weak": 2, "wrong": 1, "shown": 0, "missed": 0, "refused": 0}}
+  ]
+}
