@@ -105,6 +105,15 @@ a{color:var(--accent-ink);text-underline-offset:.18em}
 
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
+/* figures made on white (charts, screenshots) are toned down in the dark theme */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.th,figure img,.list img){filter:brightness(.86)}}
+:root[data-theme="dark"] :is(.th,figure img,.list img){filter:brightness(.86)}
+/* cards respond to the pointer */
+@media (hover:hover){
+  .featured li,#more .entry:not(.open),.list li{transition:transform .18s ease,box-shadow .18s ease}
+  .featured li:hover,#more .entry:not(.open):hover,.list li:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.10)}
+}
+
 /* print: a clean, ink-friendly page (recruiters print CVs and studies) */
 @media print{
   :root{--paper:#fff;--sheet:#fff;--ink:#000;--muted:#333;--line:#bbb}

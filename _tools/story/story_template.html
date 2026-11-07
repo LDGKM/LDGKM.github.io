@@ -93,6 +93,8 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
 .btn{display:inline-flex;align-items:center;min-height:44px;padding:9px 15px;border:1.5px solid var(--ink);border-radius:2px;color:var(--ink);text-decoration:none;font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
 .btn.main{background:var(--ochre);border-color:var(--ochre);color:#16110A}
 .btn:hover{border-color:var(--ochre)}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ochre);color:#16110A;padding:10px 14px;border-radius:3px;font-weight:600;text-decoration:none}
+.skip:focus{top:10px}
 .cue{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);margin-top:14px}
 #load{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:4;font-family:var(--font-mono);font-size:.8rem;color:var(--muted);background:rgba(11,17,23,.85);padding:6px 12px;border-radius:3px}
 .nogl #scene{display:none}
@@ -117,6 +119,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
 </style>
 </head>
 <body>
+<a class="skip" href="#c0">{{skip}}</a>
 <canvas id="scene" aria-hidden="true"></canvas>
 <header class="top">
   <div class="row">
