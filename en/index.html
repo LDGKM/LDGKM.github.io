@@ -80,6 +80,14 @@ main{position:relative;z-index:2}
 .card{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 24px;backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .proj{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:6px 12px;border-radius:3px;background:var(--ochre);color:#16110A;font-family:var(--font-display);font-weight:800;font-size:1.15rem;letter-spacing:.02em;text-transform:uppercase;line-height:1.1}
 .proj small{font-family:var(--font-mono);font-weight:600;font-size:.72rem;letter-spacing:.08em;opacity:.8;white-space:nowrap}
+.divider{position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:120px 16px 60px;background:var(--ochre);color:#16110A;text-align:center}
+.divider h2{font-size:clamp(5rem,3rem + 12vw,15rem);line-height:.85;margin:0 0 18px;letter-spacing:.01em}
+.divider p{font-size:1.25rem;font-weight:600;margin:0 0 18px}
+.divider ol{list-style:none;margin:0 auto;padding:0;display:grid;gap:12px;max-width:620px;text-align:left}
+.divider li{display:flex;align-items:center;gap:16px;background:#16110A;color:var(--ochre);border-radius:4px;padding:14px 18px;font-family:var(--font-display);font-weight:800;font-size:clamp(1.5rem,1.1rem + 1.6vw,2.4rem);text-transform:uppercase;line-height:1}
+.divider li b{display:grid;place-items:center;flex:none;width:52px;height:52px;border-radius:50%;background:var(--ochre);color:#16110A;font-size:1.8rem}
+.divider .cue{color:#16110A;opacity:.75;font-size:.9rem}
+body.in-div .hud,body.in-div .lab{visibility:hidden}
 .kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
 h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
 h1{font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem)}
@@ -201,6 +209,18 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
     </div>
   </section>
 
+  <section class="divider" id="projets" aria-labelledby="projets-t">
+    <div>
+      <h2 id="projets-t">Projects</h2>
+      <p>Two projects built on real data:</p>
+      <ol>
+        <li><b>1</b>Road accidents</li>
+        <li><b>2</b>Operating-room schedules</li>
+      </ol>
+      <p class="cue">Scroll down ↓</p>
+    </div>
+  </section>
+
   <section class="step" id="c2">
     <div class="card">
       <p class="proj"><small>Project 1 / 2</small>Road accidents</p>
@@ -316,6 +336,8 @@ const KEYS = [
   {t:[62000, -13000], d:250000, e:1.15, a:0.12, m:1.4} ];
 
 const steps = [...document.querySelectorAll(".step")];
+// the big "Projects" block hides the 3D labels while it fills the screen
+new IntersectionObserver(es => es.forEach(e => document.body.classList.toggle("in-div", e.intersectionRatio > 0.35)), {threshold:[0, 0.35, 0.6]}).observe(document.getElementById("projets"));
 const chapterLinks = [...document.querySelectorAll("#chapters a")];
 function storyPos(){
   const line = innerHeight * 0.55; let p = 0;
