@@ -16,7 +16,7 @@ EXTRACT = r"""
   const out = [];
   const add = (key, title, section, text, anchorText) => { text = T(text); if (text.length > 25) out.push({key, title: T(title), section: T(section), text, anchor: T(anchorText || text)}); };
   if (page.startsWith("classic") || page === "index.html") {
-    const intro = document.querySelector("#top .lede"); if (intro) add(page + "#top", document.querySelector("#intro-title").textContent, "Présentation", intro.textContent);
+    const intro = document.querySelector("#top .lede"), dispo = document.querySelector("#top .dispo"); if (intro) add(page + "#top", document.querySelector("#intro-title").textContent, "Présentation", intro.textContent + (dispo ? " " + [...dispo.querySelectorAll(".d1, .d2")].map(d => [...d.children].map(c => c.textContent).join(" ")).join(". ") + "." : ""), intro.textContent);
     document.querySelectorAll("#about .who p").forEach(p => add(page + "#about", document.getElementById("about-title").textContent, "", p.textContent));
     document.querySelectorAll("#experience .xp > li").forEach(li => add(page + "#experience", document.getElementById("exp-title").textContent, li.querySelector("h3").textContent, li.querySelector("h3").textContent + ", " + li.querySelector(".org").textContent + " (" + li.querySelector(".when").textContent + ") : " + [...li.querySelectorAll("ul li")].map(x => x.textContent).join(" "), li.querySelector("h3").textContent));
     document.querySelectorAll("#formation .edu > li").forEach(li => add(page + "#formation", document.getElementById("edu-title").textContent, "", li.textContent, li.querySelector("b").textContent));

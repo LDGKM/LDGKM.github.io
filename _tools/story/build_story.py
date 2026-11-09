@@ -16,6 +16,7 @@ T = {
   og="og-classic-fr.jpg", classic="/", cv="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
   skip="Aller au récit", nav_projects="Projets", nav_studies="Études", nav_studies_url="/etudes/", nav_contact="Contact", nav_text="Version texte",
   ch=["Qui je suis","La ville","Les accidents","Les décès","Le piège","Le bloc","L'incertitude","Contact"],
+  hand=["Ici, c'est Mulhouse, en 3D", "Chaque bloc = un vrai bâtiment", "Chaque point = un accident", "Rouge = quelqu'un est mort", "Mulhouse : moins d'accidents notés que Colmar, mais plus de morts", "Rouge = la salle finit en retard", "Presque plus de rouge = moins de retard", ""],
   watch_k="Vous regardez", watch=["Le centre de Mulhouse en 3D, reconstruit à partir de données publiques.", "Le centre de Mulhouse : chaque bâtiment, coloré selon son année de construction.", "Le Haut-Rhin vu du ciel : chaque point bleu est un accident de la route avec blessé (2019-2024).", "Les mêmes accidents : en rouge, ceux où quelqu'un est mort.", "Deux cercles de 3 km, autour de Mulhouse et de Colmar, pour comparer leurs accidents.", "Une journée dans 4 salles d'opération : contour = prévu, bloc plein = réel, rouge = retard.", "La même journée, planifiée avec l'incertitude apprise : le rouge a presque disparu.", "Fin du récit."],
   ch_aria="Chapitres", menu_aria="Menu principal",
   load="Chargement de la carte…", nogl="La 3D n'est pas disponible sur cet appareil : le récit reste lisible.", nodata="Les données n'ont pas pu se charger : le récit reste lisible.",
@@ -70,6 +71,7 @@ T = {
   og="og-classic.jpg", classic="/classic.html", cv="/cv/Deo_Gratias_Loutou_CV.pdf",
   skip="Skip to the story", nav_projects="Projects", nav_studies="Reports", nav_studies_url="/classic.html#projets", nav_contact="Contact", nav_text="Text version",
   ch=["Who I am","The city","Accidents","Deaths","The trap","Surgery","Uncertainty","Contact"],
+  hand=["This is Mulhouse, in 3D", "Each block = a real building", "Each dot = an accident", "Red = someone died", "Mulhouse: fewer accidents recorded than Colmar, but more deaths", "Red = the room runs late", "Almost no red = less overtime", ""],
   watch_k="You are looking at", watch=["Central Mulhouse in 3D, rebuilt from public data.", "Central Mulhouse: every building, coloured by its construction year.", "The Haut-Rhin from above: each blue dot is a road accident with someone injured (2019-2024).", "The same accidents: in red, those in which someone died.", "Two 3 km circles, around Mulhouse and Colmar, to compare their accidents.", "One day in 4 operating rooms: outline = planned, solid block = actual, red = overtime.", "The same day, planned with learned uncertainty: the red has almost gone.", "End of the story."],
   ch_aria="Chapters", menu_aria="Main menu",
   load="Loading the map…", nogl="3D isn't available on this device: the story is still readable.", nodata="The data couldn't load: the story is still readable.",
@@ -124,6 +126,7 @@ def render(t):
     t["skills_li"] = "\n".join(f"        <li>{x}</li>" for x in t.pop("s0_skills"))
     t["chapters_li"] = "\n".join(f'    <li><a href="#c{i}">{c}</a></li>' for i, c in enumerate(t["ch"]))
     t["watch_js"] = json.dumps(t.pop("watch"), ensure_ascii=False)
+    t["hand_js"] = json.dumps(t.pop("hand"), ensure_ascii=False)
     t["ch_js"] = "[" + ",".join('"' + c.replace('"', '\\"') + '"' for c in t.pop("ch")) + "]"
     eras = t.pop("eras")
     for i, e in enumerate(eras): t[f"era{i}"] = e

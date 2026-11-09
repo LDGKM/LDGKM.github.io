@@ -330,6 +330,20 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 .more-head{margin-top:72px}
 .section .bighead{margin-top:8px}
 .guide{margin-top:22px}
+
+/* availability banner: the first thing a recruiter reads */
+.dispo{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:stretch;gap:0;margin:22px 0 6px;border:2px solid var(--ink);border-radius:6px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.12)}
+.dispo > div{padding:18px 22px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.dispo .d1{background:var(--accent);color:var(--on-accent)}
+.dispo .d2{background:var(--ink);color:var(--paper)}
+.dispo .k{font:600 .82rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.dispo b{font-family:var(--font-display);font-weight:800;font-size:clamp(2.4rem,1.6rem + 3.4vw,4.4rem);line-height:1.02;margin-top:4px;text-transform:uppercase}
+.dispo small{font-size:.95rem;opacity:.9}
+.dispo .arrow{display:grid;place-items:center;background:linear-gradient(90deg,var(--accent) 50%,var(--ink) 50%);color:var(--paper);font:800 2rem var(--font-display);padding:0 6px}
+.dispo .arrow span{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--paper);color:var(--ink);border:2px solid var(--ink)}
+@media (max-width:640px){.dispo{grid-template-columns:minmax(0,1fr)}.dispo .arrow{background:linear-gradient(180deg,var(--accent) 50%,var(--ink) 50%);padding:4px 0}.dispo .arrow span{width:40px;height:40px;transform:rotate(90deg)}}
+@media (prefers-reduced-motion:no-preference){.dispo .arrow span{animation:nudge 1.6s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(6px)}}}
+@media (prefers-reduced-motion:no-preference) and (max-width:640px){@keyframes nudge{0%,100%{transform:rotate(90deg)}50%{transform:rotate(90deg) translateX(6px)}}}
 </style>
 </head>
 <body>
@@ -361,7 +375,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <p class="kicker mono">Mulhouse · M1 Informatique, Université de Haute-Alsace</p>
     <h1 id="intro-title">Deo Gratias Loutou</h1>
-    <p class="lede">J'analyse des données pour aider à prendre de meilleures décisions : je les nettoie, je vérifie qu'elles sont fiables, puis j'en tire des résultats clairs et chiffrés. <strong>Je cherche une alternance en data ou en R&amp;D pour 2027-2028, ou un stage à partir de mai 2027 qui pourrait y mener.</strong></p>
+    <div class="dispo" role="note" aria-label="Mes disponibilités"><div class="d1"><span class="k">Stage</span><b>dès mai 2027</b><small>qui pourrait mener à une alternance</small></div><div class="arrow" aria-hidden="true"><span>→</span></div><div class="d2"><span class="k">Alternance</span><b>2027-2028</b><small>en data ou en R&amp;D</small></div></div>
+    <p class="lede">J'analyse des données pour aider à prendre de meilleures décisions : je les nettoie, je vérifie qu'elles sont fiables, puis j'en tire des résultats clairs et chiffrés.</p>
     <p class="keyskills">Python · SQL · statistiques · machine learning · IA (RAG) · visualisation de données</p>
     <!--signpost--><ul class="guide" aria-label="Sur cette page">
       <li><a href="#cv" data-cv><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg><b>Mon CV</b><span>1 page, à lire ou télécharger</span></a></li>
