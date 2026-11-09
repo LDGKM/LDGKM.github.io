@@ -343,6 +343,22 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 @media (max-width:640px){.dispo{grid-template-columns:minmax(0,1fr)}.dispo .arrow{background:linear-gradient(180deg,var(--accent) 50%,var(--ink) 50%);padding:4px 0}.dispo .arrow span{width:40px;height:40px;transform:rotate(90deg)}}
 @media (prefers-reduced-motion:no-preference){.dispo .arrow span{animation:nudge 1.6s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(6px)}}}
 @media (prefers-reduced-motion:no-preference) and (max-width:640px){@keyframes nudge{0%,100%{transform:rotate(90deg)}50%{transform:rotate(90deg) translateX(6px)}}}
+.keychips{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.keychips li{margin:0;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--ink);border-radius:999px;background:var(--sheet);font-weight:600;font-size:.92rem}
+.keychips li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.keychips li.more{border:0;background:none;padding:7px 4px}
+.keychips li.more::before{display:none}
+.keychips a{font-size:.9rem;font-weight:600}
+/* 3D version notice */
+.notice3d{position:fixed;left:16px;bottom:16px;z-index:45;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 92px);padding:10px 8px 10px 14px;border:1.5px solid var(--ink);border-radius:999px;background:var(--ink);color:var(--paper);box-shadow:0 10px 26px rgba(0,0,0,.25);transform:translateY(140%);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.notice3d.show{transform:none}
+.notice3d a{color:var(--paper);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:10px}
+.notice3d a b{color:var(--accent);text-transform:uppercase;letter-spacing:.05em;font-size:.8rem}
+.notice3d .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none;box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 70%,transparent)}
+.notice3d button{background:transparent;border:0;color:var(--paper);opacity:.7;font-size:1.2rem;width:32px;height:32px;cursor:pointer;border-radius:50%}
+.notice3d button:hover{opacity:1}
+@media (prefers-reduced-motion:no-preference){.notice3d .dot{animation:ping 1.8s infinite}@keyframes ping{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}}
+@media (max-width:520px){.notice3d{font-size:.86rem}}
 </style>
 </head>
 <body>
@@ -375,14 +391,14 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <h1 id="intro-title">Deo Gratias Loutou</h1>
     <div class="dispo" role="note" aria-label="My availability"><div class="d1"><span class="k">Internship</span><b>from May 2027</b><small>that could lead to a work-study position</small></div><div class="arrow" aria-hidden="true"><span>→</span></div><div class="d2"><span class="k">Work-study (alternance)</span><b>2027–2028</b><small>in data or R&amp;D</small></div></div>
     <p class="lede">I analyse data to help people make better decisions: I clean it, check that it is reliable, then draw clear results with numbers.</p>
-    <p class="keyskills">Python · SQL · statistics · machine learning · AI (RAG) · data visualisation</p>
+    <ul class="keychips" aria-label="Key skills"><li>Python</li><li>SQL</li><li>Statistics</li><li>Machine learning</li><li>AI (RAG)</li><li>Data visualisation</li><li class="more"><a href="#competences">All my skills →</a></li></ul>
     <!--signpost--><ul class="guide" aria-label="On this page">
       <li><a href="#cv" data-cv><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg><b>My CV</b><span>1 page, to read or download</span></a></li>
       <li><a href="#projets"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-8M21 20H3"/></svg><b>My projects</b><span>4 data projects, with their results</span></a></li>
+      <li><a href="#competences"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg><b>My skills</b><span>Python, SQL, AI, statistics…</span></a></li>
       <li><a href="#experience"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg><b>My experience</b><span>2 company internships</span></a></li>
       <li><a href="#formation"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><b>My education</b><span>Master's in computer science, Mulhouse</span></a></li>
       <li><a href="#contact"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><b>Contact me</b><span>Email, LinkedIn, GitHub</span></a></li>
-      <li><button type="button" data-ask><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><b>A question?</b><span>An assistant answers from this site</span></button></li>
     </ul>
     <p class="story-link"><a href="/en/">Prefer a guided tour? The 3D story: my analyses shown on a map of Mulhouse (5 min) →</a></p>
     <div id="projets"><header class="bighead"><span class="num" aria-hidden="true">1</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-8M21 20H3"/></svg><div><h2 id="proj-title">My data projects</h2><p>Four projects, each with its result. Click an image to read the summary.</p></div></header></div>
@@ -395,22 +411,22 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   </div>
 </section>
 
+<section class="section" id="competences">
+  <div class="wrap">
+    <header class="bighead"><span class="num" aria-hidden="true">2</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg><div><h2 id="sk-title">My skills</h2><p>The tools I use, grouped by area.</p></div></header>
+    <div class="skills"><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-8M21 20H3"/></svg>Data</h3><ul><li>Python</li><li>pandas</li><li>NumPy</li><li>scikit-learn</li><li>statsmodels</li><li>Matplotlib</li><li>SQL</li><li>DuckDB</li><li>MySQL</li><li>PostgreSQL</li><li>statistics</li><li>visualisation</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>AI</h3><ul><li>RAG</li><li>hybrid search</li><li>reranking</li><li>llama.cpp</li><li>model evaluation</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg>Engineering</h3><ul><li>C++</li><li>C#</li><li>TypeScript</li><li>Java</li><li>Qt</li><li>Unity</li><li>three.js</li><li>Git</li><li>automated tests</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg>Certificates</h3><ul><li>DataCamp Python Data Fundamentals (28 h)</li><li>GitHub Foundations (9 h)</li><li>MikroTik MTCNA</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Languages</h3><ul><li>French (native)</li><li>English (B2)</li></ul></div></div>
+  </div>
+</section>
 <section class="section" id="experience">
   <div class="wrap">
-    <header class="bighead"><span class="num" aria-hidden="true">2</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg><div><h2 id="exp-title">My experience</h2><p>Two company internships.</p></div></header>
+    <header class="bighead"><span class="num" aria-hidden="true">3</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg><div><h2 id="exp-title">My experience</h2><p>Two company internships.</p></div></header>
     <ul class="xp"><li><p class="when">Jun – Aug 2026</p><h3>Web developer and analyst intern</h3><p class="org"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>PetitAvis · Feucherolles, France</p><ul><li>ConfoPE, a compliance platform for childcare facilities, already in production.</li><li>Built the first dashboard comparing facilities.</li><li>Restructured a database of more than 50 tables (48 migrations) without losing data.</li></ul></li><li><p class="when">2024 – 2025</p><h3>IT and network technician intern</h3><p class="org"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>JASPE Technologies · Benin</p><ul><li>Set up network and server monitoring (Nagios, Icinga) on Linux.</li><li>Configured MikroTik routers.</li></ul></li></ul>
   </div>
 </section>
 <section class="section" id="formation">
   <div class="wrap">
-    <header class="bighead"><span class="num" aria-hidden="true">3</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><h2 id="edu-title">My education</h2><p>A master's in computer science in progress, after a bachelor's.</p></div></header>
+    <header class="bighead"><span class="num" aria-hidden="true">4</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><h2 id="edu-title">My education</h2><p>A master's in computer science in progress, after a bachelor's.</p></div></header>
     <ul class="edu"><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><b>Master's in Computer Science (M1)</b><small>Université de Haute-Alsace, Mulhouse · Computing & Mobility track</small></div><span class="when">2026 – present</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><b>Bachelor's in Computer Science (L3)</b><small>Université de Haute-Alsace, Mulhouse</small></div><span class="when">2025 – 2026</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><b>Information security studies (L1 – L3)</b><small>IFRI, University of Abomey-Calavi, Benin</small></div><span class="when">2022 – 2025</span></li><li><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg><div><b>Scientific baccalaureate, highest honours</b><small>Collège Sainte-Thérèse, Benin</small></div><span class="when">2022</span></li></ul>
-  </div>
-</section>
-<section class="section" id="competences">
-  <div class="wrap">
-    <header class="bighead"><span class="num" aria-hidden="true">4</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg><div><h2 id="sk-title">My skills</h2><p>The tools I use, grouped by area.</p></div></header>
-    <div class="skills"><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-8M21 20H3"/></svg>Data</h3><ul><li>Python</li><li>pandas</li><li>NumPy</li><li>scikit-learn</li><li>statsmodels</li><li>Matplotlib</li><li>SQL</li><li>DuckDB</li><li>MySQL</li><li>PostgreSQL</li><li>statistics</li><li>visualisation</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>AI</h3><ul><li>RAG</li><li>hybrid search</li><li>reranking</li><li>llama.cpp</li><li>model evaluation</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg>Engineering</h3><ul><li>C++</li><li>C#</li><li>TypeScript</li><li>Java</li><li>Qt</li><li>Unity</li><li>three.js</li><li>Git</li><li>automated tests</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/></svg>Certificates</h3><ul><li>DataCamp Python Data Fundamentals (28 h)</li><li>GitHub Foundations (9 h)</li><li>MikroTik MTCNA</li></ul></div><div><h3><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Languages</h3><ul><li>French (native)</li><li>English (B2)</li></ul></div></div>
   </div>
 </section>
 <section class="section" id="about">
@@ -485,6 +501,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 
 
 </main>
+<aside class="notice3d" id="notice3d" aria-label="Version 3D"><span class="dot" aria-hidden="true"></span><a href="/en/"><b>New</b> My portfolio also comes in 3D →</a><button type="button" aria-label="Close">×</button></aside>
 
 <dialog id="cvDialog" aria-labelledby="cvTitle">
   <div class="cv-bar"><h2 id="cvTitle">CV</h2><span class="hint">Deo Gratias Loutou · 1 page · October 2026</span><a class="btn" href="cv/Deo_Gratias_Loutou_CV.pdf" download>Download PDF</a><a class="btn" href="cv/Deo_Gratias_Loutou_CV_Research.pdf" download>Research CV</a><button type="button" class="btn" id="cvClose">Close</button></div>
@@ -1119,6 +1136,14 @@ document.getElementById("copyMail").addEventListener("click", () => {
 </script>
 
 <script data-goatcounter="https://ldgkm.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script>
+(() => { const n = document.getElementById("notice3d"); if (!n) return;
+  let off = false; try { off = localStorage.getItem("notice3d") === "off"; } catch (e) {}
+  if (off){ n.remove(); return; }
+  setTimeout(() => n.classList.add("show"), 1200);
+  n.querySelector("button").addEventListener("click", () => { n.classList.remove("show"); try { localStorage.setItem("notice3d", "off"); } catch (e) {} setTimeout(() => n.remove(), 500); });
+})();
+</script>
 <script src="/assets/site.js" defer></script>
 </body>
 </html>
