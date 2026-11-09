@@ -2,7 +2,7 @@
 
     python3 build_story.py /home/claude/ldgkm.github.io
 """
-import pathlib, sys
+import json, pathlib, sys
 
 SITE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
 TPL = (pathlib.Path(__file__).parent / "story_template.html").read_text(encoding="utf-8")
@@ -16,6 +16,7 @@ T = {
   og="og-classic-fr.jpg", classic="/", cv="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
   skip="Aller au récit", nav_projects="Projets", nav_studies="Études", nav_studies_url="/etudes/", nav_contact="Contact", nav_text="Version texte",
   ch=["Qui je suis","La ville","Les accidents","Les décès","Le piège","Le bloc","L'incertitude","Contact"],
+  watch_k="Vous regardez", watch=["Le centre de Mulhouse en 3D, reconstruit à partir de données publiques.", "Le centre de Mulhouse : chaque bâtiment, coloré selon son année de construction.", "Le Haut-Rhin vu du ciel : chaque point bleu est un accident de la route avec blessé (2019-2024).", "Les mêmes accidents : en rouge, ceux où quelqu'un est mort.", "Deux cercles de 3 km, autour de Mulhouse et de Colmar, pour comparer leurs accidents.", "Une journée dans 4 salles d'opération : contour = prévu, bloc plein = réel, rouge = retard.", "La même journée, planifiée avec l'incertitude apprise : le rouge a presque disparu.", "Fin du récit."],
   ch_aria="Chapitres", menu_aria="Menu principal",
   load="Chargement de la carte…", nogl="La 3D n'est pas disponible sur cet appareil : le récit reste lisible.", nodata="Les données n'ont pas pu se charger : le récit reste lisible.",
   standing="bâtiments debout", acc_inj="accident corporel", acc_fat="accident mortel", acc_unit="accidents",
@@ -29,7 +30,7 @@ T = {
   s0_kick="Mulhouse en données · un portfolio en 2 minutes",
   s0_who="Étudiant en M1 informatique à l'Université de Haute-Alsace, à Mulhouse.",
   s0_seek="Je cherche une alternance en data ou en R&amp;D pour 2027-2028, ou un stage à partir de mai 2027 qui pourrait y mener.",
-  s0_intro="En six écrans, sur de vraies données, ce que je sais faire :",
+  s0_intro="Faites défiler : la carte 3D affiche, écran par écran, une de mes analyses sur de vraies données de Mulhouse et du Haut-Rhin. Ce qu'elles montrent :",
   s0_skills=["construire un modèle à partir de données ouvertes ;","nettoyer, vérifier et comparer équitablement ;","repérer un biais avant de conclure ;","quantifier l'incertitude pour mieux décider."],
   scroll="Faites défiler ↓", shows="Ce que ça montre",
   s1_kick="1 · La ville", s1_h="1 678 bâtiments et 533 arbres, reconstruits",
@@ -69,6 +70,7 @@ T = {
   og="og-classic.jpg", classic="/classic.html", cv="/cv/Deo_Gratias_Loutou_CV.pdf",
   skip="Skip to the story", nav_projects="Projects", nav_studies="Reports", nav_studies_url="/classic.html#notebook", nav_contact="Contact", nav_text="Text version",
   ch=["Who I am","The city","Accidents","Deaths","The trap","Surgery","Uncertainty","Contact"],
+  watch_k="You are looking at", watch=["Central Mulhouse in 3D, rebuilt from public data.", "Central Mulhouse: every building, coloured by its construction year.", "The Haut-Rhin from above: each blue dot is a road accident with someone injured (2019-2024).", "The same accidents: in red, those in which someone died.", "Two 3 km circles, around Mulhouse and Colmar, to compare their accidents.", "One day in 4 operating rooms: outline = planned, solid block = actual, red = overtime.", "The same day, planned with learned uncertainty: the red has almost gone.", "End of the story."],
   ch_aria="Chapters", menu_aria="Main menu",
   load="Loading the map…", nogl="3D isn't available on this device: the story is still readable.", nodata="The data couldn't load: the story is still readable.",
   standing="buildings standing", acc_inj="injury accident", acc_fat="fatal accident", acc_unit="accidents",
@@ -82,7 +84,7 @@ T = {
   s0_kick="Mulhouse in data · a two-minute portfolio",
   s0_who="Computer science master's student (M1) at Université de Haute-Alsace, Mulhouse, France.",
   s0_seek="I'm looking for a work-study position (alternance) in data or R&amp;D for 2027-2028, or an internship from May 2027 that could lead to it.",
-  s0_intro="In six screens, on real data, what I can do:",
+  s0_intro="Scroll down: the 3D map shows one of my analyses per screen, on real data from Mulhouse and the Haut-Rhin. What they show:",
   s0_skills=["build a model from open data;","clean, check and compare fairly;","spot a bias before concluding;","quantify uncertainty to make better decisions."],
   scroll="Scroll down ↓", shows="What this shows",
   s1_kick="1 · The city", s1_h="1,678 buildings and 533 trees, rebuilt",
@@ -121,6 +123,7 @@ def render(t):
     t = dict(t)
     t["skills_li"] = "\n".join(f"        <li>{x}</li>" for x in t.pop("s0_skills"))
     t["chapters_li"] = "\n".join(f'    <li><a href="#c{i}">{c}</a></li>' for i, c in enumerate(t["ch"]))
+    t["watch_js"] = json.dumps(t.pop("watch"), ensure_ascii=False)
     t["ch_js"] = "[" + ",".join('"' + c.replace('"', '\\"') + '"' for c in t.pop("ch")) + "]"
     eras = t.pop("eras")
     for i, e in enumerate(eras): t[f"era{i}"] = e

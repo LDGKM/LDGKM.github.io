@@ -69,6 +69,9 @@ a{color:var(--ochre);text-underline-offset:.18em}
 .legend .dot{border-radius:50%}
 .legend .ghost{border:1.5px solid #CFE0FF;background:transparent}
 .legend b{color:var(--ink)}
+.watch{left:calc(max(16px,4vw) + 500px);right:calc(max(20px,4vw) + 360px);bottom:28px;max-width:560px;font-family:var(--font-body);font-size:1rem;line-height:1.4;color:var(--ink);background:rgba(11,17,23,.82);border:1px solid var(--line);border-left:4px solid var(--ochre);border-radius:3px;padding:10px 14px}
+.watch b{display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre);font-weight:600;margin-bottom:2px}
+@media (max-width:1100px){.watch{right:max(20px,4vw)}}
 .lab{position:fixed;z-index:1;pointer-events:none;transform:translate(-50%,-140%);font-family:var(--font-mono);font-size:.78rem;color:var(--ink);background:rgba(11,17,23,.78);border:1px solid var(--line);padding:2px 7px;border-radius:2px;white-space:nowrap;transition:opacity .35s}
 .lab b{color:var(--ochre);font-weight:600}
 .lab.room{transform:translate(-100%,-50%);background:transparent;border:0;color:var(--muted)}
@@ -110,8 +113,10 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   .step{align-items:flex-end;padding:110px 12px 24px}
   .card{padding:18px;background:rgba(14,21,28,.93)}
   #legEras{display:none}
-  .legend{top:126px;right:auto;left:12px;font-size:.7rem;padding:7px 9px;max-width:calc(100vw - 24px)}
-  #year{bottom:auto;top:132px;right:auto;left:14px;font-size:2.6rem}
+  .legend{top:188px;right:auto;left:12px;font-size:.7rem;padding:7px 9px;max-width:calc(100vw - 24px)}
+  .watch{left:12px;right:12px;bottom:auto;top:118px;font-size:.84rem;padding:7px 10px;max-width:none}
+  .watch b{display:none}
+  #year{bottom:auto;top:188px;right:auto;left:14px;font-size:2.6rem}
   #year small{text-align:left}
   .lab.room{display:none}
   #blocStat{display:none}
@@ -146,6 +151,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   <p class="chapnow" id="chapNow" aria-hidden="true"></p>
 </header>
 
+<div class="hud watch" id="watch"><b>Vous regardez</b><span id="watchT"></span></div>
 <div class="hud" id="year" style="opacity:0"><span id="yearN">1450</span><small id="yearS"></small></div>
 <div class="hud legend" id="legEras" style="opacity:0"></div>
 <div class="hud legend" id="legAcc" style="opacity:0">
@@ -173,7 +179,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
       <h1>Deo Gratias Loutou</h1>
       <p>Étudiant en M1 informatique à l'Université de Haute-Alsace, à Mulhouse.</p>
       <p class="seek">Je cherche une alternance en data ou en R&amp;D pour 2027-2028, ou un stage à partir de mai 2027 qui pourrait y mener.</p>
-      <p>En six écrans, sur de vraies données, ce que je sais faire&nbsp;:</p>
+      <p>Faites défiler&nbsp;: la carte 3D affiche, écran par écran, une de mes analyses sur de vraies données de Mulhouse et du Haut-Rhin. Ce qu'elles montrent&nbsp;:</p>
       <ul class="skills">
         <li>construire un modèle à partir de données ouvertes ;</li>
         <li>nettoyer, vérifier et comparer équitablement ;</li>
@@ -263,7 +269,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
 <script>
 "use strict";
 const L = {
-  standing:"bâtiments debout", accUnit:"accidents", numfmt:"fr-FR", chapters:["Qui je suis","La ville","Les accidents","Les décès","Le piège","Le bloc","L'incertitude","Contact"],
+  standing:"bâtiments debout", accUnit:"accidents", numfmt:"fr-FR", chapters:["Qui je suis","La ville","Les accidents","Les décès","Le piège","Le bloc","L'incertitude","Contact"], watch:["Le centre de Mulhouse en 3D, reconstruit à partir de données publiques.", "Le centre de Mulhouse : chaque bâtiment, coloré selon son année de construction.", "Le Haut-Rhin vu du ciel : chaque point bleu est un accident de la route avec blessé (2019-2024).", "Les mêmes accidents : en rouge, ceux où quelqu'un est mort.", "Deux cercles de 3 km, autour de Mulhouse et de Colmar, pour comparer leurs accidents.", "Une journée dans 4 salles d'opération : contour = prévu, bloc plein = réel, rouge = retard.", "La même journée, planifiée avec l'incertitude apprise : le rouge a presque disparu.", "Fin du récit."],
   labMul:"Mulhouse", labCol:"Colmar", labMulTrap:"Mulhouse · <b>115</b> accidents · 14 mortels", labColTrap:"Colmar · <b>157</b> accidents · 12 mortels",
   statA:"Planning sur l'historique · ce jour-là&nbsp;: <b>111 min</b> de dépassement par salle, 3 salles sur 4 en retard", statB:"Planning sur l'incertitude apprise · ce jour-là&nbsp;: <b>18 min</b> de dépassement par salle, 1 salle sur 4 en retard", nogl:"La 3D n'est pas disponible sur cet appareil : le récit reste lisible.", nodata:"Les données n'ont pas pu se charger : le récit reste lisible." };
 const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
@@ -312,7 +318,7 @@ function storyPos(){
 let seen = -1, current = -1;
 function updateChapters(p){
   const i = Math.round(p);
-  if (i !== current){ current = i; $("#chapNow").textContent = `${i + 1}/${steps.length} · ${L.chapters[i]}`;
+  if (i !== current){ current = i; $("#chapNow").textContent = `${i + 1}/${steps.length} · ${L.chapters[i]}`; $("#watchT").textContent = L.watch[i] || "";
     chapterLinks.forEach((a, k) => { a.classList.toggle("now", k === i); a.classList.toggle("done", k < i);
       if (k === i) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current"); }); }
   if (i > seen){ seen = i; track("recit/" + document.documentElement.lang + "/etape/" + i); }
