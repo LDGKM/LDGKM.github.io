@@ -85,6 +85,16 @@ main{position:relative;z-index:2}
 .projblock ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .projblock li{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:800;font-size:1.5rem;text-transform:uppercase;line-height:1.05}
 .projblock li b{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--ochre);color:#16110A;font-size:1.3rem}
+.seekbox{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);margin:6px 0 4px;border:1.5px solid var(--ochre);border-radius:4px;overflow:hidden}
+.seekbox > div{padding:10px 12px}
+.seekbox .sb1{background:var(--ochre);color:#16110A}
+.seekbox .sb2{background:#16110A;color:var(--ink)}
+.seekbox span{display:block;font:600 .7rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.seekbox b{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(1.6rem,1.3rem + 1.2vw,2.2rem);line-height:1;text-transform:uppercase;margin-top:3px}
+.seekbox i{display:grid;place-items:center;font-style:normal;font-weight:800;padding:0 6px;background:linear-gradient(90deg,var(--ochre) 50%,#16110A 50%);color:var(--ink)}
+.seekbox i::before{content:"";}
+.seek-sub{font-weight:600;margin:6px 0 12px!important}
+@media (max-width:760px){#c0 .skills,#c0 .kick,#c0 .intro-p{display:none}}
 .kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
 h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
 h1{font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem)}
@@ -178,8 +188,9 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
       <p class="kick">{{s0_kick}}</p>
       <h1>Deo Gratias Loutou</h1>
       <p>{{s0_who}}</p>
-      <p class="seek">{{s0_seek}}</p>
-      <p>{{s0_intro}}</p>
+      <div class="seekbox" role="note" aria-label="{{seek_aria}}"><div class="sb1"><span>{{seek_k1}}</span><b>{{seek_v1}}</b></div><i aria-hidden="true">→</i><div class="sb2"><span>{{seek_k2}}</span><b>{{seek_v2}}</b></div></div>
+      <p class="seek-sub">{{seek_sub}}</p>
+      <p class="intro-p">{{s0_intro}}</p>
       <ul class="skills">
 {{skills_li}}
       </ul>
