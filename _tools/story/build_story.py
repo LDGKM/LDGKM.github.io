@@ -60,7 +60,7 @@ T = {
   s7_kick="Contact", s7_h="Me contacter",
   s7_seek="Alternance data ou R&amp;D pour 2027-2028, ou stage à partir de mai 2027.",
   s7_p="Code public et rapport pour chaque étude, dont une troisième sur <a href=\"/etudes/medicaments.html\">les médicaments remboursés en France</a>.",
-  s7_cv="Mon CV (PDF)", s7_all="Tous les projets", s7_all_url="/#notebook",
+  s7_cv="Mon CV (PDF)", s7_all="Tous les projets", s7_all_url="/#projets",
 ),
 "en": dict(
   langredirect="",
@@ -68,7 +68,7 @@ T = {
   title="Deo Gratias Loutou · data &amp; R&amp;D work-study 2027 · Mulhouse in data",
   desc="Deo Gratias Loutou, a computer science master's student in Mulhouse, is looking for a data or R&amp;D work-study position for 2027-2028. His portfolio, told in 3D with real public data.",
   og="og-classic.jpg", classic="/classic.html", cv="/cv/Deo_Gratias_Loutou_CV.pdf",
-  skip="Skip to the story", nav_projects="Projects", nav_studies="Reports", nav_studies_url="/classic.html#notebook", nav_contact="Contact", nav_text="Text version",
+  skip="Skip to the story", nav_projects="Projects", nav_studies="Reports", nav_studies_url="/classic.html#projets", nav_contact="Contact", nav_text="Text version",
   ch=["Who I am","The city","Accidents","Deaths","The trap","Surgery","Uncertainty","Contact"],
   watch_k="You are looking at", watch=["Central Mulhouse in 3D, rebuilt from public data.", "Central Mulhouse: every building, coloured by its construction year.", "The Haut-Rhin from above: each blue dot is a road accident with someone injured (2019-2024).", "The same accidents: in red, those in which someone died.", "Two 3 km circles, around Mulhouse and Colmar, to compare their accidents.", "One day in 4 operating rooms: outline = planned, solid block = actual, red = overtime.", "The same day, planned with learned uncertainty: the red has almost gone.", "End of the story."],
   ch_aria="Chapters", menu_aria="Main menu",
@@ -114,7 +114,7 @@ T = {
   s7_kick="Contact", s7_h="Get in touch",
   s7_seek="Data or R&amp;D work-study position for 2027-2028, or an internship from May 2027.",
   s7_p="Public code and a written report for each study, including a third one on <a href=\"/rapports/medicaments.pdf\">medicines reimbursed in France</a>.",
-  s7_cv="My CV (PDF)", s7_all="All projects", s7_all_url="/classic.html#notebook",
+  s7_cv="My CV (PDF)", s7_all="All projects", s7_all_url="/classic.html#projets",
 ),
 }
 

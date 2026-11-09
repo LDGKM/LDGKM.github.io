@@ -43,7 +43,7 @@ THEME_EARLY = '<script>try{var t=localStorage.getItem("site-theme");if(t)documen
 def header(p):
     t = L[p["lang"]]
     items = [("story", "/recit/" if p["lang"] == "fr" else "/en/", t["story"]),
-             ("projects", t["home"] + "#notebook", t["projects"])]
+             ("projects", t["home"] + "#projets", t["projects"])]
     if t["studies"]: items.append(("studies", "/etudes/", t["studies"]))
     items += [("about", t["home"] + "#about", t["about"]), ("contact", t["home"] + "#contact", t["contact"])]
     links = "\n".join(f'      <a href="{u}"{" aria-current=\"page\"" if k == p.get("current") else ""}>{lbl}</a>' for k, u, lbl in items)

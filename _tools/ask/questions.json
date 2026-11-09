@@ -1,72 +1,384 @@
 {
-  "note": "Écrites avant la construction de l'index et le choix du seuil. 'reglage' sert à régler ; 'controle' n'est jamais utilisé pour régler. Une question couverte est réussie si l'une des 3 premières réponses vient d'une des pages ou fiches attendues (expect). Une question hors sujet est réussie si l'assistant refuse.",
-  "reglage": [
-    {"q": "Quel type de contrat recherche-t-il ?", "expect": ["index.html#about", "index.html#top"]},
-    {"q": "À partir de quand est-il disponible pour un stage ?", "expect": ["index.html#about", "index.html#top"]},
-    {"q": "Quelles langues parle-t-il ?", "expect": ["index.html#about"]},
-    {"q": "Est-ce qu'il connaît SQL ?", "expect": ["index.html#about", "index.html#roads", "index.html#medicines", "etudes/accidents-route.html", "etudes/medicaments.html"]},
-    {"q": "Quelle est sa formation ?", "expect": ["index.html#about"]},
-    {"q": "Où a-t-il fait son stage ?", "expect": ["index.html#about", "index.html#confope"]},
-    {"q": "Comment le contacter ?", "expect": ["index.html#about", "index.html#contact"]},
-    {"q": "A-t-il déjà travaillé avec des modèles de langage ?", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "Comment Vigie évite-t-il d'inventer des réponses ?", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "Quels résultats sur le bloc opératoire ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html"]},
-    {"q": "Qu'est-ce que la prédiction conforme apporte au planning ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html"]},
-    {"q": "Combien de morts sur les routes par an ?", "expect": ["index.html#roads", "etudes/accidents-route.html"]},
-    {"q": "Pourquoi Mulhouse a moins d'accidents que Colmar ?", "expect": ["index.html#roads", "etudes/accidents-route.html"]},
-    {"q": "Pourquoi les dépenses de médicaments augmentent ?", "expect": ["index.html#medicines", "etudes/medicaments.html"]},
-    {"q": "Quel projet utilise Unity ?", "expect": ["index.html#drone", "index.html#boids"]},
-    {"q": "Un projet avec OpenMP ?", "expect": ["index.html#kmeans", "index.html#membrana"]},
-    {"q": "Qu'a-t-il fait chez PetitAvis ?", "expect": ["index.html#confope", "index.html#about"]},
-    {"q": "Sait-il faire du machine learning ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html", "index.html#about", "index.html#roads"]},
-    {"q": "Projet de vie artificielle", "expect": ["index.html#membrana", "index.html#boids"]},
-    {"q": "Comment fonctionne le détecteur de plagiat ?", "expect": ["index.html#plagiarism"]},
-    {"q": "Quelles certifications a-t-il ?", "expect": ["index.html#about"]},
-    {"q": "Travaille-t-il en équipe ?", "expect": ["index.html#nsga", "index.html#v2v"]},
-    {"q": "Quel est le score AUC du modèle sur les accidents ?", "expect": ["index.html#roads", "etudes/accidents-route.html"]},
-    {"q": "Comment est évalué Vigie ?", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "Quelles données utilise l'étude sur le bloc ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html"]}
-  ],
-  "reglage_hors": [
-    "Quelle est la capitale du Japon ?",
-    "Quel temps fera-t-il demain ?",
-    "Quel est son salaire souhaité ?",
-    "Recette de la tarte flambée",
-    "A-t-il le permis de conduire ?",
-    "Qui a gagné la coupe du monde 2022 ?",
-    "Quel est son numéro de téléphone ?",
-    "Écris-moi un poème"
-  ],
-  "controle": [
-    {"q": "Cherche-t-il une alternance ?", "expect": ["index.html#about", "index.html#top"]},
-    {"q": "Quel est son niveau d'anglais ?", "expect": ["index.html#about"]},
-    {"q": "Quelles bibliothèques Python maîtrise-t-il ?", "expect": ["index.html#about"]},
-    {"q": "Où étudie-t-il ?", "expect": ["index.html#about", "index.html#top"]},
-    {"q": "Son adresse e-mail ?", "expect": ["index.html#about", "index.html#contact"]},
-    {"q": "Projet RAG", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "Combien de documents dans la base de Vigie ?", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "Que vérifie le contrôle des réponses ?", "expect": ["index.html#vigie", "etudes/vigie.html"]},
-    {"q": "De combien les dépassements au bloc ont-ils baissé ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html"]},
-    {"q": "Quelle couverture pour les intervalles à 80 % ?", "expect": ["index.html#surgery", "etudes/bloc-operatoire.html"]},
-    {"q": "Les trottinettes électriques sont-elles plus dangereuses ?", "expect": ["index.html#roads", "etudes/accidents-route.html"]},
-    {"q": "Le Haut-Rhin est-il un département sûr ?", "expect": ["index.html#roads", "etudes/accidents-route.html"]},
-    {"q": "Combien rembourse l'Assurance maladie pour les médicaments ?", "expect": ["index.html#medicines", "etudes/medicaments.html"]},
-    {"q": "Évolution des patients sous GLP-1", "expect": ["index.html#medicines", "etudes/medicaments.html"]},
-    {"q": "Simulateur de drone", "expect": ["index.html#drone"]},
-    {"q": "Coloration de graphe", "expect": ["index.html#v2v"]},
-    {"q": "A-t-il utilisé Laravel ?", "expect": ["index.html#confope", "index.html#about"]},
-    {"q": "Algorithme k-means", "expect": ["index.html#kmeans"]},
-    {"q": "Optimisation multi-objectif", "expect": ["index.html#nsga"]},
-    {"q": "Voronoï et restaurants", "expect": ["index.html#voronoi"]}
-  ],
-  "controle_hors": [
-    "Combien coûte un billet de train Paris-Lyon ?",
-    "Quelle est sa couleur préférée ?",
-    "Est-il marié ?",
-    "Comment réparer une fuite d'eau ?",
-    "Quel âge a-t-il ?",
-    "Donne-moi le cours du bitcoin",
-    "Quel est le meilleur film de 2025 ?",
-    "Joue-t-il au football ?"
-  ]
+ "note": "Écrites avant la construction de l'index et le choix du seuil. 'reglage' sert à régler ; 'controle' n'est jamais utilisé pour régler. Une question couverte est réussie si l'une des 3 premières réponses vient d'une des pages ou fiches attendues (expect). Une question hors sujet est réussie si l'assistant refuse. Le 9 novembre 2026, la section À propos a été découpée en Expérience, Formation et Compétences : ces sections sont acceptées là où À propos l'était.",
+ "reglage": [
+  {
+   "q": "Quel type de contrat recherche-t-il ?",
+   "expect": [
+    "index.html#about",
+    "index.html#top",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "À partir de quand est-il disponible pour un stage ?",
+   "expect": [
+    "index.html#about",
+    "index.html#top",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Quelles langues parle-t-il ?",
+   "expect": [
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Est-ce qu'il connaît SQL ?",
+   "expect": [
+    "index.html#about",
+    "index.html#roads",
+    "index.html#medicines",
+    "etudes/accidents-route.html",
+    "etudes/medicaments.html",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Quelle est sa formation ?",
+   "expect": [
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Où a-t-il fait son stage ?",
+   "expect": [
+    "index.html#about",
+    "index.html#confope",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Comment le contacter ?",
+   "expect": [
+    "index.html#about",
+    "index.html#contact",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "A-t-il déjà travaillé avec des modèles de langage ?",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "Comment Vigie évite-t-il d'inventer des réponses ?",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "Quels résultats sur le bloc opératoire ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html"
+   ]
+  },
+  {
+   "q": "Qu'est-ce que la prédiction conforme apporte au planning ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html"
+   ]
+  },
+  {
+   "q": "Combien de morts sur les routes par an ?",
+   "expect": [
+    "index.html#roads",
+    "etudes/accidents-route.html"
+   ]
+  },
+  {
+   "q": "Pourquoi Mulhouse a moins d'accidents que Colmar ?",
+   "expect": [
+    "index.html#roads",
+    "etudes/accidents-route.html"
+   ]
+  },
+  {
+   "q": "Pourquoi les dépenses de médicaments augmentent ?",
+   "expect": [
+    "index.html#medicines",
+    "etudes/medicaments.html"
+   ]
+  },
+  {
+   "q": "Quel projet utilise Unity ?",
+   "expect": [
+    "index.html#drone",
+    "index.html#boids"
+   ]
+  },
+  {
+   "q": "Un projet avec OpenMP ?",
+   "expect": [
+    "index.html#kmeans",
+    "index.html#membrana"
+   ]
+  },
+  {
+   "q": "Qu'a-t-il fait chez PetitAvis ?",
+   "expect": [
+    "index.html#confope",
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Sait-il faire du machine learning ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html",
+    "index.html#about",
+    "index.html#roads",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Projet de vie artificielle",
+   "expect": [
+    "index.html#membrana",
+    "index.html#boids"
+   ]
+  },
+  {
+   "q": "Comment fonctionne le détecteur de plagiat ?",
+   "expect": [
+    "index.html#plagiarism"
+   ]
+  },
+  {
+   "q": "Quelles certifications a-t-il ?",
+   "expect": [
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Travaille-t-il en équipe ?",
+   "expect": [
+    "index.html#nsga",
+    "index.html#v2v"
+   ]
+  },
+  {
+   "q": "Quel est le score AUC du modèle sur les accidents ?",
+   "expect": [
+    "index.html#roads",
+    "etudes/accidents-route.html"
+   ]
+  },
+  {
+   "q": "Comment est évalué Vigie ?",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "Quelles données utilise l'étude sur le bloc ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html"
+   ]
+  }
+ ],
+ "reglage_hors": [
+  "Quelle est la capitale du Japon ?",
+  "Quel temps fera-t-il demain ?",
+  "Quel est son salaire souhaité ?",
+  "Recette de la tarte flambée",
+  "A-t-il le permis de conduire ?",
+  "Qui a gagné la coupe du monde 2022 ?",
+  "Quel est son numéro de téléphone ?",
+  "Écris-moi un poème"
+ ],
+ "controle": [
+  {
+   "q": "Cherche-t-il une alternance ?",
+   "expect": [
+    "index.html#about",
+    "index.html#top",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Quel est son niveau d'anglais ?",
+   "expect": [
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Quelles bibliothèques Python maîtrise-t-il ?",
+   "expect": [
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Où étudie-t-il ?",
+   "expect": [
+    "index.html#about",
+    "index.html#top",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Son adresse e-mail ?",
+   "expect": [
+    "index.html#about",
+    "index.html#contact",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Projet RAG",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "Combien de documents dans la base de Vigie ?",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "Que vérifie le contrôle des réponses ?",
+   "expect": [
+    "index.html#vigie",
+    "etudes/vigie.html"
+   ]
+  },
+  {
+   "q": "De combien les dépassements au bloc ont-ils baissé ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html"
+   ]
+  },
+  {
+   "q": "Quelle couverture pour les intervalles à 80 % ?",
+   "expect": [
+    "index.html#surgery",
+    "etudes/bloc-operatoire.html"
+   ]
+  },
+  {
+   "q": "Les trottinettes électriques sont-elles plus dangereuses ?",
+   "expect": [
+    "index.html#roads",
+    "etudes/accidents-route.html"
+   ]
+  },
+  {
+   "q": "Le Haut-Rhin est-il un département sûr ?",
+   "expect": [
+    "index.html#roads",
+    "etudes/accidents-route.html"
+   ]
+  },
+  {
+   "q": "Combien rembourse l'Assurance maladie pour les médicaments ?",
+   "expect": [
+    "index.html#medicines",
+    "etudes/medicaments.html"
+   ]
+  },
+  {
+   "q": "Évolution des patients sous GLP-1",
+   "expect": [
+    "index.html#medicines",
+    "etudes/medicaments.html"
+   ]
+  },
+  {
+   "q": "Simulateur de drone",
+   "expect": [
+    "index.html#drone"
+   ]
+  },
+  {
+   "q": "Coloration de graphe",
+   "expect": [
+    "index.html#v2v"
+   ]
+  },
+  {
+   "q": "A-t-il utilisé Laravel ?",
+   "expect": [
+    "index.html#confope",
+    "index.html#about",
+    "index.html#experience",
+    "index.html#formation",
+    "index.html#competences"
+   ]
+  },
+  {
+   "q": "Algorithme k-means",
+   "expect": [
+    "index.html#kmeans"
+   ]
+  },
+  {
+   "q": "Optimisation multi-objectif",
+   "expect": [
+    "index.html#nsga"
+   ]
+  },
+  {
+   "q": "Voronoï et restaurants",
+   "expect": [
+    "index.html#voronoi"
+   ]
+  }
+ ],
+ "controle_hors": [
+  "Combien coûte un billet de train Paris-Lyon ?",
+  "Quelle est sa couleur préférée ?",
+  "Est-il marié ?",
+  "Comment réparer une fuite d'eau ?",
+  "Quel âge a-t-il ?",
+  "Donne-moi le cours du bitcoin",
+  "Quel est le meilleur film de 2025 ?",
+  "Joue-t-il au football ?"
+ ]
 }

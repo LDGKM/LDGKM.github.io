@@ -17,14 +17,11 @@ EXTRACT = r"""
   const add = (key, title, section, text, anchorText) => { text = T(text); if (text.length > 25) out.push({key, title: T(title), section: T(section), text, anchor: T(anchorText || text)}); };
   if (page.startsWith("classic") || page === "index.html") {
     const intro = document.querySelector("#top .lede"); if (intro) add(page + "#top", document.querySelector("#intro-title").textContent, "Présentation", intro.textContent);
-    const about = document.getElementById("about");
-    const aboutT = about.querySelector("h2").textContent;
-    add(page + "#about", aboutT, "", about.querySelector(".section-head p").textContent);
-    about.querySelectorAll(".about p").forEach(p => add(page + "#about", aboutT, "", p.textContent));
-    about.querySelectorAll("dl dt").forEach(dt => {
-      const dd = dt.nextElementSibling; const inContact = /mail|Ailleurs|Elsewhere/i.test(dt.textContent);
-      add(page + (inContact ? "#contact" : "#about"), aboutT, dt.textContent, dt.textContent + (page === "classic.html" ? ": " : " : ") + dd.textContent.replace(/Copier|Copy/g, ""), dd.textContent.split(/[·(]/)[0]);
-    });
+    document.querySelectorAll("#about .who p").forEach(p => add(page + "#about", document.getElementById("about-title").textContent, "", p.textContent));
+    document.querySelectorAll("#experience .xp > li").forEach(li => add(page + "#experience", document.getElementById("exp-title").textContent, li.querySelector("h3").textContent, li.querySelector("h3").textContent + ", " + li.querySelector(".org").textContent + " (" + li.querySelector(".when").textContent + ") : " + [...li.querySelectorAll("ul li")].map(x => x.textContent).join(" "), li.querySelector("h3").textContent));
+    document.querySelectorAll("#formation .edu > li").forEach(li => add(page + "#formation", document.getElementById("edu-title").textContent, "", li.textContent, li.querySelector("b").textContent));
+    document.querySelectorAll("#competences .skills > div").forEach(d => add(page + "#competences", document.getElementById("sk-title").textContent, d.querySelector("h3").textContent, d.querySelector("h3").textContent + " : " + [...d.querySelectorAll("li")].map(x => x.textContent).join(", "), d.querySelector("li").textContent));
+    const c = document.getElementById("contact"); add(page + "#contact", document.getElementById("contact-title").textContent, "", c.querySelector(".bighead p").textContent + " E-mail : loutoudeogratias@gmail.com · LinkedIn · GitHub · CV", c.querySelector(".bighead p").textContent);
     document.querySelectorAll("li.entry").forEach(li => {
       const id = li.id, h = li.querySelector("h3").textContent, tags = [...li.querySelectorAll(".tags span")].map(s => s.textContent).join(", ");
       add(page + "#" + id, h, li.querySelector(".date").textContent, li.querySelector(".one").textContent + " (" + tags + ")", li.querySelector(".one").textContent);
