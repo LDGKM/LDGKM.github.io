@@ -85,16 +85,27 @@ main{position:relative;z-index:2}
 .projblock ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .projblock li{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:800;font-size:1.5rem;text-transform:uppercase;line-height:1.05}
 .projblock li b{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--ochre);color:#16110A;font-size:1.3rem}
-.seekbox{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);margin:6px 0 4px;border:1.5px solid var(--ochre);border-radius:4px;overflow:hidden}
-.seekbox > div{padding:10px 12px}
-.seekbox .sb1{background:var(--ochre);color:#16110A}
-.seekbox .sb2{background:#16110A;color:var(--ink)}
-.seekbox span{display:block;font:600 .7rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.85}
-.seekbox b{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(1.6rem,1.3rem + 1.2vw,2.2rem);line-height:1;text-transform:uppercase;margin-top:3px}
-.seekbox i{display:grid;place-items:center;font-style:normal;font-weight:800;padding:0 6px;background:linear-gradient(90deg,var(--ochre) 50%,#16110A 50%);color:var(--ink)}
-.seekbox i::before{content:"";}
-.seek-sub{font-weight:600;margin:6px 0 12px!important}
-@media (max-width:760px){#c0 .skills,#c0 .kick,#c0 .intro-p{display:none}}
+/* opening page: shown once, before the 3D story starts */
+#opening{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(120% 90% at 70% 40%,rgba(15,21,27,.55),rgba(15,21,27,.96) 70%);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:opacity .6s ease,visibility .6s}
+#opening.gone{opacity:0;visibility:hidden;pointer-events:none}
+html.op-lock{overflow:hidden}
+html.op-lock main,html.op-lock header.top,html.op-lock .hud,html.op-lock .lab,html.op-lock #load{visibility:hidden}
+.op-in{width:min(680px,100%);text-align:center}
+.op-k{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ochre);margin:0 0 12px}
+#opening h1{font-size:clamp(2.8rem,1.6rem + 6vw,6rem);margin:0 0 10px}
+.op-who{color:var(--muted);margin:0 0 22px}
+.op-seek{display:inline-grid;grid-template-columns:auto auto auto;align-items:stretch;border:1.5px solid var(--ochre);border-radius:4px;overflow:hidden;text-align:left}
+.op-seek > span{padding:12px 18px;font-family:var(--font-display);font-weight:800;font-size:clamp(1.5rem,1.1rem + 1.8vw,2.4rem);line-height:1;text-transform:uppercase}
+.op-seek small{display:block;font:600 .7rem var(--font-mono);letter-spacing:.1em;opacity:.85;margin-bottom:4px}
+.op-a{background:var(--ochre);color:#16110A}
+.op-b{background:#16110A;color:var(--ink)}
+.op-seek .op-arrow{display:grid;place-items:center;padding:0 8px;font-size:1.4rem;background:linear-gradient(90deg,var(--ochre) 50%,#16110A 50%);color:var(--ink)}
+.op-sub{margin:12px 0 26px;font-weight:600}
+.op-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.op-btns .btn{min-height:50px;font-size:.9rem}
+.op-hint{margin:18px 0 0;font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+@media (max-width:560px){.op-seek{grid-template-columns:1fr}.op-seek .op-arrow{display:none}}
+@media (prefers-reduced-motion:reduce){#opening{transition:none}}
 .kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
 h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
 h1{font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem)}
@@ -143,6 +154,18 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
 <body>
 <a class="skip" href="#c0">{{skip}}</a>
 <canvas id="scene" aria-hidden="true"></canvas>
+<div id="opening" role="region" aria-labelledby="op-name">
+  <div class="op-in">
+    <p class="op-k">{{op_k}}</p>
+    <h1 id="op-name">Deo Gratias Loutou</h1>
+    <p class="op-who">{{op_who}}</p>
+    <div class="op-seek"><span class="op-a"><small>{{op_s1k}}</small>{{op_s1}}</span><span class="op-arrow" aria-hidden="true">→</span><span class="op-b"><small>{{op_s2k}}</small>{{op_s2}}</span></div>
+    <p class="op-sub">{{op_sub}}</p>
+    <div class="op-btns"><button type="button" class="btn main" id="opGo">{{op_go}}</button><a class="btn" href="{{classic}}">{{nav_text}}</a></div>
+    <p class="op-hint">{{op_hint}}</p>
+  </div>
+</div>
+
 <header class="top">
   <div class="row">
     <a class="brand" href="#c0">Deo Gratias Loutou</a>
@@ -188,9 +211,8 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
       <p class="kick">{{s0_kick}}</p>
       <h1>Deo Gratias Loutou</h1>
       <p>{{s0_who}}</p>
-      <div class="seekbox" role="note" aria-label="{{seek_aria}}"><div class="sb1"><span>{{seek_k1}}</span><b>{{seek_v1}}</b></div><i aria-hidden="true">→</i><div class="sb2"><span>{{seek_k2}}</span><b>{{seek_v2}}</b></div></div>
-      <p class="seek-sub">{{seek_sub}}</p>
-      <p class="intro-p">{{s0_intro}}</p>
+      <p class="seek">{{s0_seek}}</p>
+      <p>{{s0_intro}}</p>
       <ul class="skills">
 {{skills_li}}
       </ul>
@@ -335,6 +357,21 @@ const KEYS = [
 const CAM = [KEYS[0], KEYS[1], {t:[-10,-20], d:1900, e:0.98, a:2.6, m:1.4}, ...KEYS.slice(2)];
 
 const steps = [...document.querySelectorAll(".step")];
+// opening page: only when arriving at the top of the story; any scroll, key or the button starts the visit
+(() => {
+  const op = $("#opening"), root = document.documentElement;
+  if (!op) return;
+  if (location.hash || scrollY > 40){ op.classList.add("gone"); return; }
+  root.classList.add("op-lock");
+  let done = false;
+  const go = () => { if (done) return; done = true; op.classList.add("gone"); root.classList.remove("op-lock"); track("recit/" + root.lang + "/ouverture"); };
+  $("#opGo").addEventListener("click", go);
+  addEventListener("wheel", go, {passive:true, once:true});
+  addEventListener("touchmove", go, {passive:true, once:true});
+  addEventListener("keydown", e => { if (["ArrowDown","PageDown"," ","Enter","j"].includes(e.key) && !done && document.activeElement !== $("#opGo")) go(); });
+  setTimeout(() => { try { $("#opGo").focus({preventScroll:true}); } catch (e) {} }, 50);
+})();
+
 const chapterLinks = [...document.querySelectorAll("#chapters a")];
 const chaps = steps.filter(s => !s.classList.contains("trans"));
 // raw scroll position over every step, the "Projects" transition included (drives the camera)
