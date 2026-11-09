@@ -57,10 +57,10 @@ a{color:var(--ochre);text-underline-offset:.18em}
 .top nav.links a:hover{color:var(--ochre)}
 .top nav.links a.plain{color:#16110A;background:var(--ochre);padding:6px 10px;border-radius:2px}
 .chapters{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:8px 0 10px;padding:0;list-style:none}
-.chapters a{display:block;padding:6px 0 0;border-top:3px solid var(--line);color:var(--muted);text-decoration:none;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:28px}
+.chapters a{display:block;padding:7px 0 0;border-top:5px solid var(--line);color:var(--muted);text-decoration:none;font-family:var(--font-mono);font-size:.8rem;font-weight:600;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:28px}
 .chapters a.done{border-top-color:color-mix(in srgb,var(--ochre) 55%,var(--line))}
-.chapters a.now{border-top-color:var(--ochre);color:var(--ink)}
-.chapnow{display:none;margin:0 0 8px;font-family:var(--font-mono);font-size:.72rem;color:var(--ink)}
+.chapters a.now{border-top-color:var(--ochre);color:#16110A;background:var(--ochre);padding:5px 6px;border-radius:0 0 3px 3px}
+.chapnow{display:none;margin:0 0 8px;font-family:var(--font-display);font-weight:800;font-size:1.25rem;text-transform:uppercase;color:var(--ochre)}
 .hud{position:fixed;z-index:3;pointer-events:none;font-family:var(--font-mono);transition:opacity .35s}
 #year{right:max(20px,4vw);bottom:28px;font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,2rem + 6vw,7rem);line-height:1;color:var(--ink);text-shadow:0 2px 18px rgba(0,0,0,.6)}
 #year small{display:block;font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--muted);text-align:right;letter-spacing:.06em}
@@ -72,9 +72,15 @@ a{color:var(--ochre);text-underline-offset:.18em}
 .watch{left:calc(max(16px,4vw) + 500px);right:calc(max(20px,4vw) + 360px);bottom:28px;max-width:560px;font-family:var(--font-body);font-size:1rem;line-height:1.4;color:var(--ink);background:rgba(11,17,23,.82);border:1px solid var(--line);border-left:4px solid var(--ochre);border-radius:3px;padding:10px 14px}
 .watch b{display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre);font-weight:600;margin-bottom:2px}
 @media (max-width:1100px){.watch{right:max(20px,4vw)}}
+#splash{position:fixed;z-index:3;pointer-events:none;top:118px;left:calc(max(16px,4vw) + 500px);right:max(20px,4vw);text-align:center;opacity:0}
+#splash span{display:inline-block;font:600 .9rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:#16110A;background:var(--ochre);padding:4px 10px;border-radius:3px}
+#splash b{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(2.8rem,1.8rem + 4vw,5.6rem);line-height:.95;text-transform:uppercase;color:var(--ink);text-shadow:0 4px 24px rgba(0,0,0,.85),0 0 2px #000;margin-top:6px}
+#splash.show{animation:splash 2.6s ease forwards}
+@keyframes splash{0%{opacity:0;transform:translateY(12px)}12%{opacity:1;transform:none}78%{opacity:1}100%{opacity:0}}
+@media (max-width:760px){#splash{display:none}}
 #hand{position:fixed;z-index:3;pointer-events:none;transition:opacity .3s;left:0;top:0;will-change:transform}
-#hand .hand-in{position:relative;transform-origin:31px 138px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55))}
-#hand svg{display:block;transform:rotate(-18deg);transform-origin:31px 138px}
+#hand .hand-in{position:relative;transform-origin:32px 138px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55))}
+#hand svg{display:block;transform:rotate(-18deg);transform-origin:32px 138px}
 #hand p{position:absolute;left:78px;top:-6px;margin:0;width:max-content;max-width:260px;font-family:var(--font-display);font-weight:800;font-size:1.55rem;line-height:1.05;text-transform:uppercase;color:#16110A;background:var(--ochre);padding:8px 12px;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
 #hand.flip p{left:auto;right:12px;top:-58px}
 #hand.below p{top:110px;left:20px;right:auto}
@@ -122,8 +128,8 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   .step{align-items:flex-end;padding:110px 12px 24px}
   .card{padding:18px;background:rgba(14,21,28,.93)}
   #legEras{display:none}
-  .legend{top:188px;right:auto;left:12px;font-size:.7rem;padding:7px 9px;max-width:calc(100vw - 24px)}
-  .watch{left:12px;right:12px;bottom:auto;top:118px;font-size:.84rem;padding:7px 10px;max-width:none}
+  .legend{display:none!important;top:188px;right:auto;left:12px;font-size:.7rem;padding:7px 9px;max-width:calc(100vw - 24px)}
+  .watch{left:12px;right:12px;bottom:auto;top:146px;font-size:.84rem;padding:7px 10px;max-width:none}
   .watch b{display:none}
   #year{bottom:auto;top:188px;right:auto;left:14px;font-size:2.6rem}
   #year small{text-align:left}
@@ -165,20 +171,21 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   <span><i class="ghost"></i>{{bloc_plan}} · <i style="background:var(--teal)"></i>{{bloc_real}} · <i style="background:var(--red)"></i>{{bloc_over}}</span>
   <span id="blocStat"></span>
 </div>
+<div id="splash" aria-hidden="true"><span id="splashN"></span><b id="splashT"></b></div>
 <div id="hand" aria-hidden="true" style="opacity:0"><div class="hand-in">
-  <svg viewBox="0 0 100 142" width="74" height="105">
-    <defs><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBDCC2"/><stop offset=".55" stop-color="#EDB894"/><stop offset="1" stop-color="#C98B66"/></linearGradient>
-    <radialGradient id="shine" cx=".35" cy=".3" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
-    <ellipse cx="40" cy="140" rx="16" ry="3" fill="#000" opacity=".35"/>
-    <rect x="28" y="0" width="50" height="22" rx="5" fill="#E3AE2A" stroke="#5C4210" stroke-width="2.5"/>
-    <rect x="22" y="18" width="60" height="56" rx="18" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <ellipse cx="86" cy="42" rx="9" ry="19" transform="rotate(-22 86 42)" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <rect x="42" y="60" width="14" height="24" rx="7" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <rect x="55" y="58" width="14" height="24" rx="7" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <rect x="68" y="54" width="13" height="22" rx="6.5" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <rect x="24" y="56" width="19" height="82" rx="9.5" fill="url(#skin)" stroke="#6B4A36" stroke-width="2.5"/>
-    <rect x="22" y="18" width="60" height="56" rx="18" fill="url(#shine)"/>
-    <path d="M28 128c4 3 9 3 12 0" stroke="#6B4A36" stroke-width="2" fill="none"/>
+  <svg viewBox="0 0 100 142" width="78" height="111">
+    <defs><linearGradient id="glove" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F3F5F8"/><stop offset="1" stop-color="#C9D0D8"/></linearGradient></defs>
+    <ellipse cx="34" cy="140" rx="15" ry="2.6" fill="#000" opacity=".35"/>
+    <g fill="url(#glove)" stroke="#121212" stroke-width="3.2" stroke-linejoin="round">
+      <ellipse cx="87" cy="44" rx="10.5" ry="18" transform="rotate(-24 87 44)"/>
+      <rect x="20" y="20" width="66" height="60" rx="26"/>
+      <circle cx="51" cy="76" r="10"/><circle cx="65" cy="74" r="10"/><circle cx="78" cy="69" r="9"/>
+      <rect x="21" y="52" width="22" height="86" rx="11"/>
+      <path d="M22 9c9-5 52-5 62 0l4 14c-4 5-66 5-70 0z"/>
+    </g>
+    <path d="M27 120c3 2 9 2 12 0" stroke="#121212" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <g stroke="#121212" stroke-width="3" stroke-linecap="round"><path d="M48 32v16M58 31v17M68 32v15"/></g>
+    <path d="M30 28c4-4 10-5 15-4" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".9"/>
   </svg>
   <p id="handT"></p>
 </div></div>
@@ -285,7 +292,7 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
 <script>
 "use strict";
 const L = {
-  standing:"{{standing}}", accUnit:"{{acc_unit}}", numfmt:"{{numfmt}}", chapters:{{ch_js}}, watch:{{watch_js}}, hand:{{hand_js}},
+  standing:"{{standing}}", accUnit:"{{acc_unit}}", numfmt:"{{numfmt}}", chapters:{{ch_js}}, watch:{{watch_js}}, hand:{{hand_js}}, part:"{{part}}",
   labMul:"{{lab_mul}}", labCol:"{{lab_col}}", labMulTrap:"{{lab_mul_trap}}", labColTrap:"{{lab_col_trap}}",
   statA:"{{bloc_statA}}", statB:"{{bloc_statB}}", nogl:"{{nogl}}", nodata:"{{nodata}}" };
 const track = p => { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: p, event: true }); } catch (e) {} };
@@ -334,7 +341,7 @@ function storyPos(){
 let seen = -1, current = -1;
 function updateChapters(p){
   const i = Math.round(p);
-  if (i !== current){ current = i; $("#chapNow").textContent = `${i + 1}/${steps.length} · ${L.chapters[i]}`; $("#watchT").textContent = L.watch[i] || "";
+  if (i !== current){ current = i; $("#chapNow").textContent = `${L.part} ${i + 1}/${steps.length} · ${L.chapters[i]}`; $("#watchT").textContent = L.watch[i] || ""; if (i > 0){ const sp = $("#splash"); $("#splashN").textContent = L.part + " " + (i + 1) + " / " + steps.length; $("#splashT").textContent = L.chapters[i]; sp.classList.remove("show"); void sp.offsetWidth; sp.classList.add("show"); }
     chapterLinks.forEach((a, k) => { a.classList.toggle("now", k === i); a.classList.toggle("done", k < i);
       if (k === i) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current"); }); }
   if (i > seen){ seen = i; track("recit/" + document.documentElement.lang + "/etape/" + i); }
@@ -600,7 +607,7 @@ function start(){
     if (handOn){ v.set(HT[0], HT[1], HT[2]).project(camera);
       if (v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1){
         const sc = phone ? 0.76 : 1, x = (v.x + 1) / 2 * innerWidth - 31 * sc, y = (1 - v.y) / 2 * innerHeight - 138 * sc;
-        hand.style.transform = `translate(${x}px,${y}px)`; hand.style.opacity = 1; hand.classList.toggle("flip", x > innerWidth - (phone ? 250 : 340)); hand.classList.toggle("below", y < (phone ? 170 : 120));
+        hand.style.transform = `translate(${x}px,${y}px)`; hand.style.opacity = 1; hand.classList.toggle("flip", x > innerWidth - (phone ? 250 : 340)); hand.classList.toggle("below", y < (phone ? 215 : 120));
         if ($("#handT").textContent !== L.hand[ci]) $("#handT").textContent = L.hand[ci];
       } else hand.style.opacity = 0;
     } else hand.style.opacity = 0;
