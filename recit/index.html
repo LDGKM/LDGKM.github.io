@@ -80,9 +80,11 @@ main{position:relative;z-index:2}
 .card{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 24px;backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .proj{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:6px 12px;border-radius:3px;background:var(--ochre);color:#16110A;font-family:var(--font-display);font-weight:800;font-size:1.15rem;letter-spacing:.02em;text-transform:uppercase;line-height:1.1}
 .proj small{font-family:var(--font-mono);font-weight:600;font-size:.72rem;letter-spacing:.08em;opacity:.8;white-space:nowrap}
-.step.part-start{flex-direction:column;align-items:flex-start;justify-content:center;gap:18px}
-.part-t{width:min(460px,100%);font-size:clamp(2.6rem,1.8rem + 3.8vw,4.6rem);margin:0;padding-bottom:10px;border-bottom:3px solid var(--ochre);text-shadow:0 4px 24px rgba(0,0,0,.85)}
-@media (max-width:760px){.step.part-start{justify-content:flex-end}}
+.projblock{border:1.5px solid var(--ochre);border-left:6px solid var(--ochre)}
+.projblock h2{font-size:clamp(2.6rem,1.8rem + 3.8vw,4.4rem);margin-bottom:16px}
+.projblock ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.projblock li{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:800;font-size:1.5rem;text-transform:uppercase;line-height:1.05}
+.projblock li b{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--ochre);color:#16110A;font-size:1.3rem}
 .kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
 h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
 h1{font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem)}
@@ -205,8 +207,18 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
   </section>
 
 
-  <section class="step part-start" id="c2">
-    <h2 class="part-t">Projets</h2>
+  <section class="step trans" id="projets" aria-labelledby="projets-t">
+    <div class="card projblock">
+      <p class="kick">La suite</p>
+      <h2 id="projets-t">Projets</h2>
+      <ol>
+        <li><b>1</b><span>Accidents de la route</span></li>
+        <li><b>2</b><span>Plannings du bloc opératoire</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="step" id="c2">
     <div class="card">
       <p class="proj"><small>Projet 1 / 2</small>Accidents de la route</p>
       <p class="kick">2 · Les accidents</p>
@@ -319,18 +331,30 @@ const KEYS = [
   {t:[BOARD.historique + 25000, BZ], d:100000, e:0.95, a:0.0, m:1.8},
   {t:[BOARD.appris + 25000, BZ], d:100000, e:0.95, a:0.0, m:1.8},
   {t:[62000, -13000], d:250000, e:1.15, a:0.12, m:1.4} ];
+const CAM = [KEYS[0], KEYS[1], {t:[-10,-20], d:1900, e:0.98, a:2.6, m:1.4}, ...KEYS.slice(2)];
 
 const steps = [...document.querySelectorAll(".step")];
 const chapterLinks = [...document.querySelectorAll("#chapters a")];
-function storyPos(){
+const chaps = steps.filter(s => !s.classList.contains("trans"));
+// raw scroll position over every step, the "Projects" transition included (drives the camera)
+function rawPos(){
   const line = innerHeight * 0.55; let p = 0;
   for (const s of steps){ const r = s.getBoundingClientRect(); p += clamp((line - r.top) / r.height, 0, 1); }
   return clamp(p - 0.5, 0, steps.length - 1);
 }
+// story position over the chapters only: the transition stretches the move from chapter 1 to 2,
+// the city stays almost still while the Projects block passes, then the map arrives
+function effOf(r){
+  if (r <= 1) return r;
+  if (r <= 2.5) return 1 + (r - 1) / 1.5 * 0.2;
+  if (r <= 3) return 1.2 + (r - 2.5) / 0.5 * 0.8;
+  return r - 1;
+}
+function storyPos(){ return effOf(rawPos()); }
 let seen = -1, current = -1;
 function updateChapters(p){
   const i = Math.round(p);
-  if (i !== current){ current = i; $("#chapNow").textContent = `${i + 1}/${steps.length} · ${L.chapters[i]}`; $("#watchT").textContent = L.watch[i] || "";
+  if (i !== current){ current = i; $("#chapNow").textContent = `${i + 1}/${chaps.length} · ${L.chapters[i]}`; $("#watchT").textContent = L.watch[i] || "";
     chapterLinks.forEach((a, k) => { a.classList.toggle("now", k === i); a.classList.toggle("done", k < i);
       if (k === i) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current"); }); }
   if (i > seen){ seen = i; track("recit/" + document.documentElement.lang + "/etape/" + i); }
@@ -343,8 +367,8 @@ addEventListener("keydown", e => {
   if (!next && !prev) return;
   if (e.key === " " && (e.shiftKey || ["A", "BUTTON"].includes(document.activeElement.tagName))) return;
   e.preventDefault();
-  const i = clamp(Math.round(storyPos()) + (next ? 1 : -1), 0, steps.length - 1);
-  steps[i].scrollIntoView({behavior: reduced ? "auto" : "smooth", block: "start"});
+  const i = clamp(Math.round(storyPos()) + (next ? 1 : -1), 0, chaps.length - 1);
+  chaps[i].scrollIntoView({behavior: reduced ? "auto" : "smooth", block: "start"});
 });
 
 /* ------------------------------------------------------------------ 3D */
@@ -536,18 +560,18 @@ function start(){
     if (vis){ el.style.left = ((v.x + 1) / 2 * innerWidth) + "px"; el.style.top = ((1 - v.y) / 2 * innerHeight) + "px"; }
   }
 
-  let pSmooth = storyPos(), dirty = true, tPrev = performance.now(), statShown = "";
+  let pSmooth = rawPos(), dirty = true, tPrev = performance.now(), statShown = "";
   function frame(now){
     const dt = Math.min(0.05, (now - tPrev) / 1000); tPrev = now;
-    const target = storyPos();
+    const target = rawPos();
     // draw only while the story moves: an idle page costs nothing (battery, phones)
     if (!dirty && Math.abs(target - pSmooth) < 0.0004){ requestAnimationFrame(frame); return; }
     dirty = false;
     pSmooth += (target - pSmooth) * (reduced ? 1 : Math.min(1, dt * 6));
     if (Math.abs(target - pSmooth) < 0.0004) pSmooth = target;
-    const p = pSmooth, phone = innerWidth < 760;
+    const p = effOf(pSmooth), q = pSmooth, phone = innerWidth < 760;
 
-    const i = Math.min(KEYS.length - 2, Math.floor(p)), f = smooth(clamp(p - i, 0, 1)), A = KEYS[i], B = KEYS[i + 1];
+    const i = Math.min(CAM.length - 2, Math.floor(q)), f = smooth(clamp(q - i, 0, 1)), A = CAM[i], B = CAM[i + 1];
     const tx = lerp(A.t[0], B.t[0], f), tz = lerp(A.t[1], B.t[1], f);
     const d = Math.exp(lerp(Math.log(A.d * (phone ? A.m : 1)), Math.log(B.d * (phone ? B.m : 1)), f)), e = lerp(A.e, B.e, f);
     const a = lerp(A.a, B.a, f);
@@ -568,7 +592,7 @@ function start(){
     showBoard(boards.appris, bB, ramp(p, 5.6, 6.1));
 
     // HUD
-    const y1 = p > 0.4 && p < 1.45 ? 1 : 0;
+    const y1 = p > 0.4 && p < 1.45 && !(q > 1.45 && q < 2.9) ? 1 : 0;
     $("#year").style.opacity = y1; $("#legEras").style.opacity = y1;
     if (y1){ $("#yearN").textContent = Math.min(2026, Math.round(year));
       $("#yearS").textContent = L.standing + " : " + fmt(bYears.filter(v => v <= year - 4).length); }
