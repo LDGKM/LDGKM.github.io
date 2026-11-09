@@ -80,9 +80,9 @@ main{position:relative;z-index:2}
 .card{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 24px;backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .proj{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:6px 12px;border-radius:3px;background:var(--ochre);color:#16110A;font-family:var(--font-display);font-weight:800;font-size:1.15rem;letter-spacing:.02em;text-transform:uppercase;line-height:1.1}
 .proj small{font-family:var(--font-mono);font-weight:600;font-size:.72rem;letter-spacing:.08em;opacity:.8;white-space:nowrap}
-.divider{position:relative;min-height:45vh;min-height:45svh;display:flex;align-items:center;padding:40px max(16px,4vw)}
-.divider h2{width:min(460px,100%);font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem);margin:0;padding-bottom:10px;border-bottom:3px solid var(--ochre);text-shadow:0 4px 24px rgba(0,0,0,.8)}
-body.in-div .hud,body.in-div .lab{visibility:hidden}
+.step.part-start{flex-direction:column;align-items:flex-start;justify-content:center;gap:18px}
+.part-t{width:min(460px,100%);font-size:clamp(2.6rem,1.8rem + 3.8vw,4.6rem);margin:0;padding-bottom:10px;border-bottom:3px solid var(--ochre);text-shadow:0 4px 24px rgba(0,0,0,.85)}
+@media (max-width:760px){.step.part-start{justify-content:flex-end}}
 .kick{font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.05em;margin:0 0 8px}
 h1,h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;line-height:1.02;margin:0 0 12px;text-wrap:balance}
 h1{font-size:clamp(2.4rem,1.7rem + 3.6vw,4.2rem)}
@@ -204,11 +204,9 @@ h2{font-size:clamp(1.7rem,1.3rem + 1.6vw,2.4rem)}
     </div>
   </section>
 
-  <section class="divider" id="projets" aria-labelledby="projets-t">
-    <h2 id="projets-t">Projects</h2>
-  </section>
 
-  <section class="step" id="c2">
+  <section class="step part-start" id="c2">
+    <h2 class="part-t">Projects</h2>
     <div class="card">
       <p class="proj"><small>Project 1 / 2</small>Road accidents</p>
       <p class="kick">2 · Accidents</p>
@@ -323,8 +321,6 @@ const KEYS = [
   {t:[62000, -13000], d:250000, e:1.15, a:0.12, m:1.4} ];
 
 const steps = [...document.querySelectorAll(".step")];
-// the big "Projects" block hides the 3D labels while it fills the screen
-new IntersectionObserver(es => es.forEach(e => document.body.classList.toggle("in-div", e.intersectionRatio > 0.35)), {threshold:[0, 0.35, 0.6]}).observe(document.getElementById("projets"));
 const chapterLinks = [...document.querySelectorAll("#chapters a")];
 function storyPos(){
   const line = innerHeight * 0.55; let p = 0;
