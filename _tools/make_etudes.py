@@ -85,11 +85,11 @@ def page(slug, title, short, kicker, lede, stats, repo, body, prev, nxt, desc, o
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="../classic-fr.html">Deo Gratias Loutou</a>
+    <a class="brand" href="../">Deo Gratias Loutou</a>
     <nav aria-label="Menu principal">
-      <a href="../classic-fr.html#notebook">Projets</a>
+      <a href="../#notebook">Projets</a>
       <a href="./">Études</a>
-      <a href="../classic-fr.html#contact">Contact</a>
+      <a href="../#contact">Contact</a>
       <a href="../cv/Deo_Gratias_Loutou_CV_FR.pdf">CV (PDF)</a>
       <a href="../index.html">Version 3D</a>
     </nav>
@@ -110,7 +110,7 @@ def page(slug, title, short, kicker, lede, stats, repo, body, prev, nxt, desc, o
 {body}
   <nav class="pager" aria-label="Autres études">{pv}{nx}</nav>
 </main>
-<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../classic-fr.html">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
+<footer><div class="wrap">© 2026 Deo Gratias Loutou · <a href="../">deogratias-loutou.fr</a> · Les graphiques sont ceux du rapport, avec leurs légendes en anglais.</div></footer>
 {GC}
 </body>
 </html>

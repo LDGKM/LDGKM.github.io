@@ -11,7 +11,7 @@ SITE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
 L = {
  "fr": dict(skip="Aller au contenu", menu="Menu", nav_aria="Menu principal", story="Récit 3D", projects="Projets",
             studies="Études", about="À propos", contact="Contact", cv_pdf="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
-            home="/classic-fr.html", other_label="English", other_lang="en",
+            home="/", other_label="English", other_lang="en",
             seek="Alternance data ou R&amp;D 2027-2028, ou stage dès mai 2027 · Mulhouse",
             privacy="Sans cookies ; mesure d'audience anonyme (GoatCounter).", links_aria="Me joindre", ask="Une question ?", ask_aria="Poser une question sur mon parcours"),
  "en": dict(skip="Skip to content", menu="Menu", nav_aria="Main menu", story="3D story", projects="Projects",
@@ -22,9 +22,9 @@ L = {
 }
 
 PAGES = {
- "classic-fr.html": dict(lang="fr", current="projects", other="/classic.html", cv_dialog=True,
+ "index.html": dict(lang="fr", current="projects", other="/classic.html", cv_dialog=True,
                          note="Données cartographiques © IGN, Licence Ouverte 2.0 · 3D avec three.js."),
- "classic.html":    dict(lang="en", current="projects", other="/classic-fr.html", cv_dialog=True,
+ "classic.html":    dict(lang="en", current="projects", other="/", cv_dialog=True,
                          note="Map data © IGN, Licence Ouverte 2.0 · 3D with three.js."),
  "etudes/index.html":             dict(lang="fr", current="studies", other="/classic.html", note=""),
  "etudes/bloc-operatoire.html":   dict(lang="fr", current="studies", other="/classic.html", crumb="Plannings de bloc opératoire",
@@ -42,7 +42,7 @@ THEME_EARLY = '<script>try{var t=localStorage.getItem("site-theme");if(t)documen
 
 def header(p):
     t = L[p["lang"]]
-    items = [("story", "/" if p["lang"] == "fr" else "/en/", t["story"]),
+    items = [("story", "/recit/" if p["lang"] == "fr" else "/en/", t["story"]),
              ("projects", t["home"] + "#notebook", t["projects"])]
     if t["studies"]: items.append(("studies", "/etudes/", t["studies"]))
     items += [("about", t["home"] + "#about", t["about"]), ("contact", t["home"] + "#contact", t["contact"])]
@@ -105,7 +105,7 @@ def apply(path, p):
     # main landmark + breadcrumbs
     s = re.sub(r"<main(?![^>]*\bid=)([^>]*)>", r'<main id="main"\1>', s, count=1)
     if p.get("crumb") and 'class="crumbs"' not in s:
-        s = s.replace('<main id="main" class="wrap">', f'<main id="main" class="wrap">\n  <nav class="crumbs" aria-label="Fil d\'Ariane"><a href="/classic-fr.html">Accueil</a> › <a href="/etudes/">Études</a> › <span aria-current="page">{p["crumb"]}</span></nav>', 1)
+        s = s.replace('<main id="main" class="wrap">', f'<main id="main" class="wrap">\n  <nav class="crumbs" aria-label="Fil d\'Ariane"><a href="/">Accueil</a> › <a href="/etudes/">Études</a> › <span aria-current="page">{p["crumb"]}</span></nav>', 1)
     if "/assets/site.js" not in s:
         s = s.replace("</body>", '<script src="/assets/site.js" defer></script>\n</body>', 1)
     path.write_text(s, encoding="utf-8")

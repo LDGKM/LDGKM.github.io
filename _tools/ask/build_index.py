@@ -15,7 +15,7 @@ EXTRACT = r"""
   const T = s => (s || "").replace(/\s+/g, " ").replace(/\s+([,.)])/g, "$1").trim();
   const out = [];
   const add = (key, title, section, text, anchorText) => { text = T(text); if (text.length > 25) out.push({key, title: T(title), section: T(section), text, anchor: T(anchorText || text)}); };
-  if (page.startsWith("classic")) {
+  if (page.startsWith("classic") || page === "index.html") {
     const intro = document.querySelector("#top .lede"); if (intro) add(page + "#top", document.querySelector("#intro-title").textContent, "Présentation", intro.textContent);
     const about = document.getElementById("about");
     const aboutT = about.querySelector("h2").textContent;
@@ -59,7 +59,7 @@ def link(key, anchor):
     # links to the passage itself with a text fragment; the anchor id (if any) is the fallback
     words = anchor.split()[:7]
     frag = urllib.parse.quote(" ".join(words), safe="")
-    base = "/" + key
+    base = "/" + (key[len("index.html"):] if key.startswith("index.html") else key)
     return base + (":~:text=" if "#" in base else "#:~:text=") + frag
 
 def build(pages, out_name):
@@ -67,7 +67,7 @@ def build(pages, out_name):
     with sync_playwright() as pw:
         b = pw.chromium.launch(); p = b.new_page()
         for page in pages:
-            p.goto(f"http://localhost:{PORT}/{page}"); p.wait_for_timeout(600)
+            p.goto(f"http://localhost:{PORT}/{page}" + ("?lang=fr" if page == "index.html" else "")); p.wait_for_timeout(600)
             for d in p.evaluate(EXTRACT, page):
                 d["url"] = link(d["key"], d.pop("anchor")); docs.append(d)
         b.close()
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT)], cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     try:
-        build(["classic-fr.html", "etudes/vigie.html", "etudes/bloc-operatoire.html", "etudes/accidents-route.html", "etudes/medicaments.html"], "ask-fr.json")
+        build(["index.html", "etudes/vigie.html", "etudes/bloc-operatoire.html", "etudes/accidents-route.html", "etudes/medicaments.html"], "ask-fr.json")
         build(["classic.html"], "ask-en.json")
     finally:
         srv.terminate()

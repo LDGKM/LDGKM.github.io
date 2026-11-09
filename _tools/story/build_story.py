@@ -1,4 +1,4 @@
-"""Build the scroll-driven 3D story: /index.html (fr) and /en/index.html (en).
+"""Build the scroll-driven 3D story: /recit/index.html (fr) and /en/index.html (en).
 
     python3 build_story.py /home/claude/ldgkm.github.io
 """
@@ -9,11 +9,11 @@ TPL = (pathlib.Path(__file__).parent / "story_template.html").read_text(encoding
 
 T = {
 "fr": dict(
-  langredirect='<script>try{if(!localStorage.getItem("chezdeo-lang")&&!/^fr/i.test(navigator.language||"fr")&&!/[?&]lang=fr/.test(location.search))location.replace("/en/")}catch(e){}</script>',
-  lang="fr", locale="fr_FR", url="https://deogratias-loutou.fr/", other_url="/en/", other_label="English", other_lang="en",
+  langredirect='',
+  lang="fr", locale="fr_FR", url="https://deogratias-loutou.fr/recit/", other_url="/en/", other_label="English", other_lang="en",
   title="Deo Gratias Loutou · alternance data &amp; R&amp;D 2027 · Mulhouse en données",
   desc="Deo Gratias Loutou, étudiant en M1 informatique à Mulhouse, cherche une alternance data ou R&amp;D pour 2027-2028. Son portfolio, raconté en 3D avec de vraies données publiques.",
-  og="og-classic-fr.jpg", classic="/classic-fr.html", cv="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
+  og="og-classic-fr.jpg", classic="/", cv="/cv/Deo_Gratias_Loutou_CV_FR.pdf",
   skip="Aller au récit", nav_projects="Projets", nav_studies="Études", nav_studies_url="/etudes/", nav_contact="Contact", nav_text="Version texte",
   ch=["Qui je suis","La ville","Les accidents","Les décès","Le piège","Le bloc","L'incertitude","Contact"],
   ch_aria="Chapitres", menu_aria="Menu principal",
@@ -59,11 +59,11 @@ T = {
   s7_kick="Contact", s7_h="Me contacter",
   s7_seek="Alternance data ou R&amp;D pour 2027-2028, ou stage à partir de mai 2027.",
   s7_p="Code public et rapport pour chaque étude, dont une troisième sur <a href=\"/etudes/medicaments.html\">les médicaments remboursés en France</a>.",
-  s7_cv="Mon CV (PDF)", s7_all="Tous les projets", s7_all_url="/classic-fr.html#notebook",
+  s7_cv="Mon CV (PDF)", s7_all="Tous les projets", s7_all_url="/#notebook",
 ),
 "en": dict(
   langredirect="",
-  lang="en", locale="en_GB", url="https://deogratias-loutou.fr/en/", other_url="/", other_label="Français", other_lang="fr",
+  lang="en", locale="en_GB", url="https://deogratias-loutou.fr/en/", other_url="/recit/", other_label="Français", other_lang="fr",
   title="Deo Gratias Loutou · data &amp; R&amp;D work-study 2027 · Mulhouse in data",
   desc="Deo Gratias Loutou, a computer science master's student in Mulhouse, is looking for a data or R&amp;D work-study position for 2027-2028. His portfolio, told in 3D with real public data.",
   og="og-classic.jpg", classic="/classic.html", cv="/cv/Deo_Gratias_Loutou_CV.pdf",
@@ -133,7 +133,7 @@ def render(t):
     assert "{{" not in s, s[s.index("{{"):s.index("{{") + 40]
     return s
 
-(SITE / "index.html").write_text(render(T["fr"]), encoding="utf-8")
+(SITE / "recit" / "index.html").write_text(render(T["fr"]), encoding="utf-8")
 (SITE / "en").mkdir(exist_ok=True)
 (SITE / "en" / "index.html").write_text(render(T["en"]), encoding="utf-8")
 print("built fr + en")
