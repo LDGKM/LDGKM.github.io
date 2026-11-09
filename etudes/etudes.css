@@ -33,3 +33,9 @@ code{font-family:var(--font-mono);font-size:.9em;background:var(--sheet);border:
 .cta-box{margin-top:44px;padding:20px 22px;background:var(--sheet);border:1.5px solid var(--ink);border-left:6px solid var(--accent);border-radius:3px}
 .cta-box .kick{font-family:var(--font-mono);font-size:.78rem;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}
 .cta-box p{margin:0 0 10px}
+.brief{margin:22px 0 0;padding:16px 18px;background:var(--sheet);border:1.5px solid var(--ink);border-left:6px solid var(--accent);border-radius:3px;display:grid;gap:8px}
+.brief .bk{font-family:var(--font-mono);font-size:.76rem;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.06em;margin:0}
+.brief dl{margin:0;display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 14px}
+.brief dt{font-weight:600}
+.brief dd{margin:0}
+@media (max-width:600px){.brief dl{grid-template-columns:minmax(0,1fr)}.brief dd{margin-bottom:6px}}

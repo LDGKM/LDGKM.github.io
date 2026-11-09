@@ -281,6 +281,10 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
 }
 .story-link{margin:14px 0 0;font-size:.92rem}
 .story-link a{font-weight:600}
+.featured .shows-k{margin:0;font-size:.92rem;padding-top:8px;border-top:1px solid var(--line)}
+.featured .shows-k b{color:var(--accent-ink)}
+.keyskills{font-family:var(--font-mono);font-size:.86rem;color:var(--muted);margin:10px 0 0}
+.more-note{color:var(--muted);margin:10px 0 0;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 </style>
 </head>
 <body>
@@ -311,15 +315,16 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
   <div class="wrap">
     <p class="kicker mono">Mulhouse · M1 Computer Science, Université de Haute-Alsace</p>
     <h1 id="intro-title">Deo Gratias Loutou</h1>
-    <p class="lede">I turn open data into analyses you can check, and I study how uncertainty learned from data changes decisions. <strong>Looking for a work-study position (alternance) in data or R&amp;D for 2027–2028, or an internship from May 2027 that could lead to it.</strong></p>
+    <p class="lede">I analyse data to help people make better decisions: I clean it, check that it is reliable, then draw clear results with numbers. <strong>Looking for a work-study position (alternance) in data or R&amp;D for 2027–2028, or an internship from May 2027 that could lead to it.</strong></p>
+    <p class="keyskills">Python · SQL · statistics · machine learning · AI (RAG) · data visualisation</p>
     <div class="cta"><a class="btn primary" href="#cv" data-cv>Read my CV</a><a class="btn" href="#contact">Contact me</a><button class="btn" type="button" data-ask>Ask a question</button></div>
     <p class="story-link"><a href="/en/">Prefer a guided tour? The 3D story: my analyses shown on a map of Mulhouse (5 min) →</a></p>
     <h2 class="sr">Featured projects</h2>
     <ol class="featured">
-    <li><a class="card" href="#vigie"><img class="th" src="img/thumbs/vigie.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">AI · C++20, local RAG</span><h3>Vigie, an assistant that cites its sources</h3><p class="res">A RAG assistant over 115 digital-finance documents that checks every citation and every number: 18 of 18 out-of-scope questions refused.</p></a><p class="links"><a href="https://github.com/LDGKM/Vigie" target="_blank" rel="noopener">Code ↗</a><a href="etudes/vigie.html" hreflang="fr">Write-up (French) →</a></p></li>
-    <li><a class="card" href="#surgery"><img class="th" src="img/thumbs/surgery.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Research · Python, HiGHS</span><h3>From data to robust surgery schedules</h3><p class="res">Learned uncertainty cuts operating-room overtime from 113 to 19 minutes per room and day.</p></a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
-    <li><a class="card" href="#roads"><img class="th" src="img/thumbs/roads.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents cleaned and validated against official figures, and what turns a crash into a death.</p></a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
-    <li><a class="card" href="#medicines"><img class="th" src="img/thumbs/medicines.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">EUR 160 billion of medicines: spending up 43% while the number of boxes stayed flat.</p></a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#vigie"><img class="th" src="img/thumbs/vigie.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">AI · C++</span><h3>Vigie, an assistant that cites its sources</h3><p class="res">It answers questions on financial regulation using only official documents, and says “I don't know” rather than make things up.</p><p class="shows-k"><b>What it shows:</b> I can build a reliable AI tool and measure its mistakes.</a><p class="links"><a href="https://github.com/LDGKM/Vigie" target="_blank" rel="noopener">Code ↗</a><a href="etudes/vigie.html" hreflang="fr">Write-up (French) →</a></p></li>
+    <li><a class="card" href="#surgery"><img class="th" src="img/thumbs/surgery.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Research · Python</span><h3>More reliable operating-room schedules</h3><p class="res">By learning from 6,385 real operations how uncertain their length is, end-of-day overruns drop from 113 to 19 minutes per room.</p><p class="shows-k"><b>What it shows:</b> I can use machine learning to improve a real decision.</a><p class="links"><a href="https://github.com/LDGKM/surgery-duration-uncertainty" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/plannings-bloc-operatoire.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#roads"><img class="th" src="img/thumbs/roads.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>Road accidents in France</h3><p class="res">310,000 accidents from 2019 to 2024: where and why people die on the road, with figures that match the official statistics.</p><p class="shows-k"><b>What it shows:</b> I can clean large datasets and check that they are reliable.</a><p class="links"><a href="https://github.com/LDGKM/road-accidents-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/accidents-route.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
+    <li><a class="card" href="#medicines"><img class="th" src="img/thumbs/medicines.webp" alt="" width="480" height="300" loading="lazy"><span class="k mono">Data analysis · SQL, Python</span><h3>What France reimburses</h3><p class="res">Public health insurance pays 43% more than in 2019 for the same number of medicine boxes: I found which treatments explain the rise.</p><p class="shows-k"><b>What it shows:</b> I can explain a number clearly to the people who decide.</a><p class="links"><a href="https://github.com/LDGKM/medicine-spending-france" target="_blank" rel="noopener">Code ↗</a><a href="https://deogratias-loutou.fr/rapports/medicaments.pdf" target="_blank" rel="noopener">Report (PDF) ↗</a></p></li>
     </ol>
   </div>
 </section>
@@ -334,7 +339,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
     <p class="sr" id="filterMsg" aria-live="polite"></p>
     <ol class="entries" id="entries"></ol>
     <h3 class="more-title" id="more-projects">Other projects</h3>
-    <ol class="entries compact" id="more"></ol>
+    <p class="more-note">Simulation, algorithms, web development: course and personal projects, less tied to data. <button type="button" class="btn" id="moreBtn" aria-expanded="false" aria-controls="more">See the {n} other projects</button></p>
+    <ol class="entries compact" id="more" hidden></ol>
   </div>
 </section>
 
@@ -822,6 +828,11 @@ const entryHtml = e => `
 list.innerHTML = ENTRIES.slice(0, 4).map(entryHtml).join("");
 const moreList = document.getElementById("more");
 moreList.innerHTML = ENTRIES.slice(4).map(entryHtml).join("");
+const moreBtn = document.getElementById("moreBtn"), moreN = ENTRIES.length - 4;
+moreBtn.textContent = moreBtn.textContent.replace("{n}", moreN);
+const showMore = on => { moreList.hidden = !on; moreBtn.setAttribute("aria-expanded", String(on)); moreBtn.hidden = on; };
+moreBtn.addEventListener("click", () => { showMore(true); track("autres-projets"); });
+if (/^#(?!notebook|top|about|contact|cv|city)/.test(location.hash) && document.querySelector("#more " + location.hash)) showMore(true);
 // filters: one chip per category, with counts; "all" shows everything
 (() => {
   const FILTERS = [["all", "All"], ["data", "Data"], ["research", "Research"], ["sim", "Simulation & 3D"], ["algo", "Algorithms"], ["dev", "Web development"], ["demo", "With a live demo"]], box = document.getElementById("filters"), lis = () => [...document.querySelectorAll("#entries > li, #more > li")];
@@ -830,6 +841,7 @@ moreList.innerHTML = ENTRIES.slice(4).map(entryHtml).join("");
   box.addEventListener("click", e => {
     const b = e.target.closest("[data-f]"); if (!b) return; const k = b.dataset.f;
     box.querySelectorAll("[data-f]").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+    if (k !== "all") showMore(true);
     let n = 0; lis().forEach(li => { const on = k === "all" || li.dataset.cats.split(" ").includes(k); li.hidden = !on; if (on) n++; });
     document.getElementById("more-projects").hidden = ![...document.querySelectorAll("#more > li")].some(li => !li.hidden);
     document.getElementById("filterMsg").textContent = n + " " + (n > 1 ? "projects shown" : "project shown");
